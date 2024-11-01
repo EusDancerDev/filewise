@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 - **file_operations** tools for bulk renaming, copying, moving, and managing file permissions
 - **format_converters**: conversion tools for PDF and NetCDF file formats
 - **data utilities**:
-  - JSON utilities for encoding and handling JSON objects
-  - pandas utilities for data manipulation and conversions
-  - xarray utilities for handling NetCDF data and patterns
+	- JSON utilities for encoding and handling JSON objects
+	- pandas utilities for data manipulation and conversions
+	- xarray utilities for handling NetCDF data and patterns
 - **scripts**: automation scripts for various file-related tasks
