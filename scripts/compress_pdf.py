@@ -17,7 +17,7 @@ following cells, instead of running the whole program.
 # Import custom modules #
 #-----------------------#
 
-from pyutils.filewise.format_converters.pdf_tools import file_compressor
+from filewise.format_converters.pdf_tools import file_compressor
 
 #-------------------#
 # Define parameters #

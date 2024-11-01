@@ -14,7 +14,7 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from pyutils.strings.string_handler import append_ext, get_obj_specs
+from pygenutils.strings.string_handler import append_ext, get_obj_specs
 
 #------------------#
 # Define functions #

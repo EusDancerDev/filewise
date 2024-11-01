@@ -11,7 +11,7 @@ from numpy import array
 # Import custom modules #
 #-----------------------#
 
-from pyutils.string_handler import string_handler
+from pygenutils.string_handler import string_handler
 
 # Create aliases #
 #----------------#

@@ -18,7 +18,7 @@ of the module `permission_manager` (subpackage `file_operations` in `filewise`).
 # Import custom modules #
 #-----------------------#
 
-from pyutils.filewise.file_operations.permission_manager import modify_obj_owner, modify_obj_permissions
+from filewise.file_operations.permission_manager import modify_obj_owner, modify_obj_permissions
 
 #-------------------#
 # Define parameters #

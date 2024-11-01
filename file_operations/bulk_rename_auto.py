@@ -11,12 +11,12 @@ from pathlib import Path
 # Import custom modules #
 #-----------------------#
 
-from pyutils.arrays_and_lists.data_manipulation import select_elements
-from pyutils.parameters_and_constants import global_parameters
-from pyutils.strings import information_output_formatters, string_handler
-from pyutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
-from pyutils.filewise.file_operations import ops_handler, path_utils
-from pyutils.filewise.introspection_utils import get_caller_method_all_args
+from pygenutils.arrays_and_lists.data_manipulation import select_elements
+from paramlib.parameters_and_constants import global_parameters
+from pygenutils.strings import information_output_formatters, string_handler
+from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
+from filewise.file_operations import ops_handler, path_utils
+from filewise.general.introspection_utils import get_caller_method_all_args
 
 # Create aliases #
 #----------------#

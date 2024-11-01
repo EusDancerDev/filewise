@@ -12,13 +12,13 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from pyutils.arrays_and_lists.data_manipulation import find_duplicated_elements
-from pyutils.strings.information_output_formatters import format_string, get_type_str
-from pyutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
-from pyutils.filewise.file_operations.ops_handler import remove_files
-from pyutils.filewise.file_operations.path_utils import find_files
-from pyutils.filewise.introspection_utils import get_caller_args
-from pyutils.filewise.pandas_utils.data_manipulation import polish_df_column_names
+from pygenutils.arrays_and_lists.data_manipulation import find_duplicated_elements
+from pygenutils.strings.information_output_formatters import format_string, get_type_str
+from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
+from filewise.file_operations.ops_handler import remove_files
+from filewise.file_operations.path_utils import find_files
+from filewise.general.introspection_utils import get_caller_args
+from filewise.pandas_utils.data_manipulation import polish_df_column_names
 
 #------------------#
 # Define functions #

@@ -5,12 +5,12 @@
 # Import custom modules #
 #-----------------------#
 
-from pyutils.arrays_and_lists.data_manipulation import flatten_to_string
-from pyutils.operative_systems.os_operations import exit_info, run_system_command
-from pyutils.parameters_and_constants.global_parameters import common_delim_list
-from pyutils.strings import string_handler, information_output_formatters
-from pyutils.filewise.file_operations import ops_handler, path_utils
-from pyutils.filewise import introspection_utils 
+from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
+from pygenutils.operative_systems.os_operations import exit_info, run_system_command
+from paramlib.parameters_and_constants.global_parameters import common_delim_list
+from pygenutils.strings import string_handler, information_output_formatters
+from filewise.file_operations import ops_handler, path_utils
+from filewise import introspection_utils 
 
 # Aliases for functions #
 #-----------------------#

@@ -14,13 +14,13 @@ but keep in mind that the module is designed to work with absolute paths.
 # Import custom modules #
 #-----------------------#
 
-from pyutils.filewise.file_operations.bulk_rename_auto import reorder_objs
+from filewise.file_operations.bulk_rename_auto import reorder_objs
 
 #-------------------#
 # Define parameters #
 #-------------------#
 
-path = "/home/jonander/Pictures/2023/Tenerife_test_rename_pyutils."
+path = "/home/jonander/Pictures/2023/Tenerife_test_rename_pygenutils"
 obj_type = "file"
 
 zero_padding = 3

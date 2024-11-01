@@ -21,9 +21,9 @@ import os
 # Import custom modules #
 #-----------------------#
 
-from pyutils.parameters_and_constants.global_parameters import climate_file_extensions
-from pyutils.string_handler import information_output_formatters, string_handler
-from pyutils.filewise.file_operations import path_utils
+from paramlib.parameters_and_constants.global_parameters import climate_file_extensions
+from pygenutils.string_handler import information_output_formatters, string_handler
+from filewise.file_operations import path_utils
 
 # Create aliases #
 #----------------#

@@ -11,9 +11,9 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from pyutils.parameters_and_constants.global_parameters import basic_time_format_strs
-from pyutils.time_handling.time_formatters import parse_time_string
-from pyutils.filewise.pandas_utils.pandas_obj_handler import csv2df
+from paramlib.parameters_and_constants.global_parameters import basic_time_format_strs
+from pygenutils.time_handling.time_formatters import parse_time_string
+from filewise.pandas_utils.pandas_obj_handler import csv2df
 
 #------------------#
 # Define functions #

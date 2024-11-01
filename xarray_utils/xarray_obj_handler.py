@@ -11,9 +11,9 @@ import xarray as xr
 # Import custom modules #
 #-----------------------#
 
-from pyutils.pandas_data_frames.data_frame_handler import save2csv
-from pyutils.string_handler.string_handler import append_ext, get_obj_specs
-from pyutils.filewise.xarray_utils.patterns import find_coordinate_variables, find_time_dimension
+from filewise.pandas_utils.pandas_obj_handler import save2csv
+from filewise.xarray_utils.patterns import find_coordinate_variables, find_time_dimension
+from pygenutils.string_handler.string_handler import append_ext, get_obj_specs
 
 #-------------------------#
 # Define custom functions #

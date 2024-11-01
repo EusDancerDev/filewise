@@ -14,7 +14,7 @@ but keep in mind that the module is designed to work with absolute paths.
 # Import custom modules #
 #-----------------------#
 
-from pyutils.filewise.format_converters.pdf_tools import file_tweaker
+from filewise.format_converters.pdf_tools import file_tweaker
 
 #-------------------#
 # Define parameters #

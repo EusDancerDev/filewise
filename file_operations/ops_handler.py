@@ -12,7 +12,7 @@ import shutil
 # Import custom modules #
 #-----------------------#
 
-from pyutils.operative_systems.os_operations import exit_info, run_system_command
+from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 
 #------------------#
 # Define functions #
