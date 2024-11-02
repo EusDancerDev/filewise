@@ -65,7 +65,7 @@ def _whole_word(patterns):
 # File Operations #
 #~~~~~~~~~~~~~~~~~#
 
-def find_files(patterns, search_path, match_type="ext", top_only=False):
+def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None):
     """
     Searches for files based on extensions or glob patterns with various matching types.
 
@@ -77,15 +77,18 @@ def find_files(patterns, search_path, match_type="ext", top_only=False):
         The directory path to search within.
     match_type : str, optional
         The type of matching to apply. Options include:
-        - "ext": Match based on file extensions.
-        - "glob_left": Match with a wildcard at the beginning of the pattern.
-        - "glob_right": Match with a wildcard at the end of the pattern.
-        - "glob_both": Match with wildcards at both the beginning and the end of the pattern.
-        - "ww": Match the exact whole word (no wildcards).
+        - "ext": match based on file extensions.
+        - "glob_left": match with a wildcard at the beginning of the pattern.
+        - "glob_right": match with a wildcard at the end of the pattern.
+        - "glob_both": match with wildcards at both the beginning and the end of the pattern.
+        - "ww": match the exact whole word (no wildcards).
         Defaults to "ext".
     top_only : bool, optional
         If True, only searches in the top directory without subdirectories. 
         Defaults to False.
+    dirs_to_exclude : str or list, optional
+        Directory or list of directories to exclude from the search.
+        Defaults to None.
     
     Returns
     -------
@@ -99,11 +102,12 @@ def find_files(patterns, search_path, match_type="ext", top_only=False):
     """
     if isinstance(patterns, str):
         patterns = [patterns]
+    if isinstance(dirs_to_exclude, str):
+        dirs_to_exclude = [dirs_to_exclude]
 
-    # Use a switch-case dictionary to modify patterns based on match_type
     modify_pattern_func = match_pattern_modifier.get(match_type)
     if not modify_pattern_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
     
     patterns = modify_pattern_func(patterns)
 
@@ -112,9 +116,12 @@ def find_files(patterns, search_path, match_type="ext", top_only=False):
     else:
         files = path_converter(search_path)
 
+    if dirs_to_exclude:
+        files = [file for file in files if not any(excluded in file for excluded in dirs_to_exclude)]
+
     match_func = match_type_dict.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
 
     return list(np.unique([file for file in files if match_func(file, patterns)]))
 
@@ -122,7 +129,7 @@ def find_files(patterns, search_path, match_type="ext", top_only=False):
 # Directory Operations #
 #~~~~~~~~~~~~~~~~~~~~~~#
 
-def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False):
+def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None):
     """
     Finds directories containing files that match the given patterns with various matching types.
 
@@ -134,15 +141,18 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
         The directory path to search within.
     match_type : str, optional
         The type of matching to apply. Options include:
-        - "ext": Match based on file extensions.
-        - "glob_left": Match with a wildcard at the beginning of the pattern.
-        - "glob_right": Match with a wildcard at the end of the pattern.
-        - "glob_both": Match with wildcards at both the beginning and the end of the pattern.
-        - "ww": Match the exact whole word (no wildcards).
+        - "ext": match based on file extensions.
+        - "glob_left": match with a wildcard at the beginning of the pattern.
+        - "glob_right": match with a wildcard at the end of the pattern.
+        - "glob_both": match with wildcards at both the beginning and the end of the pattern.
+        - "ww": match the exact whole word (no wildcards).
         Defaults to "ext".
     top_only : bool, optional
         If True, only searches in the top directory without subdirectories.
         Defaults to False.
+    dirs_to_exclude : str or list, optional
+        Directory or list of directories to exclude from the search.
+        Defaults to None.
     
     Returns
     -------
@@ -156,11 +166,12 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     """
     if isinstance(patterns, str):
         patterns = [patterns]
+    if isinstance(dirs_to_exclude, str):
+        dirs_to_exclude = [dirs_to_exclude]
 
-    # Use a switch-case dictionary to modify patterns based on match_type
     modify_pattern_func = match_pattern_modifier.get(match_type)
     if not modify_pattern_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
     
     patterns = modify_pattern_func(patterns)
 
@@ -169,20 +180,21 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     else:
         files = path_converter(search_path)
 
+    if dirs_to_exclude:
+        files = [file for file in files if not any(excluded in file for excluded in dirs_to_exclude)]
+
     match_func = match_type_dict.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
 
-    # Find directories containing files that match the patterns
     dirs = [os.path.dirname(file) for file in files if match_func(file, patterns)]
     return list(np.unique(dirs))
-
 
 
 # Extensions and Directories Search #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-def find_items(search_path, skip_ext=None, top_only=False, task="extensions"):
+def find_items(search_path, skip_ext=None, top_only=False, task="extensions", dirs_to_exclude=None):
     """
     Finds all unique file extensions or directories in the specified path.
 
@@ -198,6 +210,9 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions"):
     task : {"extensions", "directories"}, default "extensions"
         - "extensions": to find file extensions
         - "directories" to find directories
+    dirs_to_exclude : str or list, optional
+        Directory or list of directories to exclude from the search.
+        Defaults to None.
     
     Returns
     -------
@@ -208,11 +223,16 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions"):
         skip_ext = []
     if isinstance(skip_ext, str):
         skip_ext = [skip_ext]
+    if isinstance(dirs_to_exclude, str):
+        dirs_to_exclude = [dirs_to_exclude]
 
     if top_only:
         items = path_converter(search_path, glob_bool=False)
     else:
         items = path_converter(search_path)
+
+    if dirs_to_exclude:
+        items = [item for item in items if not any(excluded in item for excluded in dirs_to_exclude)]
 
     if task == "extensions":
         extensions = [get_obj_specs(file, "ext") for file in items 
@@ -223,8 +243,7 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions"):
         return list(np.unique(dirs))
     else:
         raise ValueError("Invalid task. Use 'extensions' or 'directories'.")
-
-
+        
 #--------------------------#
 # Parameters and constants #
 #--------------------------#
@@ -240,6 +259,8 @@ match_type_dict = {
     "glob_both": lambda file, patterns: any(pattern in file for pattern in patterns),
     "ww": lambda file, patterns: any(pattern == file for pattern in patterns)
 }
+
+mtd_keys = list(match_type_dict.keys())
 
 match_pattern_modifier = {
     "ext": lambda patterns: patterns,
