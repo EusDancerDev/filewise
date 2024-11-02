@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Module `path_utils`:
 	- Enhanced `find_files` and `find_dirs_with_files` with new `match_type` options for flexible pattern matching.
 	- Removed redundant methods and improved modularity with internal helper functions.
+	- Added `dirs_to_exclude` argument to `find_files`, `find_dirs_with_files`, and `find_items` functions for selective directory exclusion during searches.
 
 ---
 
