@@ -23,7 +23,6 @@ from filewise.general.introspection_utils import get_caller_method_all_args
 
 rename_objects = ops_handler.rename_objects
 
-find_dirs = path_utils.find_dirs
 find_dirs_with_files = path_utils.find_dirs_with_files
 find_files = path_utils.find_files
 find_items = path_utils.find_items
