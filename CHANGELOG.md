@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v3.3.2] - 2024-11-02 
+
+### Changed
+
+**file_operations**
+- Module `path_utils`:
+	- Enhanced `find_files` and `find_dirs_with_files` with new `match_type` options for flexible pattern matching.
+	- Removed redundant methods and improved modularity with internal helper functions.
+
 ---
 
 ## [v3.0.0] - 2024-11-01
