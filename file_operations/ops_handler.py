@@ -69,7 +69,7 @@ def move_files(patterns, input_directories, destination_directories, match_type=
 
     match_func = match_type_dict.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}.")
 
     for input_directory in input_directories:
         files = _get_files_in_directory(input_directory)  # Using the helper
@@ -105,7 +105,7 @@ def copy_files(patterns, input_directories, destination_directories, match_type=
 
     match_func = match_type_dict.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}.")
 
     for input_directory in input_directories:
         files = _get_files_in_directory(input_directory)  # Using the helper
@@ -136,7 +136,7 @@ def remove_files(patterns, input_directories, match_type="ext"):
 
     match_func = match_type_dict.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type: {match_type}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}.")
 
     for input_directory in input_directories:
         files = _get_files_in_directory(input_directory)  # Using the helper
@@ -336,3 +336,5 @@ match_type_dict = {
     "ext": lambda file, patterns: any(file.endswith(f".{ext}") for ext in patterns),
     "glob": lambda file, patterns: any(pattern in file for pattern in patterns)
 }
+
+mtd_keys = list(match_type_dict.keys())
