@@ -2,7 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v3.4.2] - 2024-11-02 
+## [v3.4.0] - 2024-11-03
+
+### Added
+
+- Added `__init__.py` files to all first-level and deeper sub-packages for enhanced import access
+
+### Changed
+
+**file_operations**
+- Module `path_utils`: enhanced path retrieval logic with an updated internal helper and improved directory and file search methods.
+
+---
+
+## [v3.3.5] - 2024-11-02 
 
 ### Changed
 
