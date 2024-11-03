@@ -12,7 +12,7 @@ from pathlib import Path
 #-----------------------#
 
 from pygenutils.arrays_and_lists.data_manipulation import select_elements
-from paramlib.parameters_and_constants import global_parameters
+from paramlib import global_parameters
 from pygenutils.strings import information_output_formatters, string_handler
 from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
 from filewise.file_operations import ops_handler, path_utils

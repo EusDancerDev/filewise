@@ -12,7 +12,7 @@ import xarray as xr
 # Import custom modules #
 #-----------------------#
 
-from paramlib.parameters_and_constants.global_parameters import common_delim_list
+from paramlib.global_parameters import common_delim_list
 from filewise.xarray_utils.file_utils import check_ncfile_integrity
 
 #-------------------------#

@@ -11,7 +11,7 @@ import os
 # Import custom modules #
 #-----------------------#
 
-from paramlib.parameters_and_constants.global_parameters import climate_file_extensions
+from paramlib.global_parameters import climate_file_extensions
 from pygenutils.strings.information_output_formatters import format_string, string_underliner
 from filewise.file_operations import ops_handler
 from filewise.xarray_utils import file_utils, patterns
