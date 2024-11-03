@@ -8,12 +8,6 @@
 import os
 import numpy as np
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
-
-from pygenutils.strings.string_handler import get_obj_specs
-
 #------------------#
 # Define functions #
 #------------------#
@@ -21,7 +15,7 @@ from pygenutils.strings.string_handler import get_obj_specs
 # Helpers #
 #---------#
 
-def path_converter(path, glob_bool=True):
+def _fetch_path_items(path, glob_bool=True):
     """
     Converts a path into an os-based path and handles globbing.
 
@@ -38,9 +32,11 @@ def path_converter(path, glob_bool=True):
         A list of all files and directories found in the specified path.
     """
     if glob_bool:
-        return [os.path.join(dirpath, file)
-                for dirpath, _, files in os.walk(path)
-                for file in files]
+        items = []
+        for dirpath, dirnames, filenames in os.walk(path):
+            items.extend([os.path.join(dirpath, dirname) for dirname in dirnames])
+            items.extend([os.path.join(dirpath, file) for file in filenames])
+        return items
     else:
         return [os.path.join(path, item) for item in os.listdir(path)]
     
@@ -112,9 +108,9 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     patterns = modify_pattern_func(patterns)
 
     if top_only:
-        files = path_converter(search_path, glob_bool=False)
+        files = _fetch_path_items(search_path, glob_bool=False)
     else:
-        files = path_converter(search_path)
+        files = _fetch_path_items(search_path)
 
     if dirs_to_exclude:
         files = [file for file in files if not any(excluded in file for excluded in dirs_to_exclude)]
@@ -176,9 +172,9 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     patterns = modify_pattern_func(patterns)
 
     if top_only:
-        files = path_converter(search_path, glob_bool=False)
+        files = _fetch_path_items(search_path, glob_bool=False)
     else:
-        files = path_converter(search_path)
+        files = _fetch_path_items(search_path)
 
     if dirs_to_exclude:
         files = [file for file in files if not any(excluded in file for excluded in dirs_to_exclude)]
@@ -227,16 +223,16 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions", di
         dirs_to_exclude = [dirs_to_exclude]
 
     if top_only:
-        items = path_converter(search_path, glob_bool=False)
+        items = _fetch_path_items(search_path, glob_bool=False)
     else:
-        items = path_converter(search_path)
+        items = _fetch_path_items(search_path)
 
     if dirs_to_exclude:
         items = [item for item in items if not any(excluded in item for excluded in dirs_to_exclude)]
 
     if task == "extensions":
-        extensions = [get_obj_specs(file, "ext") for file in items 
-                      if os.path.isfile(file) and get_obj_specs(file, "ext") not in skip_ext]
+        extensions = [os.path.splitext(file)[1] for file in items 
+                      if os.path.isfile(file) and os.path.splitext(file)[1] not in skip_ext]
         return list(np.unique(extensions))
     elif task == "directories":
         dirs = [item for item in items if os.path.isdir(item)]
