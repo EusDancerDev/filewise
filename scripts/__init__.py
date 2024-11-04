@@ -3,6 +3,7 @@
 
 # filewise/scripts/__init__.py
 
+from . import __init__
 from . import bulk_rename
 from . import compress_pdf
 from . import copy_compress

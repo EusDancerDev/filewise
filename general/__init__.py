@@ -3,4 +3,5 @@
 
 # filewise/general/__init__.py
 
+from . import __init__
 from . import introspection_utils

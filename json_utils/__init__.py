@@ -3,5 +3,6 @@
 
 # filewise/json_utils/__init__.py
 
+from . import __init__
 from . import json_encoding_operations
 from . import json_obj_handler

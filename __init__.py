@@ -3,6 +3,7 @@
 
 # filewise/__init__.py
 
+from . import __init__
 from . import file_operations
 from . import format_converters
 from . import general

@@ -3,6 +3,7 @@
 
 # filewise/pandas_utils/__init__.py
 
+from . import __init__
 from . import conversions
 from . import data_manipulation
 from . import pandas_obj_handler
