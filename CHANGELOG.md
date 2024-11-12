@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v3.4.2] - 2024-11-12 
+
+### Changed
+
+**File Operations**
+- Module `bulk_rename_auto`: in the import of the module `introspection_utils`,
+substitute the `get_caller_method_all_args` method name with the actual `get_all_caller_args`.
+
+---
+
 ## [v3.4.0] - 2024-11-03
 
 ### Added
@@ -10,7 +20,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-**file_operations**
+**File Operations**
 - Module `path_utils`: enhanced path retrieval logic with an updated internal helper and improved directory and file search methods.
 
 ---
@@ -19,7 +29,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-**file_operations**
+**File Operations**
 - Module `path_utils`:
 	- Enhanced `find_files` and `find_dirs_with_files` with new `match_type` options for flexible pattern matching.
 	- Removed redundant methods and improved modularity with internal helper functions.
@@ -40,7 +50,7 @@ All notable changes to this project will be documented in this file.
 ## [2.1.0] - Initial Release - 2024-10-28
 
 ### Added
-- **file_operations** tools for bulk renaming, copying, moving, and managing file permissions
+- **File Operations** tools for bulk renaming, copying, moving, and managing file permissions
 - **format_converters**: conversion tools for PDF and NetCDF file formats
 - **data utilities**:
 	- JSON utilities for encoding and handling JSON objects
