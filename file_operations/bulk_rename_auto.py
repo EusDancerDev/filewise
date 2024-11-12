@@ -16,7 +16,7 @@ from paramlib import global_parameters
 from pygenutils.strings import information_output_formatters, string_handler
 from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
 from filewise.file_operations import ops_handler, path_utils
-from filewise.general.introspection_utils import get_caller_method_all_args
+from filewise.general.introspection_utils import get_all_caller_args
 
 # Create aliases #
 #----------------#
@@ -64,7 +64,7 @@ def loop_renamer(obj_list,
                  dry_run=False,
                  splitdelim=None):
     
-    param_keys = list(get_caller_method_all_args().values())
+    param_keys = list(get_all_caller_args().values())
     obj_type_arg_pos = find_substring_index(param_keys, "obj_type")
     zero_pad_pos = find_substring_index(param_keys, "zero_padding")
     
@@ -133,7 +133,7 @@ def reorder_objs(path,
                  splitdelim=None):
     
     # Input parameter validation #
-    all_arg_dict = get_caller_method_all_args()    
+    all_arg_dict = get_all_caller_args()    
     param_keys = list(all_arg_dict.keys())
     defaults = list(all_arg_dict.values())
         
