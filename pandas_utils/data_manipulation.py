@@ -89,7 +89,7 @@ def sort_df_values(df,
         Apply the key function to the values
         before sorting. This is similar to the 'key' argument in the
         builtin :meth:'sorted' function, with the notable difference that
-        this 'key' function should be *vectorized*.
+        this 'key' function should be *vectorised*.
     """
     
     df = df.sort_values(by=by,
@@ -248,7 +248,7 @@ def sort_df_indices(df,
         Apply the key function to the values
         before sorting. This is similar to the 'key' argument in the
         builtin :meth:'sorted' function, with the notable difference that
-        this 'key' function should be *vectorized*.
+        this 'key' function should be *vectorised*.
     """
             
     df.sort_index(axis=axis, 
