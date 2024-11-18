@@ -23,23 +23,23 @@ from pygenutils.strings.string_handler import append_ext, get_obj_specs
 # Read from and write to JSON files #
 #-----------------------------------#
 
-# Dictionaries #
-#-#-#-#-#-#-#-#-
+# Basic JSON Data Serialization #
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-def serialise_dict_to_json(dictionary, 
-                           out_file_path=None,
-                           indent=4,
-                           ensure_ascii=False,
-                           sort_keys=False,
-                           allow_nan=False,
-                           default=None):
+def serialise_to_json(data, 
+                      out_file_path=None,
+                      indent=4,
+                      ensure_ascii=False,
+                      sort_keys=False,
+                      allow_nan=False,
+                      default=None):
     """
-    Convert a dictionary to a JSON string and optionally write it to a file.
+    Convert data to a JSON string and optionally write it to a file.
 
     Parameters
     ----------
-    dictionary : dict
-        The dictionary to be converted to JSON format.
+    data : dict, list, or other JSON-serializable structure
+        The data to be converted to JSON format.
     out_file_path : str, optional
         The output file path. If None, the JSON data will only be returned as a string. 
         Default is None.
@@ -75,65 +75,61 @@ def serialise_dict_to_json(dictionary,
         sort_keys=sort_keys,
         allow_nan=allow_nan,
         default=default
-        )
-    
-    # Get file specs #
+    )
+
+    # Get file specs
     out_file_parent = get_obj_specs(out_file_path, obj_spec_key="parent")
     out_file_no_rel_path = get_obj_specs(out_file_path, obj_spec_key="name")
 
-    # Serialise dictionary to JSON formatted string
-    json_str = json.dumps(dictionary, **kwargs)
+    # Serialise data to JSON formatted string
+    json_str = json.dumps(data, **kwargs)
 
-    if out_file_path is not None:
-        # Determine the output file path
+    if out_file_path:
+        # Determine the output file path and add extension if missing
         if not os.path.splitext(out_file_path)[1]:
             out_file_path = append_ext(out_file_path, extensions[0])
 
         try:
-            # Check if file already exists
+            # Handle existing files with user confirmation
             if os.path.exists(out_file_path):
                 overwrite_stdin = input(
                     f"Warning: file '{out_file_no_rel_path}' "
                     f"at directory '{out_file_parent}' already exists.\n"
                     "Overwrite it? (y/n) "
-                    )
-                while (overwrite_stdin not in ["y", "n"]):
-                    overwrite_stdin = \
-                    input("\nPlease enter 'y' for 'yes' or 'n' for 'no': ")
-                
+                )
+                while overwrite_stdin not in ["y", "n"]:
+                    overwrite_stdin = input("\nPlease enter 'y' for 'yes' or 'n' for 'no': ")
+
                 if overwrite_stdin == "n":
                     print("File not overwritten.")
                     return None  # Do not overwrite file
-                
-            else:
-                # Either if chosen not to overwrite or file initially inexistent,
-                # write JSON string to new file
-                with open(out_file_path, 'w') as f:
-                    json.dump(dictionary, f, **kwargs)
 
+            # Write JSON string to file
+            with open(out_file_path, 'w') as f:
+                json.dump(data, f, **kwargs)
             return out_file_path
 
         except IOError as e:
             raise IOError(f"Could not write to file '{out_file_path}': {e}")
 
     else:
-        # If out_file_path is not provided, return JSON formatted string
+        # Return JSON formatted string if out_file_path is not provided
         return json_str
 
 
-def serialise_json_to_dict(in_file_path):
+def serialise_from_json(in_data):
     """
-    Convert a JSON file or a JSON-formatted string to a dictionary.
+    Convert a JSON file or a JSON-formatted string to a dictionary or list.
 
     Parameters 
     ----------
-    in_file_path : str
-        The input file path, which could be absolute or relative, or a JSON-formatted string.
+    in_data : str
+        The input JSON file path (absolute or relative) or a JSON-formatted string.
 
     Returns
     -------
-    dict
-        The content of the JSON file or string as a dictionary.
+    dict or list
+        The content of the JSON file or string as a dictionary or list.
 
     Raises
     ------
@@ -143,23 +139,24 @@ def serialise_json_to_dict(in_file_path):
         If the content cannot be decoded as JSON.
     """
 
-    # Check if the input is a file path and read from the file #
-    if os.path.isfile(in_file_path):
+    # Check if the input is a file path and read from the file
+    if os.path.isfile(in_data):
         try:
-            with open(in_file_path) as file:
-                content_dict = json.load(file)
-            return content_dict
+            with open(in_data) as file:
+                content = json.load(file)
+            return content
         except FileNotFoundError:
-            raise FileNotFoundError(f"File not found: '{in_file_path}'")
+            raise FileNotFoundError(f"File not found: '{in_data}'")
         except json.JSONDecodeError as e:
-            raise ValueError(f"Could not decode content from file '{in_file_path}'.") from e
+            raise ValueError(f"Could not decode content from file '{in_data}'.") from e
     else:
-        # If it's not a file path, try to read it as a JSON-formatted string #
+        # Attempt to read the input as a JSON-formatted string
         try:
-            content_dict = json.loads(in_file_path)
-            return content_dict
+            content = json.loads(in_data)
+            return content
         except json.JSONDecodeError as e:
             raise ValueError("Could not decode content from provided JSON string.") from e
+
 
        
 # Pandas Dataframes #
