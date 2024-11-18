@@ -2,13 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+---
+
+## [v3.5.0] - 2024-11-18
+
+### Changed
+
+**JSON utils**
+
+- Module `json_obj_handler`: enhanced JSON serialization functions to support dictionaries and lists of dictionaries; improved naming and documentation for clarity.
+
+---
+
 ## [v3.4.2] - 2024-11-12 
 
 ### Changed
 
 **File Operations**
-- Module `bulk_rename_auto`: in the import of the module `introspection_utils`,
-substitute the `get_caller_method_all_args` method name with the actual `get_all_caller_args`.
+- Module `bulk_rename_auto`: in the import of the module `introspection_utils`, substitute the `get_caller_method_all_args` method name with the actual `get_all_caller_args`.
 
 ---
 
