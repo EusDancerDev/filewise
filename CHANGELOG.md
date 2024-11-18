@@ -11,6 +11,29 @@ All notable changes to this project will be documented in this file.
 **JSON utils**
 
 - Module `json_obj_handler`: enhanced JSON serialization functions to support dictionaries and lists of dictionaries; improved naming and documentation for clarity.
+- The following method renamings have been made:
+<table>
+	<thead>
+		<tr>
+			<th>Old function name</span></th>
+			<th>New function name</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>serialise_dict_to_json</td>
+			<td>serialise_to_json</td>
+		</tr>
+		<tr>
+			<td>serialise_json_to_dict</td>
+			<td>deserialise_json</td>
+		</tr>
+		<tr>
+			<td>serialise_json_to_df</td>
+			<td>deserialise_json_to_df</td>
+		</tr>
+	</tbody>
+</table>
 
 ---
 
