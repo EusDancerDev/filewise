@@ -117,7 +117,7 @@ def serialise_to_json(data,
         return json_str
 
 
-def serialise_from_json(in_data):
+def deserialise_json(in_data):
     """
     Convert a JSON file or a JSON-formatted string to a dictionary or list.
 
@@ -162,16 +162,125 @@ def serialise_from_json(in_data):
 # Pandas Dataframes #
 #-#-#-#-#-#-#-#-#-#-#
 
-def serialise_json_to_df(json_obj_list,
-                         encoding="utf-8",
-                         orient=None, 
-                         typ='frame', 
-                         dtype=True,
-                         convert_dates=True,
-                         keep_default_dates=True,
-                         precise_float=False,
+def serialise_df_to_json(df, 
+                         out_path=None,
+                         orient=None,
+                         force_ascii=True,
                          date_unit=None,
-                         encoding_errors='strict'):
+                         indent=4, 
+                         mode="w"):
+    
+    """
+    Convert a Pandas Dataframe to JSON object or file.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The Dataframe to be converted to JSON.
+    out_path : str, path object, file-like object, or None
+        String, path object (implementing os.PathLike[str]), or file-like
+        object implementing a write() function.
+        If None, the result is returned as a string.
+    orient : str
+        Indication of expected JSON string format.
+    
+        * Series:
+    
+            - default is 'index'
+            - allowed values are: {'split', 'records', 'index', 'table'}.
+    
+        * DataFrame:
+    
+            - default is 'columns'
+            - allowed values are: {'split', 'records', 'index', 'columns',
+              'values', 'table'}.
+    
+        * The format of the JSON string:
+    
+            - 'split' : dict like {'index' -> [index], 'columns' -> [columns],
+              'data' -> [values]}
+            - 'records' : list like [{column -> value}, ... , {column -> value}]
+            - 'index' : dict like {index -> {column -> value}}
+            - 'columns' : dict like {column -> {index -> value}}
+            - 'values' : just the values array
+            - 'table' : dict like {'schema': {schema}, 'data': {data}}
+    
+            Describing the data, where data component is like ``orient='records'``.
+            
+    indent : int, optional
+        Length of whitespace used to indent each record.
+    force_ascii : bool
+        Force encoded string to be ASCII. Defaults to True.
+    mode : str, default 'w' (writing)
+        Specify the IO mode for output when supplying a path_or_buf.
+        Accepted args are 'w' (writing) and 'a' (append) only.
+        mode='a' is only supported when lines is True and orient is 'records'.
+        
+    date_unit : {'s', 'ms', 'us' or 'ns'}, default None
+        The timestamp unit to detect if converting dates.
+        The default behaviour is to try and detect the correct precision, 
+        but if this is not desired, then pass one of the mentioned options
+        to force parsing only seconds, milliseconds, microseconds 
+        or nanoseconds respectively.
+       
+    Returns
+    -------
+    None or str
+        If 'out_path' is None, returns the resulting JSON format as a string.
+        Otherwise, writes the JSON to the specified path and returns None.
+        
+    Raises
+    ------
+    ValueError
+        If the DataFrame is empty.
+    FileNotFoundError
+        If the specified file path is not found or is invalid.
+    IOError
+        If the file cannot be written.
+    
+    Notes
+    -----
+    The behaviour of ``indent=0`` varies from the stdlib, which does not
+    indent the output but does insert newlines. Currently, ``indent=0``
+    and the default ``indent=None`` are equivalent in pandas, though this
+    may change in a future release.
+    """
+    
+    # Check if the DataFrame is empty
+    if df.empty:
+        raise ValueError("The DataFrame is empty and cannot be converted to JSON.")
+    
+    # Attempt to convert the DataFrame to JSON and handle possible errors
+    try:
+        result = df.to_json(path_or_buf=out_path,
+                            orient=orient,
+                            force_ascii=force_ascii,
+                            date_unit=date_unit,
+                            indent=indent,
+                            mode=mode)
+        # Return the JSON string if no output path is provided
+        return result
+    
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File path not found or invalid: '{out_path}'")
+    
+    except IOError as e:
+        raise IOError(f"Cannot write to file '{out_path}': {e}") from e
+    
+    except ValueError as e:
+        raise ValueError(f"An error occurred while converting DataFrame to JSON: {str(e)}") from e    
+
+
+def deserialise_json_to_df(json_obj_list,
+                           encoding="utf-8",
+                           orient=None, 
+                           typ='frame', 
+                           dtype=True,
+                           convert_dates=True,
+                           keep_default_dates=True,
+                           precise_float=False,
+                           date_unit=None,
+                           encoding_errors='strict'):
 
     """
     Converts a list of JSON-compatible strings or JSON file paths to a merged Pandas DataFrame.
@@ -329,113 +438,6 @@ def serialise_json_to_df(json_obj_list,
     
     return df
 
-def serialise_df_to_json(df, 
-                         out_path=None,
-                         orient=None,
-                         force_ascii=True,
-                         date_unit=None,
-                         indent=4, 
-                         mode="w"):
-    
-    """
-    Convert a Pandas Dataframe to JSON object or file.
-    
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The Dataframe to be converted to JSON.
-    out_path : str, path object, file-like object, or None
-        String, path object (implementing os.PathLike[str]), or file-like
-        object implementing a write() function.
-        If None, the result is returned as a string.
-    orient : str
-        Indication of expected JSON string format.
-    
-        * Series:
-    
-            - default is 'index'
-            - allowed values are: {'split', 'records', 'index', 'table'}.
-    
-        * DataFrame:
-    
-            - default is 'columns'
-            - allowed values are: {'split', 'records', 'index', 'columns',
-              'values', 'table'}.
-    
-        * The format of the JSON string:
-    
-            - 'split' : dict like {'index' -> [index], 'columns' -> [columns],
-              'data' -> [values]}
-            - 'records' : list like [{column -> value}, ... , {column -> value}]
-            - 'index' : dict like {index -> {column -> value}}
-            - 'columns' : dict like {column -> {index -> value}}
-            - 'values' : just the values array
-            - 'table' : dict like {'schema': {schema}, 'data': {data}}
-    
-            Describing the data, where data component is like ``orient='records'``.
-            
-    indent : int, optional
-        Length of whitespace used to indent each record.
-    force_ascii : bool
-        Force encoded string to be ASCII. Defaults to True.
-    mode : str, default 'w' (writing)
-        Specify the IO mode for output when supplying a path_or_buf.
-        Accepted args are 'w' (writing) and 'a' (append) only.
-        mode='a' is only supported when lines is True and orient is 'records'.
-        
-    date_unit : {'s', 'ms', 'us' or 'ns'}, default None
-        The timestamp unit to detect if converting dates.
-        The default behaviour is to try and detect the correct precision, 
-        but if this is not desired, then pass one of the mentioned options
-        to force parsing only seconds, milliseconds, microseconds 
-        or nanoseconds respectively.
-       
-    Returns
-    -------
-    None or str
-        If 'out_path' is None, returns the resulting JSON format as a string.
-        Otherwise, writes the JSON to the specified path and returns None.
-        
-    Raises
-    ------
-    ValueError
-        If the DataFrame is empty.
-    FileNotFoundError
-        If the specified file path is not found or is invalid.
-    IOError
-        If the file cannot be written.
-    
-    Notes
-    -----
-    The behaviour of ``indent=0`` varies from the stdlib, which does not
-    indent the output but does insert newlines. Currently, ``indent=0``
-    and the default ``indent=None`` are equivalent in pandas, though this
-    may change in a future release.
-    """
-    
-    # Check if the DataFrame is empty
-    if df.empty:
-        raise ValueError("The DataFrame is empty and cannot be converted to JSON.")
-    
-    # Attempt to convert the DataFrame to JSON and handle possible errors
-    try:
-        result = df.to_json(path_or_buf=out_path,
-                            orient=orient,
-                            force_ascii=force_ascii,
-                            date_unit=date_unit,
-                            indent=indent,
-                            mode=mode)
-        # Return the JSON string if no output path is provided
-        return result
-    
-    except FileNotFoundError:
-        raise FileNotFoundError(f"File path not found or invalid: '{out_path}'")
-    
-    except IOError as e:
-        raise IOError(f"Cannot write to file '{out_path}': {e}") from e
-    
-    except ValueError as e:
-        raise ValueError(f"An error occurred while converting DataFrame to JSON: {str(e)}") from e
 
 #--------------------------#
 # Parameters and constants #
