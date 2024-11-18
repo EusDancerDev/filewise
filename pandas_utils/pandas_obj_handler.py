@@ -13,7 +13,7 @@ import pandas as pd
 #-----------------------#
 
 from pygenutils.arrays_and_lists.data_manipulation import find_duplicated_elements
-from pygenutils.strings.information_output_formatters import format_string, get_type_str
+from pygenutils.strings.text_formatters import format_string, get_type_str
 from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files

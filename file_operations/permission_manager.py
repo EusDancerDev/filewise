@@ -16,7 +16,7 @@ import shutil
 #-----------------------#
 
 from filewise.file_operations import path_utils
-from pygenutils.strings import information_output_formatters, string_handler
+from pygenutils.strings import text_formatters, string_handler
 from filewise.general.introspection_utils import get_caller_args
 
 # Create aliases #
@@ -25,8 +25,8 @@ from filewise.general.introspection_utils import get_caller_args
 find_files = path_utils.find_files
 find_items = path_utils.find_items
 
-format_string = information_output_formatters.format_string
-print_format_string = information_output_formatters.print_format_string
+format_string = text_formatters.format_string
+print_format_string = text_formatters.print_format_string
 
 find_substring_index = string_handler.find_substring_index
 

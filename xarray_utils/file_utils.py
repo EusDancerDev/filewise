@@ -22,7 +22,7 @@ import os
 #-----------------------#
 
 from paramlib.global_parameters import climate_file_extensions
-from pygenutils.string_handler import information_output_formatters, string_handler
+from pygenutils.string_handler import text_formatters, string_handler
 from filewise.file_operations import path_utils
 
 # Create aliases #
@@ -30,9 +30,9 @@ from filewise.file_operations import path_utils
 
 find_files = path_utils.find_files
 
-format_string = information_output_formatters.format_string
-print_format_string = information_output_formatters.print_format_string
-string_underliner = information_output_formatters.string_underliner
+format_string = text_formatters.format_string
+print_format_string = text_formatters.print_format_string
+string_underliner = text_formatters.string_underliner
 
 get_obj_specs = string_handler.get_obj_specs
 

@@ -8,15 +8,15 @@
 from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 from paramlib.global_parameters import common_delim_list
-from pygenutils.strings import string_handler, information_output_formatters
+from pygenutils.strings import string_handler, text_formatters
 from filewise.file_operations import ops_handler, path_utils
 from filewise import introspection_utils 
 
 # Aliases for functions #
 #-----------------------#
 
-format_string = information_output_formatters.format_string
-format_table_from_lists = information_output_formatters.format_table_from_lists
+format_string = text_formatters.format_string
+format_table_from_lists = text_formatters.format_table_from_lists
 
 get_caller_args = introspection_utils.get_caller_args
 get_type_str = introspection_utils.get_type_str
