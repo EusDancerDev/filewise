@@ -880,7 +880,8 @@ def merge_csv_files(input_file_list,
         
         ind_file_df_nrow_list = []    
         for file in input_file_list:
-            file_df = csv2df(separator=separator_in,
+            file_df = csv2df(file,
+                             separator=separator_in,
                              engine=engine,
                              encoding=encoding,
                              header=header,
@@ -888,8 +889,7 @@ def merge_csv_files(input_file_list,
                              index_col=index_col,
                              decimal=decimal)
             
-            file_df_shape = file_df.shape
-            ind_file_df_nrow_list.append(file_df_shape[0])
+            ind_file_df_nrow_list.append(file_df.shape[0])
             
         ind_file_df_nrow_unique = unique(ind_file_df_nrow_list)
         lifdnu = len(ind_file_df_nrow_unique)
