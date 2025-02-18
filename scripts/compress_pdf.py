@@ -30,7 +30,7 @@ from filewise.format_converters.pdf_tools import file_compressor
 in_path_str  = "/home/jonander/Documents/apunteak.pdf"
 out_path_str = "/home/jonander/Documents/tweaked.pdf"
 
-# For readability purposes, place the method here,
+# For readability purposes, place the function here,
 # alongside with the case usage parameters 
 file_compressor(in_path_str, out_path_str)
 
@@ -48,6 +48,6 @@ out_path_list = ["/home/jonander/Documents/compressed_sample1.pdf",
                  "/home/jonander/Documents/compressed_sample3.pdf",
                  "/home/jonander/Documents/compressed_sample4.pdf",]
 
-# For readability purposes, place the method here,
+# For readability purposes, place the function here,
 # alongside with the case usage parameters 
 file_compressor(in_path_list, out_path_list)
