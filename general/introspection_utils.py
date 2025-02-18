@@ -13,8 +13,8 @@ import sys
 # Define functions #
 #------------------#
 
-# Methods #
-#---------#
+# Functions #
+#-----------#
 
 # Function names #
 def get_func_name(lib="inspect"):
@@ -37,8 +37,8 @@ def get_func_name(lib="inspect"):
     ValueError
         If `lib` is not a supported library.
     """
-    if lib not in func_name_libs:
-        raise ValueError("Unsupported library. Choose from {func_name_libs}.")
+    if lib not in NAME_RESOLUTION_LIBRARIES:
+        raise ValueError("Unsupported library. Choose from {NAME_RESOLUTION_LIBRARIES}.")
     if lib == "inspect":
         return inspect.getframeinfo(inspect.currentframe().f_back).function
     return sys._getframe(1).f_code.co_name
@@ -282,5 +282,5 @@ def inspect_memory_usage(obj, seen=None):
 # Parameters and constants #
 #--------------------------#
 
-# Supported library list for method name retrievals #
-func_name_libs = ["inspect", "sys"]
+# Supported library list for function name retrievals #
+NAME_RESOLUTION_LIBRARIES = ["inspect", "sys"]
