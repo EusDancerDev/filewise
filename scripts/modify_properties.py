@@ -43,8 +43,8 @@ attr_id = -1
 new_owner = -1
 new_group = -1
 
-# Owner modification method params #
-#----------------------------------#
+# Owner modification function params #
+#-----------------------------------#
 
 # Module to use for #
 module = "shutil"
