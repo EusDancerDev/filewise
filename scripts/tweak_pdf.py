@@ -78,9 +78,9 @@ input_path_n --> type string --> it corresponds this object:
 
 
 In order to maintain the required variable names to use the 'file_tweaker'
-method, instead of centralizing under a generic name,
+function, instead of centralizing under a generic name,
 the program is splitted into three blocks, each for a case usage,
-where at the end of it the method is implemented.
+where at the end of it the function is implemented.
 
 It is reccommended to firsly run this first cell, and then one of the 
 following cells, instead of running the whole program.
@@ -96,7 +96,7 @@ cat_str = "1-2 8"
 
 cat_out_str = f"{cat_str}; {output_path_str}"
 
-# For readability purposes, place the method here,
+# For readability purposes, place the function here,
 # alongside with the case usage parameters 
 file_tweaker(path_str, cat_out_str)
 
@@ -119,7 +119,7 @@ cat_str_list = ["1-25 34-end",
 cat_out_dict = {out_path : cat_str 
                 for out_path, cat_str in zip(output_path_list, cat_str_list)}
 
-# For readability purposes, place the method here,
+# For readability purposes, place the function here,
 # alongside with the case usage parameters 
 file_tweaker(path_str, cat_out_dict)
 
@@ -160,6 +160,6 @@ cat_out_dict_list\
     for out_path, cat_str in zip(output_path_list, cat_str_list)
     for output_path_list, cat_str_list in zip(output_path_lists, cat_str_list)}]
 
-# For readability purposes, place the method here,
+# For readability purposes, place the function here,
 # alongside with the case usage parameters 
 file_tweaker(path_list, cat_out_dict_list)
