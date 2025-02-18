@@ -107,7 +107,7 @@ def insert_column_in_df(df, index_col, column_name, values):
     """
     Function that inserts a column on a simple, non multi-index
     Pandas DataFrame, specified by an index column.
-    Note that this method is in-place.
+    Note that this function acts in-place.
     
     Parameters
     ----------
@@ -268,7 +268,7 @@ def reindex_df(df, col_to_replace=None, vals_to_replace=None):
     Further function than df.reset_index attribute,
     for resetting the index of the given Pandas DataFrame,
     using any specified column and then resetting the latter.
-    This method applies only for one-leveled objects
+    This function applies only for one-leveled objects
     (i.e, cannot have a MultiIndex) and can contain any tipe of index.
     It can also be applied for simple reindexing.
     
