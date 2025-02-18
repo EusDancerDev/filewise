@@ -385,7 +385,7 @@ def merge_excel_files(input_file_list,
 
     Notes
     -----
-    If multiple files contain sheets with identical names, the method appends
+    If multiple files contain sheets with identical names, the function appends
     the original file name to the sheet names to avoid key conflicts
     in the output dictionary.
     """
@@ -432,7 +432,7 @@ def merge_excel_files(input_file_list,
         there will be more than one tuple, contained in a list,
         in order to preserve performance.
       
-    The application of the method results in a dictionary as follows:
+    The application of the function results in a dictionary as follows:
     res_dict = {'sheet1' : [(0,0), (1,0)]}
     
     In this case, the repeated key is 'sheet1', which appears in the sheets
@@ -517,9 +517,9 @@ def save2csv(file_path,
 
     Notes
     -----
-    - This method is designed to work with simple CSV files, typically with only one sheet.
+    - This function is designed to work with simple CSV files, typically with only one sheet.
     - If 'file_path' does not have a file extension, '.csv' is automatically appended to it.
-    - If the specified file already exists, the method prompts to confirm overwrite before saving.
+    - If the specified file already exists, the function prompts to confirm overwrite before saving.
     """
 
     
@@ -1020,9 +1020,9 @@ def ods_handler(file_path,
     Reads a LibreOffice Calc file and processes its sheets either into a 
     dictionary of DataFrames or a single merged DataFrame.
     
-    In either case, it calls the 'excel_handler' method, because the only
+    In either case, it calls the 'excel_handler' function, because the only
     difference is the engine called, 'odf', from 'odfpy' library.
-    Then this method inherits every functionalities from the mentioned one.
+    Then this function inherits every functionalities from the mentioned one.
 
     Parameters:
     -----------
