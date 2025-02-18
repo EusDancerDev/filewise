@@ -22,8 +22,8 @@ from filewise.xarray_utils.file_utils import check_ncfile_integrity
 # Dimension handlers #
 #--------------------#
 
-# Main methods #
-#-#-#-#-#-#-#-#-
+# Main functions #
+#-#-#-#-#-#-#-#-#-
 
 def get_file_dimensions(nc_file):
     """
@@ -221,8 +221,8 @@ def get_times(nc_file, time_dimension_name):
     return time_values
 
 
-# Particular methods #
-#-#-#-#-#-#-#-#-#-#-#-
+# Particular functions #
+#-#-#-#-#-#-#-#-#-#-#-#-
 
 def find_coordinate_variables(nc_file):
     """

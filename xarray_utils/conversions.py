@@ -60,7 +60,7 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
       that calls the 'grib_to_netcdf' tool, with optional flags.
     - When 'on_shell' is False, xarray is used to directly open the GRIB file 
       and convert it to netCDF format.
-    - The method will prompt for input in the case of multiple GRIB files if 
+    - The function will prompt for input in the case of multiple GRIB files if 
       'on_shell' is True.
     """
 

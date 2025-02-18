@@ -19,8 +19,8 @@ from pygenutils.string_handler.string_handler import append_ext, get_obj_specs
 # Define custom functions #
 #-------------------------#
 
-# Main methods #
-#--------------#
+# Main functions #
+#----------------#
 
 # xarray objects #
 #~~~~~~~~~~~~~~~~#

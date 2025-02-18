@@ -43,8 +43,8 @@ get_obj_specs = string_handler.get_obj_specs
 # netCDF file searching #
 #-----------------------#
 
-# Main method #
-#-#-#-#-#-#-#-#
+# Main function #
+#-#-#-#-#-#-#-#-#
     
 def scan_ncfiles(search_path):
     """
@@ -150,7 +150,7 @@ def ncfile_integrity_status(ncfile_name):
     """
     Checks the integrity of a given netCDF file by attempting to open it with xarray.
 
-    This method tries to open the specified netCDF file using `xarray.open_dataset`.
+    This function tries to open the specified netCDF file using `xarray.open_dataset`.
     If the file is successfully opened, it is closed and the function completes without
     returning anything. If an error occurs during this process, it delegates the exception
     raise to the output of xarray.dataset class.
