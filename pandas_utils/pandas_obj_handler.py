@@ -256,9 +256,9 @@ def save2excel(file_path,
     If so, Excel file extension is automatically added.
     """
     file_ext = get_obj_specs(file_path, obj_spec_key="ext")
-    lne = len(file_ext)
+    extension_length = len(file_ext)
     
-    if lne == 0:
+    if extension_length == 0:
         file_path = append_ext(file_path, extensions[1])
     
     # Name and parent #
@@ -395,8 +395,8 @@ def merge_excel_files(input_file_list,
     if isinstance(input_file_list, str):
         input_file_list = [input_file_list]
         
-    lifn = len(input_file_list)    
-    if lifn == 1:
+    input_file_count = len(input_file_list)    
+    if input_file_count == 1:
         raise ValueError(below_minimum_file_warning)
         
     # For simplicity and convenience, even if any file has only one sheet, 
@@ -442,8 +442,8 @@ def merge_excel_files(input_file_list,
     (second index 0 in both cases).
     """
     duplicated_sheetname_index_dict = find_duplicated_elements(all_file_sheetname_list_of_lists)
-    ldsid = len(duplicated_sheetname_index_dict)
-    if ldsid > 0:
+    duplicate_sheet_count = len(duplicated_sheetname_index_dict)
+    if duplicate_sheet_count > 0:
         for sheet_name in list(duplicated_sheetname_index_dict.keys()):
             index_tuple_list = duplicated_sheetname_index_dict[sheet_name]
             for tupl in index_tuple_list:
@@ -537,9 +537,9 @@ def save2csv(file_path,
         """
         
         file_ext = get_obj_specs(file_path, obj_spec_key="ext")
-        lne = len(file_ext)
+        extension_length = len(file_ext)
         
-        if lne == 0:
+        if extension_length == 0:
             file_path = append_ext(file_path, extensions[0])
         
         
@@ -866,9 +866,9 @@ def merge_csv_files(input_file_list,
     if isinstance(input_file_list, str):
         input_file_list = [input_file_list]
         
-    lifn = len(input_file_list)
+    input_file_count = len(input_file_list)
     
-    if lifn == 1:
+    if input_file_count == 1:
         raise ValueError(below_minimum_file_warning)
         
     # Option 1: merge data of all files into a single DataFrame #
@@ -893,10 +893,10 @@ def merge_csv_files(input_file_list,
             ind_file_df_nrow_list.append(file_df.shape[0])
             
         ind_file_df_nrow_unique = unique(ind_file_df_nrow_list)
-        lifdnu = len(ind_file_df_nrow_unique)
+        unique_row_count = len(ind_file_df_nrow_unique)
         
         # If not the case, warn respectively and prompt to merge anyway #
-        if lifdnu > 1:
+        if unique_row_count > 1:
             merge_anyway_stdin = input("Warning: number of rows of data in some files "
                                        "is not common to all data. "
                                        "Mergeing resulted in concatenation by "
