@@ -11,12 +11,12 @@ from pathlib import Path
 # Import custom modules #
 #-----------------------#
 
-from pygenutils.arrays_and_lists.data_manipulation import select_elements
-from paramlib import global_parameters
-from pygenutils.strings import text_formatters, string_handler
-from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
 from filewise.file_operations import ops_handler, path_utils
 from filewise.general.introspection_utils import get_all_caller_args
+from paramlib import global_parameters
+from pygenutils.arrays_and_lists.data_manipulation import select_elements
+from pygenutils.strings import text_formatters, string_handler
+from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
 
 # Create aliases #
 #----------------#
@@ -188,8 +188,7 @@ def reorder_objs(path,
         Appart from that, there can be newer objects that contain characters
         and they even need to be placed back in the time.
         
-        In order to prevent that problem, 
-        the user can customize the starting number.
+        In order to prevent that problem, the user can customise the starting number.
         
         In any case the program will firstly attempt a dry run and
         let know if there are conflicting objects.
@@ -269,23 +268,23 @@ def reorder_objs(path,
                                                           num_formatted_objs_dry_run_2,
                                                           conflicting_objs):
             
-                arg_tuple_reorder_objs1 = (objname_uneven, 
-                                           timestamp_str_objname_uneven,
-                                           nff_dR2,
-                                           timestamp_str_nff_dR2,
-                                           confl_obj, 
-                                           timestamp_str_confl_obj)
-                report_file_obj.write(format_string(conf_obj_info_str, arg_tuple_reorder_objs1))
+                format_args_conflict_info = (objname_uneven, 
+                                             timestamp_str_objname_uneven,
+                                             nff_dR2,
+                                             timestamp_str_nff_dR2,
+                                             confl_obj, 
+                                             timestamp_str_confl_obj)
+                report_file_obj.write(format_string(conf_obj_info_template, format_args_conflict_info))
                          
             report_file_obj.close()
                 
             if obj_type == basic_object_types[0]:
-                arg_tuple_reorder1 = ("files", report_file_name)
-                print_format_string(conflicting_objects_warning, arg_tuple_reorder1)
+                format_args_conflict_warning_files = ("files", report_file_name)
+                print_format_string(conflicting_objects_warning, format_args_conflict_warning_files)
                 
             elif obj_type == basic_object_types[1]:
-                arg_tuple_reorder2 = ("directories", report_file_name)
-                print_format_string(conflicting_objects_warning, arg_tuple_reorder2) 
+                format_args_conflict_warning_dirs = ("directories", report_file_name)
+                print_format_string(conflicting_objects_warning, format_args_conflict_warning_dirs) 
  
         else:
             
@@ -296,21 +295,21 @@ def reorder_objs(path,
             report_file_obj = open(report_file_path, "w")                    
             
             for objname_uneven, nff_dR2 in zip(obj_list_uneven, num_formatted_objs_dry_run_2):
-                arg_tuple_reorder_objs2 = (objname_uneven,
-                                           timestamp_str_objname_uneven,
-                                           nff_dR2,
-                                           timestamp_str_nff_dR2)
-                report_file_obj.write(conf_obj_info_str, arg_tuple_reorder_objs2)
+                format_args_dry_run_info = (objname_uneven,
+                                            timestamp_str_objname_uneven,
+                                            nff_dR2,
+                                            timestamp_str_nff_dR2)
+                report_file_obj.write(format_string(conf_obj_info_template, format_args_dry_run_info))
                          
             report_file_obj.close()
                 
             if obj_type == basic_object_types[0]:
-                arg_tuple_reorder3 = ("files", report_file_name)
-                print_format_string(no_conflicting_object_message, arg_tuple_reorder3)
+                format_args_no_conflict_files = ("files", report_file_name)
+                print_format_string(no_conflicting_object_message, format_args_no_conflict_files)
                 
             elif obj_type == basic_object_types[1]:
-                arg_tuple_reorder4 = ("directories", report_file_name)
-                print_format_string(no_conflicting_object_message, arg_tuple_reorder4)
+                format_args_no_conflict_dirs = ("directories", report_file_name)
+                print_format_string(no_conflicting_object_message, format_args_no_conflict_dirs)
                 
             ansPerformChanges\
             = input("Would you like to perform the changes? [y/n] ")
@@ -389,13 +388,13 @@ def reorder_objs(path,
                                                           num_formatted_objs_dry_run,
                                                           conflicting_objs):
             
-                arg_tuple_reorder_objs3 = (objname_unevens, 
-                                           timestamp_str_objname_unevens,
-                                           nff_dR,
-                                           timestamp_str_nff_dR,
-                                           confl_obj,
-                                           timestamp_str_confl_obj)
-                report_file_obj.write(format_string(conf_obj_info_str, arg_tuple_reorder_objs3))
+                format_args_conflict_info_slice = (objname_unevens, 
+                                                   timestamp_str_objname_unevens,
+                                                   nff_dR,
+                                                   timestamp_str_nff_dR,
+                                                   confl_obj,
+                                                   timestamp_str_confl_obj)
+                report_file_obj.write(format_string(conf_obj_info_template, format_args_conflict_info_slice))
                          
             report_file_obj.close()
                 
@@ -412,8 +411,8 @@ def reorder_objs(path,
             
             for objname_unevens, nff_dr in zip(obj_list_uneven_slice, 
                                                num_formatted_objs_dry_run):
-                arg_tuple_reorder_objs4 = (objname_unevens, nff_dR)
-                report_file_obj.write(format_string(dry_run_info_str, arg_tuple_reorder_objs4))
+                format_args_dry_run_info_slice = (objname_unevens, nff_dR)
+                report_file_obj.write(format_string(dry_run_info_template, format_args_dry_run_info_slice))
                          
             report_file_obj.close()
                 
@@ -449,14 +448,14 @@ If no limit wants to be considered, set the parameter to 'inf'
 lcos_upper_limit = 2
         
 
-# Preformatted strings #
-#----------------------#
+# Template strings #
+#------------------#
 
 # Object path comparisons and conflicts, if any, due to already existing ones #
-conf_obj_info_str\
+conf_obj_info_template\
 = """'{}' <--> '{}' renamed to '{}' <--> '{}' conflicts with '{}' <--> '{}'\n"""
 
-dry_run_info_str = """'{}' renamed to '{}'\n"""
+dry_run_info_template = """'{}' renamed to '{}'\n"""
 
 conflicting_objects_warning = """\n\nSome renamed {} conflict!
 Information is stored at file '{}'."""
