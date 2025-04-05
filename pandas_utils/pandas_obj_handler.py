@@ -12,13 +12,14 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from pygenutils.arrays_and_lists.data_manipulation import find_duplicated_elements
-from pygenutils.strings.text_formatters import format_string, get_type_str
-from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
 from filewise.general.introspection_utils import get_caller_args
 from filewise.pandas_utils.data_manipulation import polish_df_column_names
+
+from pygenutils.arrays_and_lists.data_manipulation import find_duplicated_elements
+from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
+from pygenutils.strings.text_formatters import format_string, get_type_str
 
 #------------------#
 # Define functions #
@@ -128,8 +129,8 @@ def excel_handler(file_path,
     Reads an Excel file and processes its sheets either into a 
     dictionary of DataFrames or a single merged DataFrame.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     file_path : str
         Path to the Excel file.
     sheet_name : str, int, list, or None, default 0
@@ -148,21 +149,21 @@ def excel_handler(file_path,
         Type of output to return. Must be either 'dict' to return a dictionary
         of DataFrames, or 'df' to return a single merged DataFrame.
 
-    Returns:
-    --------
+    Returns 
+    -------
     dict or pd.DataFrame
         If 'return_type' is 'dict', returns a dictionary where keys are
         sheet names and values are DataFrames.
         If 'return_type' is 'df', returns a single DataFrame
         with data from all sheets merged.
 
-    Raises:
-    -------
+    Raises
+    ------
     TypeError
         If 'return_type' is not 'dict' or 'df'.
 
-    Example usage:
-    --------------
+    Examples
+    --------
     result_dict = excel_handler('file_path.xlsx', return_type='dict')
     result_df = excel_handler('file_path.xlsx', return_type='df')
     """
@@ -1024,8 +1025,8 @@ def ods_handler(file_path,
     difference is the engine called, 'odf', from 'odfpy' library.
     Then this function inherits every functionalities from the mentioned one.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     file_path : str
         Path to the Excel file.
     sheet_name : str, int, list, or None, default 0
@@ -1041,16 +1042,16 @@ def ods_handler(file_path,
         Type of output to return. Must be either 'dict' to return a dictionary
         of DataFrames, or 'df' to return a single merged DataFrame.
 
-    Returns:
-    --------
+    Returns
+    -------
     dict or pd.DataFrame
         If 'return_type' is 'dict', returns a dictionary where keys are
         sheet names and values are DataFrames.
         If 'return_type' is 'df', returns a single DataFrame
         with data from all sheets merged.
 
-    Raises:
-    -------
+    Raises
+    ------
     TypeError
         If 'return_type' is not 'dict' or 'df'.
     """
