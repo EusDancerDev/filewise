@@ -5,12 +5,12 @@
 # Import custom modules #
 #-----------------------#
 
+from filewise import introspection_utils 
+from filewise.file_operations import ops_handler, path_utils
+from paramlib.global_parameters import common_delim_list
 from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
-from paramlib.global_parameters import common_delim_list
 from pygenutils.strings import string_handler, text_formatters
-from filewise.file_operations import ops_handler, path_utils
-from filewise import introspection_utils 
 
 # Aliases for functions #
 #-----------------------#
@@ -49,8 +49,9 @@ def tweak_pages(file, cat_str, out_path=None):
         if len(out_path) > 60:
             out_path = add_str_to_path(file, "_lotsOfPagesTweaked")
 
-    command = f"{essential_command_list[1]} '{file}' cat {cat_str} output '{out_path}'"
-    process_exit_info = run_system_command(command)
+    # Define the command based on the given options
+    pdftk_template_formatted = f"{essential_command_list[1]} '{file}' cat {cat_str} output '{out_path}'"
+    process_exit_info = run_system_command(pdftk_template_formatted)
     exit_info(process_exit_info)
 
 
@@ -113,8 +114,9 @@ def merge_files(in_path_list, out_path=None):
     """
     all_in_paths = flatten_to_string(in_path_list)
     out_path = out_path or ext_adder("merged_doc", extensions[0])
-    command = format_string(pdfunite_command_prefmt, (all_in_paths, out_path))
-    process_exit_info = run_system_command(command)
+    # Define the command for merging files
+    pdfunite_cmd = format_string(pdfunite_template, (all_in_paths, out_path))
+    process_exit_info = run_system_command(pdfunite_cmd)
     exit_info(process_exit_info)
 
 
@@ -152,8 +154,9 @@ def file_compressor(in_path, out_path=None):
 
     for ip, op_aux in zip(in_path, out_path):
         op = ext_adder(op_aux, extensions[0])
-        command = f"{essential_command_list[0]} -dPDFSETTINGS=/ebook {ip} {op}"
-        process_exit_info = run_system_command(command)
+        # Define the command for compression
+        ps2pdf_template_formatted = f"{essential_command_list[0]} -dPDFSETTINGS=/ebook {ip} {op}"
+        process_exit_info = run_system_command(ps2pdf_template_formatted)
         exit_info(process_exit_info)
    
 
@@ -174,8 +177,8 @@ def eml_to_pdf(search_path, delete_eml_files=False):
     eml_files = find_files(extensions[1], search_path, match_type="ext", top_path_only=True)
     converter_tool_path = find_files(f"*emailconverter*.{extensions[-1]}", alldoc_dirpath, match_type="glob")
     for emlf in eml_files:
-        command = f"java -jar {converter_tool_path} '{emlf}'"
-        process_exit_info = run_system_command(command)
+        converter_template_formatted = f"java -jar {converter_tool_path} '{emlf}'"
+        process_exit_info = run_system_command(converter_template_formatted)
         exit_info(process_exit_info)
     if delete_eml_files:
         remove_files(extensions[1], search_path)
@@ -196,8 +199,8 @@ def msg_to_pdf(search_path, delete_msg_files=False, delete_eml_files=False):
     """
     msg_files = find_files(extensions[2], search_path, match_type="ext", top_path_only=True)
     for msgf in msg_files:
-        command = f"{essential_command_list[3]} '{msgf}'"
-        process_exit_info = run_system_command(command)
+        msg_to_pdf_template_formatted = f"{essential_command_list[3]} '{msgf}'"
+        process_exit_info = run_system_command(msg_to_pdf_template_formatted)
         exit_info(process_exit_info)
     eml_to_pdf(search_path, delete_eml_files=delete_eml_files)
     if delete_msg_files:
@@ -217,8 +220,8 @@ def _check_essential_progs():
     """
     non_installed_prog_list = []
     for prog in essential_program_list:
-        command = f"dpkg -l | grep -i {prog} | wc -l"
-        process_exit_info = run_system_command(command, capture_output=True)
+        dpkg_template_formatted = f"dpkg -l | grep -i {prog} | wc -l"
+        process_exit_info = run_system_command(dpkg_template_formatted, capture_output=True)
         exit_info(process_exit_info)
         if int(process_exit_info.get("stdout")) < 1:
             non_installed_prog_list.append(prog)
@@ -258,7 +261,7 @@ one of the following table:
 
 essential_prog_not_found_error = "Programs missing for module functionality:\n{}"
 
-pdfunite_command_prefmt = "pdfunite {} {}"
+pdfunite_template = "pdfunite {} {}"
 
 # Initialize #
 #------------#
