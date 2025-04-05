@@ -71,7 +71,7 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                 for file_num, nc_file in enumerate(nc_files, start=1):
                     print(f"Processing file {file_num} out of {len(nc_files)} "
                           f"in directory {dir_num} out of {len(nc_dirs)}...")
-                    report.write(format_string(string_underliner(dir_info_str, dir_name), "+"))
+                    report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
                     
                     try:
                         check_ncfile(nc_file)
@@ -96,7 +96,7 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                                 lon_delta
                                 )
                             
-                            report.write(format_string(latlon_info_str, format_args_latlon_bounds))
+                            report.write(format_string(latlon_info_template, format_args_latlon_bounds))
                             move_files(coord_info_fname,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
@@ -138,7 +138,7 @@ def extract_time_bounds():
                 for file_num, nc_file in enumerate(nc_files, start=1):
                     print(f"Processing file {file_num} out of {len(nc_files)} "
                           f"in directory {dir_num} out of {len(nc_dirs)}...")
-                    report.write(format_string(string_underliner(dir_info_str, dir_name), "+"))
+                    report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
                     
                     try:
                         check_ncfile(nc_file)
@@ -158,7 +158,7 @@ def extract_time_bounds():
                                 len(times)
                                 )
                             
-                            report.write(format_string(period_info_str, format_args_time_periods))
+                            report.write(format_string(period_info_template, format_args_time_periods))
                             move_files(date_range_info_fname,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
@@ -201,7 +201,7 @@ def extract_time_formats():
                 for file_num, nc_file in enumerate(nc_files, start=1):
                     print(f"Processing file {file_num} out of {len(nc_files)} "
                           f"in directory {dir_num} out of {len(nc_dirs)}...")
-                    report.write(format_string(string_underliner(dir_info_str, dir_name), "+"))
+                    report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
                     
                     try:
                         check_ncfile(nc_file)
@@ -219,7 +219,7 @@ def extract_time_formats():
                                 times.values, 
                                 len(times)
                                 )
-                            report.write(format_string(time_format_info_str, format_args_time_formats))
+                            report.write(format_string(time_format_info_template, format_args_time_formats))
                             move_files(time_formats_file_name,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
@@ -289,11 +289,11 @@ regrid_method_list = [
     "patch"
     ]
 
-# Preformatted strings #
-#----------------------#
+# Template strings #
+#------------------#
 
 # Main parameter scanning info strings #
-latlon_info_str = \
+latlon_info_template = \
 """=========================================================
 ·File: {}
 
@@ -308,7 +308,7 @@ latlon_info_str = \
     
 """
 
-period_info_str = \
+period_info_template = \
 """=========================================================
 ·File: {}
 ·Time range: {} -- {}
@@ -316,7 +316,7 @@ period_info_str = \
 
 """
     
-time_format_info_str = \
+time_format_info_template = \
 """=========================================================
 ·File: {}
     
@@ -327,4 +327,4 @@ time_format_info_str = \
 """
 
 # File scanning progress information strings #
-dir_info_str = """\nDirectory: {}"""
+dir_info_template = """\nDirectory: {}"""
