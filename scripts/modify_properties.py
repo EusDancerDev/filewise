@@ -11,7 +11,7 @@ YOU MAY REDISTRIBUTE this program along any other directory,
 but keep in mind that the module is designed to work with absolute paths.
 
 For more information about file object parameters, refer to the documentation
-of the module `permission_manager` (subpackage `file_operations` in `filewise`).
+of the module `permission_manager` (sub-package `file_operations` in `filewise`).
 """
 
 #-----------------------#
