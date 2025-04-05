@@ -285,9 +285,9 @@ def save2excel(file_path,
             
         # If the file to be created already exists, prompt to overwrite it #    
         if file_already_exists:
-            arg_list_file_exists = [file_name, fn_parent]
+            format_args_file_exists = [file_name, fn_parent]
             overwrite_stdin\
-            = input(format_string(already_existing_file_warning, arg_list_file_exists))
+            = input(format_string(already_existing_file_warning_template, format_args_file_exists))
             
             while (overwrite_stdin != "y" and overwrite_stdin != "n"):
                 overwrite_stdin = input(overwrite_prompt_warning)
@@ -309,9 +309,9 @@ def save2excel(file_path,
         
         # If the file to be created already exists, prompt to overwrite it #    
         if file_already_exists:
-            arg_list_file_exists = [file_name, fn_parent]
+            format_args_file_exists = [file_name, fn_parent]
             overwrite_stdin\
-            = input(format_string(already_existing_file_warning, arg_list_file_exists))
+            = input(format_string(already_existing_file_warning_template, format_args_file_exists))
             
             while (overwrite_stdin != "y" and overwrite_stdin != "n"):
                 overwrite_stdin = input(overwrite_prompt_warning)
@@ -560,9 +560,9 @@ def save2csv(file_path,
             
             # If the file to be created already exists, prompt to overwrite it #  
             if file_already_exists:
-                arg_list_file_exists = [file_name, fn_parent]
+                format_args_file_exists = [file_name, fn_parent]
                 overwrite_stdin\
-                = input(format_string(already_existing_file_warning, arg_list_file_exists))
+                = input(format_string(already_existing_file_warning_template, format_args_file_exists))
                 
                 while (overwrite_stdin != "y" and overwrite_stdin != "n"):
                     overwrite_stdin = input(overwrite_prompt_warning)
@@ -594,9 +594,9 @@ def save2csv(file_path,
         else:
             # If the file to be created already exists, prompt to overwrite it #  
             if file_already_exists:
-                arg_list_file_exists = [file_name, fn_parent]
+                format_args_file_exists = [file_name, fn_parent]
                 overwrite_stdin\
-                = input(format_string(already_existing_file_warning, arg_list_file_exists))
+                = input(format_string(already_existing_file_warning_template, format_args_file_exists))
                 
                 while (overwrite_stdin != "y" and overwrite_stdin != "n"):
                     overwrite_stdin = input(overwrite_prompt_warning)
@@ -628,7 +628,7 @@ def save2csv(file_path,
             
     else:        
         input_obj_type = get_type_str(data_frame)
-        raise TypeError(format_string(unsupported_obj_type_err_str, input_obj_type))
+        raise TypeError(format_string(unsupported_obj_type_err_template, input_obj_type))
         
         
     
@@ -1116,10 +1116,10 @@ def merge_ods_files(input_file_list,
 # File extension list #
 extensions = ["csv", "xlsx"]
 
-# Preformatted strings #
+# Template strings #
 #----------------------#
 
-already_existing_file_warning = """Warning: file '{}' at directory '{}' \
+already_existing_file_warning_template = """Warning: file '{}' at directory '{}' \
 already exists.\nDo you want to overwrite it? (y/n) """
 
 # Warning strings #
@@ -1132,7 +1132,7 @@ in order to perform the merge."""
 # Error strings #
 #---------------#
 
-unsupported_obj_type_err_str = "Expected a pandas.DataFrame object, got {}"
+unsupported_obj_type_err_template = "Expected a pandas.DataFrame object, got {}"
 
 # Argument choice options #
 #-------------------------#
