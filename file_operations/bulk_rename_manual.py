@@ -91,18 +91,18 @@ def get_obj_list(main_posix_path, obj_type, path_to_str=False):
                            f"{str(e)}")
      
     
-def print_format_string(string2format, arg_list):
+def print_format_string(string2format, format_args_list):
     """
-    Print a formatted string with the provided arguments.
+    Print a formatted string using the provided arguments.
 
-    Parameters
-    ----------
+    Args
+    ----
     string2format : str
         The string to format.
-    arg_list : list
-        The list of arguments to format into the string.
+    format_args_list : list
+        List of arguments to format the string with.
     """
-    print(string2format.format(*arg_list))
+    print(string2format.format(*format_args_list))
 
 #-------------------#
 # Define parameters #
@@ -118,8 +118,8 @@ main_path = "/home/jonander/Pictures/2024"
 change_to_path_and_store(main_path)
 cwd_path = get_current_path()
 
-# Progress information string #
-rename_progress_info_str = """Current directory : {}
+# Progress information template string #
+rename_progress_info_template = """Current directory : {}
 File or directory list : {}
 Length of the list : {}
 """
@@ -134,7 +134,7 @@ object_listing_dict = {
     obj_type_list[0] : lambda path : [file
                                       for file in path.iterdir() 
                                       if file.is_file()],
-    obj_type_list[1] : lambda path : [dirc 
+    obj_type_list[1] : lambda path : [dirc
                                       for dirc in path.iterdir() 
                                       if dirc.is_dir()]
     }
@@ -148,8 +148,8 @@ obj_list = get_obj_list(cwd_path, "directory", return_path_obj=True)
 len_obj_list = len(obj_list)
 
 # Print basic information such as current path, list of files and its length #
-arg_list = [cwd_path, obj_list, len_obj_list]
-print_format_string(rename_progress_info_str, arg_list)
+format_args_list = [cwd_path, obj_list, len_obj_list]
+print_format_string(rename_progress_info_template, format_args_list)
 
 # Perform the file renaming #
 for num, file in enumerate(obj_list, start=1):
