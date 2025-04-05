@@ -11,11 +11,12 @@ import xarray as xr
 # Import custom modules #
 #-----------------------#
 
+from filewise.xarray_utils.xarray_obj_handler import _save_ds_as_nc
+from paramlib.global_parameters import climate_file_extensions
 from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
 from pygenutils.operative_systems.os_operations import run_system_command, exit_info
-from paramlib.global_parameters import climate_file_extensions
 from pygenutils.string_handler import string_handler
-from filewise.xarray_utils.xarray_obj_handler import _save_ds_as_nc
+
 
 # Create aliases #
 #----------------#
@@ -100,13 +101,13 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
                                                  new_obj=extensions[0])
         
         # Construct the shell command for conversion
-        grib2nc_syntax = "grib_to_netcdf "
+        grib2nc_template = "grib_to_netcdf "
         if option_str:
-            grib2nc_syntax += f"{option_str} "
-        grib2nc_syntax += f"-o {nc_file_new} {grib_allfile_info_str}"
+            grib2nc_template += f"{option_str} "
+        grib2nc_template += f"-o {nc_file_new} {grib_allfile_info_str}"
         
         # Execute the shell command
-        process_exit_info = run_system_command(grib2nc_syntax,
+        process_exit_info = run_system_command(grib2nc_template,
                                                capture_output=True,
                                                encoding="utf-8")
         exit_info(process_exit_info)
