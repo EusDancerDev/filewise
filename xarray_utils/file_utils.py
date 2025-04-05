@@ -108,7 +108,7 @@ def scan_ncfiles(search_path):
     file_vs_err_list = []
     for idx, file in enumerate(all_files, start=1):
         format_args_scan_progress = (idx, len(all_files), file)
-        print_format_string(scan_progress_str, format_args_scan_progress)
+        print_format_string(scan_progress_template, format_args_scan_progress)
         try:
             ncfile_integrity_status(file)
         except Exception as ncf_err:
@@ -134,13 +134,13 @@ def scan_ncfiles(search_path):
     
     # Report generation #
     with open(report_file_path, "w") as report:
-        report.write(report_info_str.format(*(total_dirs, total_files, total_faulties)))
+        report.write(report_info_template.format(*(total_dirs, total_files, total_faulties)))
         
         for dirc in file_vs_errs_dict.keys():
             format_args_dir_info = (dirc, len(file_vs_errs_dict[dirc]))
-            report.write(format_string(string_underliner(dir_info_str, format_args_dir_info), "="))
+            report.write(format_string(string_underliner(dir_info_template, format_args_dir_info), "="))
             for values in file_vs_errs_dict[dirc]:
-                report.write(format_string(file_info_writing_str, values))
+                report.write(format_string(file_info_writing_template, values))
 
 
 # Helpers #
@@ -198,23 +198,23 @@ code_call_dir = os.getcwd()
 # File extensions #
 extensions = climate_file_extensions[::3]
 
-# Preformatted strings #
+# Template strings #
 #----------------------#
 
 # File scanning progress information strings #
-scan_progress_str =\
+scan_progress_template =\
 """
 File number: {} out of {}
 File name: {}
 """
 
-dir_info_str = """\nDirectory: {} | Faulty files in this directory: {}"""
-file_info_writing_str = """\nFile: {} -> {}\n"""
+dir_info_template = """\nDirectory: {} | Faulty files in this directory: {}"""
+file_info_writing_template = """\nFile: {} -> {}\n"""
 
 # Report results
 report_fn_noext = "faulty_netcdf_file_report"
 report_file_path = f"{code_call_dir}/{report_fn_noext}.txt"
-report_info_str =\
+report_info_template =\
 """
 +--------------------------------+
 |Faulty NETCDF format file report|
