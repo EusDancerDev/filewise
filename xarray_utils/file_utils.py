@@ -21,9 +21,9 @@ import os
 # Import custom modules #
 #-----------------------#
 
+from filewise.file_operations import path_utils
 from paramlib.global_parameters import climate_file_extensions
 from pygenutils.string_handler import text_formatters, string_handler
-from filewise.file_operations import path_utils
 
 # Create aliases #
 #----------------#
@@ -107,8 +107,8 @@ def scan_ncfiles(search_path):
     #################################################################
     file_vs_err_list = []
     for idx, file in enumerate(all_files, start=1):
-        arg_tuple_scanf = (idx, len(all_files), file)
-        print_format_string(scan_progress_str, arg_tuple_scanf)
+        format_args_scan_progress = (idx, len(all_files), file)
+        print_format_string(scan_progress_str, format_args_scan_progress)
         try:
             ncfile_integrity_status(file)
         except Exception as ncf_err:
@@ -137,8 +137,8 @@ def scan_ncfiles(search_path):
         report.write(report_info_str.format(*(total_dirs, total_files, total_faulties)))
         
         for dirc in file_vs_errs_dict.keys():
-            scandir_arg_tuple = (dirc, len(file_vs_errs_dict[dirc]))
-            report.write(format_string(string_underliner(dir_info_str, scandir_arg_tuple), "="))
+            format_args_dir_info = (dirc, len(file_vs_errs_dict[dirc]))
+            report.write(format_string(string_underliner(dir_info_str, format_args_dir_info), "="))
             for values in file_vs_errs_dict[dirc]:
                 report.write(format_string(file_info_writing_str, values))
 
