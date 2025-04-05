@@ -3,6 +3,8 @@
 
 # filewise/__init__.py
 
+__version__ = "3.6.0"
+
 from . import __init__
 from . import file_operations
 from . import format_converters
