@@ -11,10 +11,11 @@ import os
 # Import custom modules #
 #-----------------------#
 
-from paramlib.global_parameters import climate_file_extensions
-from pygenutils.strings.text_formatters import format_string, string_underliner
 from filewise.file_operations import ops_handler
 from filewise.xarray_utils import file_utils, patterns
+from paramlib.global_parameters import climate_file_extensions
+from pygenutils.strings.text_formatters import format_string, string_underliner
+
 
 # Create aliases #
 #----------------#
@@ -85,7 +86,7 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                             lats, lons = get_spatial_bounds(nc_file, coord_vars[0], coord_vars[1], value_roundoff)
                             lat_delta, lon_delta = get_deltas(lats, lons, delta_roundoff)
                             
-                            arg_tuple_bounds = (
+                            format_args_latlon_bounds = (
                                 nc_file, 
                                 lats,
                                 lons, 
@@ -95,7 +96,7 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                                 lon_delta
                                 )
                             
-                            report.write(format_string(latlon_info_str, arg_tuple_bounds))
+                            report.write(format_string(latlon_info_str, format_args_latlon_bounds))
                             move_files(coord_info_fname,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
@@ -150,14 +151,14 @@ def extract_time_bounds():
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
                             times = get_times(nc_file, time_var)                            
-                            arg_tuple_periods = (
+                            format_args_time_periods = (
                                 nc_file, 
                                 times[0].values,
                                 times[-1].values, 
                                 len(times)
                                 )
                             
-                            report.write(format_string(period_info_str, arg_tuple_periods))
+                            report.write(format_string(period_info_str, format_args_time_periods))
                             move_files(date_range_info_fname,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
@@ -213,12 +214,12 @@ def extract_time_formats():
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
                             times = get_times(nc_file, time_var)
-                            arg_tuple_formats = (
+                            format_args_time_formats = (
                                 nc_file, 
                                 times.values, 
                                 len(times)
                                 )
-                            report.write(format_string(time_format_info_str, arg_tuple_formats))
+                            report.write(format_string(time_format_info_str, format_args_time_formats))
                             move_files(time_formats_file_name,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
