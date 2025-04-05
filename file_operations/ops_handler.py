@@ -270,22 +270,22 @@ def rsync(source_paths,
     
     for sp, dp in zip(source_paths, destination_paths):
         # Define the rsync command based on the given options
-        rsync_command = ["rsync", f"-{mode}"]
+        rsync_template = ["rsync", f"-{mode}"]
 
         # Add the --delete flag if needed
         if delete_at_destination:
-            rsync_command.append("--delete")
+            rsync_template.append("--delete")
         
         # Add source_allfiles_only flag (no trailing slash on source path)
         if not source_allfiles_only:
             sp = sp.rstrip('/') + "/"
         
         # Complete the rsync command
-        rsync_command.append(sp)
-        rsync_command.append(dp)
+        rsync_template.append(sp)
+        rsync_template.append(dp)
 
         # Run the rsync command
-        process_exit_info = run_system_command(" ".join(rsync_command))
+        process_exit_info = run_system_command(" ".join(rsync_template))
         exit_info(process_exit_info)
             
 
