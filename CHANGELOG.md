@@ -26,7 +26,7 @@ All notable changes to this project will be documented in this file.
 
 #### **File Operations**
 
-- Module `bulk_rename_auto`: renamed all `arg_tuple_*` variables to `format_args_*` for clarity and consistency
+- Modules `bulk_rename_auto` and `bulk_rename_manual`: renamed all `arg_tuple_*` variables to `format_args_*` for clarity and consistency
 - Module `file_utils`: renamed `arg_tuple_scanf` to `format_args_scan_progress` and `scandir_arg_tuple` to `format_args_dir_info`
 
 #### **Format Converters**
