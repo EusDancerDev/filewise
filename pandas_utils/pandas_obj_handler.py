@@ -14,12 +14,12 @@ import pandas as pd
 
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
-from filewise.general.introspection_utils import get_caller_args
+from filewise.general.introspection_utils import get_caller_args, get_type_str
 from filewise.pandas_utils.data_manipulation import polish_df_column_names
 
-from pygenutils.arrays_and_lists.data_manipulation import find_duplicated_elements
+from pygenutils.arrays_and_lists.patterns import find_duplicated_elements
 from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
-from pygenutils.strings.text_formatters import format_string, get_type_str
+from pygenutils.strings.text_formatters import format_string
 
 #------------------#
 # Define functions #
