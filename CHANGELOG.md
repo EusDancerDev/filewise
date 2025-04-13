@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.6.1] - 2025-04-06
+
+### Fixed
+
+#### **Pandas Utils**
+
+- Module `pandas_obj_handler`:
+  - Corrected import paths for the `filewise` package
+  - Updated import statements to use correct package paths
+  - Maintained consistent import structure across the module
+
+---
+
 ## [v3.6.0] - 2025-04-05
 
 ### Changed
@@ -14,7 +27,7 @@ All notable changes to this project will be documented in this file.
   - Renamed variables with "_command" suffix to use "template" suffix where they represent formatteable strings
   - Renamed generic "command" variables to more specific names that better describe their purpose
 
-#### **Pandas Utils**
+#### **Pandas Utils** (v3.6.0)
 
 - Module `pandas_obj_handler`:
   - Improved variable naming conventions across multiple modules for better clarity and consistency
