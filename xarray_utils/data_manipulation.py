@@ -11,26 +11,18 @@ import os
 # Import custom modules #
 #-----------------------#
 
-from filewise.file_operations import ops_handler
-from filewise.xarray_utils import file_utils, patterns
+from filewise.file_operations.ops_handler import move_files
+from filewise.file_operations.path_utils import find_dirs_with_files, find_files
+from filewise.xarray_utils.file_utils import ncfile_integrity_status
+from filewise.xarray_utils.patterns import (
+    find_coordinate_variables,
+    find_time_key,
+    get_latlon_bounds,
+    get_latlon_deltas,
+    get_times
+)
 from paramlib.global_parameters import climate_file_extensions
 from pygenutils.strings.text_formatters import format_string, string_underliner
-
-
-# Create aliases #
-#----------------#
-
-move_files = ops_handler.move_files
-find_dirs_with_files = ops_handler.find_dirs_with_files
-find_files = ops_handler.find_files
-
-check_ncfile = file_utils.ncfile_integrity_status
-
-find_coords = patterns.find_coordinate_variables
-find_time = patterns.find_time_key
-get_spatial_bounds = patterns.get_latlon_bounds
-get_deltas = patterns.get_latlon_deltas
-get_times = patterns.get_times
 
 #-------------------------#
 # Define custom functions #
@@ -74,17 +66,17 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                     report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
                     
                     try:
-                        check_ncfile(nc_file)
+                        ncfile_integrity_status(nc_file)
                     except Exception as ncf_err:
                         report.write(f"FAULTY FILE '{nc_file}': {ncf_err}\n")
                     else:
                         try:
-                            coord_vars = find_coords(nc_file)
+                            coord_vars = find_coordinate_variables(nc_file)
                         except Exception as coord_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {coord_err}\n")
                         else:
-                            lats, lons = get_spatial_bounds(nc_file, coord_vars[0], coord_vars[1], value_roundoff)
-                            lat_delta, lon_delta = get_deltas(lats, lons, delta_roundoff)
+                            lats, lons = get_latlon_bounds(nc_file, coord_vars[0], coord_vars[1], value_roundoff)
+                            lat_delta, lon_delta = get_latlon_deltas(lats, lons, delta_roundoff)
                             
                             format_args_latlon_bounds = (
                                 nc_file, 
@@ -141,12 +133,12 @@ def extract_time_bounds():
                     report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
                     
                     try:
-                        check_ncfile(nc_file)
+                        ncfile_integrity_status(nc_file)
                     except Exception as ncf_err:
                         report.write(f"FAULTY FILE '{nc_file}': {ncf_err}\n")
                     else:
                         try:
-                            time_var = find_time(nc_file)
+                            time_var = find_time_key(nc_file)
                         except Exception as time_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
@@ -204,12 +196,12 @@ def extract_time_formats():
                     report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
                     
                     try:
-                        check_ncfile(nc_file)
+                        ncfile_integrity_status(nc_file)
                     except Exception as ncf_err:
                         report.write(f"FAULTY FILE '{nc_file}': {ncf_err}\n")
                     else:
                         try:
-                            time_var = find_time(nc_file)
+                            time_var = find_time_key(nc_file)
                         except Exception as time_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
