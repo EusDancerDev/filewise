@@ -15,7 +15,6 @@ import pandas as pd
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
 from filewise.general.introspection_utils import get_caller_args, get_type_str
-from filewise.pandas_utils.data_manipulation import polish_df_column_names
 
 from pygenutils.arrays_and_lists.patterns import find_duplicated_elements
 from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
@@ -198,7 +197,37 @@ def excel_handler(file_path,
             all_value_df = all_value_df.drop(columns=['sheet'])
             return all_value_df
 
+# DataFrame column name handling #
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
+def polish_df_column_names(df, sep_to_polish="\n"):
+    """
+    Function to polish a Pandas DataFrames' column names, by eliminating
+    the specified separator that might appear when reading files such as
+    Microsoft Excel or LibreOffice Calc document.
+    
+    It uses the 'rename' method to rename the columns by using a 'lambda';
+    it simply takes the final entry of the list obtained by splitting 
+    each column name any time there is a new line.
+    If there is no new line, the column name is unchanged.
+    
+    Parameters
+    ----------
+    df : pandas.Dataframe
+        Dataframe containing data
+    sep_to_polish : str
+        Separator to detect and eliminate from the string formed
+        by all column names.
+        
+    Returns
+    -------
+    df_fixed : pandas.Dataframe
+        Dataframe containing exactly the same data as the input one,
+        with column names polished accordingly.    
+    """
+    
+    df_fixed = df.rename(columns=lambda x: x.split(sep_to_polish)[-1])
+    return df_fixed
 
 def save2excel(file_path,
                frame_obj,
