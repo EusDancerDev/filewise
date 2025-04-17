@@ -343,62 +343,6 @@ def find_nearest_coordinates(nc_file, lats_obs, lons_obs, roundoff=3):
     return nearest_lats, nearest_lons
 
 
-def find_time_dimension(nc_file):
-    """
-    Finds the time dimension name in a netCDF file or xarray.Dataset.
-    Searches for common time-related dimension names.
-
-    Parameters
-    ----------
-    nc_file : str or xarray.Dataset
-        Either the path to the netCDF file or an already opened xarray.Dataset object.
-
-    Returns
-    -------
-    str
-        The name of the time dimension.
-
-    Raises
-    ------
-    ValueError
-        If no time dimension is found in the dataset.
-    """
-    if isinstance(nc_file, str):
-        ncfile_integrity_status(nc_file)
-        ds = xr.open_dataset(nc_file)
-        close_dataset = True
-    elif isinstance(nc_file, xr.Dataset):
-        ds = nc_file
-        close_dataset = False
-    else:
-        raise TypeError("Unsupported data file type. Expected str or xarray.Dataset.")
-
-    # Common time dimension names
-    time_keywords = ['time', 'Time', 'TIME', 't', 'T']
-    
-    # Check dimensions
-    dims = list(ds.dims)
-    for dim in dims:
-        if dim in time_keywords:
-            if close_dataset:
-                ds.close()
-            return dim
-            
-    # Check variables
-    vars_ = list(ds.variables)
-    for var in vars_:
-        if var in time_keywords:
-            if close_dataset:
-                ds.close()
-            return var
-            
-    if close_dataset:
-        ds.close()
-        
-    raise ValueError("No time dimension found in the dataset. Common time dimension names "
-                    "include: 'time', 'Time', 'TIME', 't', 'T'")
-
-
 #--------------------------#
 # Parameters and constants #
 #--------------------------#
