@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.6.1] - 2025-04-06
+## [v3.6.1] - 2025-04-17
 
 ### Fixed
 
@@ -14,6 +14,10 @@ All notable changes to this project will be documented in this file.
   - Corrected import paths for the `filewise` package
   - Updated import statements to use correct package paths
   - Maintained consistent import structure across the module
+
+#### **File Operations**
+
+- Module `bulk_rename_auto`: replace wrong package import for `select_elements` function.
 
 ---
 
