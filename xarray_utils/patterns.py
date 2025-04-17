@@ -13,7 +13,7 @@ import xarray as xr
 #-----------------------#
 
 from paramlib.global_parameters import common_delim_list
-from filewise.xarray_utils.file_utils import check_ncfile_integrity
+from filewise.xarray_utils.file_utils import ncfile_integrity_status
 
 #-------------------------#
 # Define custom functions #
@@ -47,7 +47,8 @@ def get_file_dimensions(nc_file):
         If the input is neither a string nor an xarray.Dataset object.
     """
     if isinstance(nc_file, str):
-        ds = check_ncfile_integrity(nc_file)
+        ncfile_integrity_status(nc_file)
+        ds = xr.open_dataset(nc_file)
         close_dataset = True
     elif isinstance(nc_file, xr.Dataset):
         ds = nc_file
@@ -88,7 +89,8 @@ def get_file_variables(nc_file):
         If the input is neither a string nor an xarray.Dataset object.
     """
     if isinstance(nc_file, str):
-        ds = check_ncfile_integrity(nc_file)
+        ncfile_integrity_status(nc_file)
+        ds = xr.open_dataset(nc_file)
         close_dataset = True
     elif isinstance(nc_file, xr.Dataset):
         ds = nc_file
@@ -162,7 +164,8 @@ def get_latlon_bounds(nc_file, lat_dimension_name, lon_dimension_name, value_rou
         Rounded latitude and longitude values from the netCDF file.
     """
     # Open the netCDF file
-    ds = check_ncfile_integrity(nc_file)
+    ncfile_integrity_status(nc_file)
+    ds = xr.open_dataset(nc_file)
     
     # Retrieve and round latitude and longitude values
     lat_values = ds[lat_dimension_name].values.round(value_roundoff)
@@ -212,7 +215,8 @@ def get_times(nc_file, time_dimension_name):
     xarray.DataArray
         Time values as an xarray.DataArray.
     """
-    ds = check_ncfile_integrity(nc_file)
+    ncfile_integrity_status(nc_file)
+    ds = xr.open_dataset(nc_file)
     
     # Extract time values from the specified time dimension
     time_values = ds[time_dimension_name]
@@ -300,7 +304,8 @@ def find_nearest_coordinates(nc_file, lats_obs, lons_obs, roundoff=3):
 
     # Handle file opening: accept both file paths and already opened xarray.Dataset objects
     if isinstance(nc_file, str):
-        ds = check_ncfile_integrity(nc_file)
+        ncfile_integrity_status(nc_file)
+        ds = xr.open_dataset(nc_file)
         close_ds = True
     elif isinstance(nc_file, xr.Dataset):
         ds = nc_file
