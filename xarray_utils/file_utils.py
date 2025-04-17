@@ -23,7 +23,7 @@ import os
 
 from filewise.file_operations import path_utils
 from paramlib.global_parameters import climate_file_extensions
-from pygenutils.string_handler import text_formatters, string_handler
+from pygenutils.strings import text_formatters, string_handler
 
 # Create aliases #
 #----------------#
