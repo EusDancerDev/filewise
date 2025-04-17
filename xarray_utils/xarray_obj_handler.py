@@ -12,8 +12,9 @@ import xarray as xr
 #-----------------------#
 
 from filewise.pandas_utils.pandas_obj_handler import save2csv
-from filewise.xarray_utils.patterns import find_coordinate_variables, find_time_dimension
-from pygenutils.string_handler.string_handler import append_ext, get_obj_specs
+from filewise.xarray_utils.patterns import find_coordinate_variables
+from pygenutils.strings.string_handler import append_ext, get_obj_specs
+from pygenutils.time_handling.date_and_time_utils import find_time_key
 
 #-------------------------#
 # Define custom functions #
@@ -301,7 +302,7 @@ def save_da_as_csv(data_array,
     
     # Rename the columns based on the provided new_columns
     if not new_columns:
-        date_key = find_time_dimension(data_array)
+        date_key = find_time_key(data_array)
         new_columns = [date_key, data_array.name]
     data_frame.columns = new_columns
     
