@@ -4,9 +4,54 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.6.1] - 2025-04-17
+## [v3.7.0] - 2025-04-18
 
-### Fixed
+### Changed
+
+#### **Pandas utils**
+
+- Module `bulk_rename_auto`:
+  - Replace wrong package import for `select_elements` function.
+
+- Module `data_manipulation.py`:
+  - Remove the function `polish_df_column_names`
+  - Function moved to `pandas_obj_handler.py` where it´s more logically placed
+  - Cleaned up the function `insert_column_in_df`, eliminating unnecessarily lengthening code
+
+- Module `pandas_obj_handler.py`:
+  - Add the function `polish_df_column_names` originally from `data_manipulation` in the package
+  - Remove the redundant import of that function
+
+#### **Xarray utils**
+
+- Module `file_utils.py`:
+  - Correct the import paths of the modules 'text_formatters' and 'string_handler'
+
+- Module `patterns.py`:
+  - Correct the function name `check_ncfile_integrity`to `ncfile_integrity_status` from the path `filewise.xarray_utils.file_utils`
+
+<!-- TODO: improve or summarise the following block a bit -->
+- Module `conversions.py`:
+  - Correct the path for the function `flatten_to_string`
+  - Move the aliased functions into a single import
+  - Remove the aliases themselves
+
+- Module `xarray_obj_handler.py`:
+  - Correct the path for the functions `append_ext` and `get_obj_specs`
+  - Add the import of the function `find_time_key`, the newer and equivalent function to `find_time_dimension`
+  - Remove the no longer existing function `find_time_dimension`, as `find_time_key` already supports all top-level xarray objects:
+    - xarray.Dataset
+    - xarray.DataArray
+
+- Module `data_manipulation.py`:
+  - Remove unused functions from the module `ops_handler.py`; conserve only `move_files`.
+  - Refactor function aliasing.
+
+---
+
+## [v3.6.1] - 2025-04-15
+
+### Fixed (v3.6.1)
 
 #### **Pandas Utils**
 
@@ -15,15 +60,11 @@ All notable changes to this project will be documented in this file.
   - Updated import statements to use correct package paths
   - Maintained consistent import structure across the module
 
-#### **File Operations**
-
-- Module `bulk_rename_auto`: replace wrong package import for `select_elements` function.
-
 ---
 
 ## [v3.6.0] - 2025-04-05
 
-### Changed
+### Changed (v3.6.0)
 
 #### **General**
 
