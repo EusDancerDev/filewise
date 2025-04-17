@@ -11,49 +11,12 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from paramlib.global_parameters import basic_time_format_strs
-from pygenutils.time_handling.time_formatters import parse_time_string
 from filewise.pandas_utils.pandas_obj_handler import csv2df
 
 #------------------#
 # Define functions #
 #------------------#
 
-# Dataframe appearance polishing #
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-
-def polish_df_column_names(df, sep_to_polish="\n"):
-      
-    """
-    Function to polish a Pandas DataFrames' column names, by eliminating
-    the specified separator that might appear when reading files such as
-    Microsoft Excel or LibreOffice Calc document.
-    
-    It uses the 'rename' method to rename the columns by using a 'lambda';
-    it simply takes the final entry of the list obtained by splitting 
-    each column name any time there is a new line.
-    If there is no new line, the column name is unchanged.
-    
-    Parameters
-    ----------
-    df : pandas.Dataframe
-        Dataframe containing data
-    sep_to_polish : str
-        Separator to detect and eliminate from the string formed
-        by all column names.
-        
-    Returns
-    -------
-    df_fixed : pandas.Dataframe
-        Dataframe containing exactly the same data as the input one,
-        with column names polished accordingly.    
-    """
-    
-    df_fixed = df.rename(columns=lambda x: x.split(sep_to_polish)[-1])
-    return df_fixed
-
-    
-    
 # Data frame value handling #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
@@ -131,82 +94,38 @@ def insert_column_in_df(df, index_col, column_name, values):
     df.insert(index_col, column_name, values)
     
     
-def insert_row_in_df(df, index_row, values=float('nan'), reset_indices=False):
-    
+def insert_row_in_df(df, row_data, index=None):
     """
-    Function that inserts a row on a simple, non multi-index
-    Pandas DataFrame, in a specified index column.
-    That row can be introduced at the begginning, ending,
-    or in any position between them.
-    This function works either with integer or DatetimeIndex arrays.
+    Insert a row into a pandas DataFrame at a specified index.
     
     Parameters
     ----------
     df : pandas.DataFrame
-        Data frame containing data.
-    index_row : int, str, datetime.datetime or pandas._libs.tslibs.timestamps.Timestamp
-        Denotes the row position to insert new data.
-        It is considered that data is desired to introduced
-        ABOVE that index, so that once inserted data on that position, 
-        the rest of the data will be displaced downwards.
+        The DataFrame to insert the row into
+    row_data : dict or list
+        The data for the new row. If dict, keys should match DataFrame columns.
+        If list, values should be in the same order as DataFrame columns.
+    index : int, optional
+        The index at which to insert the row. If None, appends to the end.
         
-        Strictly speaking, this function distinguishes between four cases:
-        1. The index is an integer:
-            If index_row == 0 then the row will be introduced
-            at the begginning, ending if index_row == -1,
-            else at any other position.
-        2. The index is a datetime.datetime tuple:
-            The index will be introduced at the end of the data frame,
-            and then the indices will be sorted.
-            Note this means that the new time array spacing is NOT even.
-              
-    values : single value or list or numpy.ndarray or pandas.Series
-        The type of the value(s) is considered as irrelevant.
-        Default value is NaN.
+    Returns
+    -------
+    pandas.DataFrame
+        The DataFrame with the new row inserted
     """
     
-    idx = df.index
-    
-    if isinstance(idx, pd.RangeIndex)\
-    or isinstance(idx, pd.Float64Index):
-    
-        if index_row == 0:
-            df_shift = df.shift()
-            df_shift.loc[idx[-1]+1] = df.loc[idx[-1]] 
-            df_shift.loc[idx[0], :] = values
-            df = df_shift
-            
-        elif index_row == -1:
-            df.loc[idx[-1]+1, :] = values
-            
-        else:
-            index_between = index_row - 0.5
-            df.loc[index_between, :] = values
-            
-            if reset_indices:
-                df = df.reset_index(drop=True)
-    
+    if isinstance(row_data, dict):
+        new_row = pd.DataFrame([row_data])
+    elif isinstance(row_data, list):
+        new_row = pd.DataFrame([row_data], columns=df.columns)
     else:
-        try:
-            time_freq = pd.infer_freq(idx)
-        except (TypeError, ValueError):
-            time_freq = pd.infer_freq(idx[100])
-            
-        time_abbrs = basic_time_format_strs
+        raise ValueError("row_data must be a dict or list")
         
-        if isinstance(index_row, str):
-            if time_freq not in time_abbrs:
-                dt_format = basic_time_format_strs["H"]
-            else:
-                dt_format = basic_time_format_strs[time_freq]
-                
-            index_row = parse_time_string(index_row, dt_format)
-        
-        df.loc[index_row, :] = values
-        df.sort_index()
-        
-    return df
-        
+    if index is None:
+        return pd.concat([df, new_row], ignore_index=True)
+    else:
+        return pd.concat([df.iloc[:index], new_row, df.iloc[index:]], ignore_index=True)
+
     
 # Data frame index handling #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
