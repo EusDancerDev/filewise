@@ -13,17 +13,13 @@ import xarray as xr
 
 from filewise.xarray_utils.xarray_obj_handler import _save_ds_as_nc
 from paramlib.global_parameters import climate_file_extensions
-from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
+from pygenutils.arrays_and_lists.conversions import flatten_to_string
 from pygenutils.operative_systems.os_operations import run_system_command, exit_info
-from pygenutils.string_handler import string_handler
-
-
-# Create aliases #
-#----------------#
-
-find_substring_index = string_handler.find_substring_index
-get_obj_specs = string_handler.get_obj_specs
-modify_obj_specs = string_handler.modify_obj_specs
+from pygenutils.strings.string_handler import (
+    find_substring_index,
+    get_obj_specs,
+    modify_obj_specs
+)
 
 #------------------#
 # Define functions #
