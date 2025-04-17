@@ -14,7 +14,7 @@ from pathlib import Path
 from filewise.file_operations import ops_handler, path_utils
 from filewise.general.introspection_utils import get_all_caller_args
 from paramlib import global_parameters
-from pygenutils.arrays_and_lists.data_manipulation import select_elements
+from pygenutils.arrays_and_lists.patterns import select_elements
 from pygenutils.strings import text_formatters, string_handler
 from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
 
@@ -323,8 +323,7 @@ def reorder_objs(path,
              
     else:
         
-        obj_list_uneven_slice = select_elements(obj_list_uneven,
-                                                      index_range)   
+        obj_list_uneven_slice = select_elements(obj_list_uneven, index_range)   
         
         if starting_number == "default":
             raise ValueError(f"'{param_keys[start_num_arg_pos]}' argument "
