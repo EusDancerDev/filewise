@@ -7,19 +7,6 @@
 
 from numpy import array
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
-
-from pygenutils.string_handler import string_handler
-
-# Create aliases #
-#----------------#
-
-find_substring_index = string_handler.find_substring_index
-get_obj_specs = string_handler.get_obj_specs
-modify_obj_specs = string_handler.modify_obj_specs
-
 #------------------#
 # Define functions #
 #------------------#
