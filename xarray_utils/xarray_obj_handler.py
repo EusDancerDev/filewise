@@ -14,7 +14,7 @@ import xarray as xr
 from filewise.pandas_utils.pandas_obj_handler import save2csv
 from filewise.xarray_utils.patterns import find_coordinate_variables
 from pygenutils.strings.string_handler import append_ext, get_obj_specs
-from pygenutils.time_handling.date_and_time_utils import find_time_key
+from pygenutils.time_handling.time_utils import find_time_key
 
 #-------------------------#
 # Define custom functions #
