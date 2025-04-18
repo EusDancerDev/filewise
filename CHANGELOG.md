@@ -25,12 +25,12 @@ All notable changes to this project will be documented in this file.
 #### **Xarray utils**
 
 - Module `file_utils.py`:
-  - Correct the import paths of the modules 'text_formatters' and 'string_handler'
+  - Correct the import paths of the modules `text_formatters` and `string_handler`
+  - Allow the function `ncfile_integrity_status` to return the dataset if the file is successfully opened
 
 - Module `patterns.py`:
   - Correct the function name `check_ncfile_integrity`to `ncfile_integrity_status` from the path `filewise.xarray_utils.file_utils`
 
-<!-- TODO: improve or summarise the following block a bit -->
 - Module `conversions.py`:
   - Correct the path for the function `flatten_to_string`
   - Move the aliased functions into a single import
