@@ -151,8 +151,8 @@ def ncfile_integrity_status(ncfile_name):
     Checks the integrity of a given netCDF file by attempting to open it with xarray.
 
     This function tries to open the specified netCDF file using `xarray.open_dataset`.
-    If the file is successfully opened, it is closed and the function completes without
-    returning anything. If an error occurs during this process, it delegates the exception
+    If the file is successfully opened, it returns the dataset before closing it.
+    If an error occurs during this process, it delegates the exception
     raise to the output of xarray.dataset class.
     
     Parameters
@@ -162,9 +162,8 @@ def ncfile_integrity_status(ncfile_name):
 
     Returns
     -------
-    str
-        A string representation of the error message if an exception occurs.
-        If the file is successfully opened and closed, no value is returned (i.e., None).
+    xarray.Dataset
+        The opened dataset if successful.
 
     Raises
     ------
@@ -186,7 +185,10 @@ def ncfile_integrity_status(ncfile_name):
         the file are missing or invalid.
     """
     ds = xr.open_dataset(ncfile_name)
-    ds.close()
+    try:
+        return ds
+    finally:
+        ds.close()
 
 #--------------------------#
 # Parameters and constants #
