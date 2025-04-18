@@ -16,13 +16,13 @@ from filewise.file_operations.path_utils import find_dirs_with_files, find_files
 from filewise.xarray_utils.file_utils import ncfile_integrity_status
 from filewise.xarray_utils.patterns import (
     find_coordinate_variables,
-    find_time_key,
     get_latlon_bounds,
     get_latlon_deltas,
     get_times
 )
 from paramlib.global_parameters import climate_file_extensions
 from pygenutils.strings.text_formatters import format_string, string_underliner
+from pygenutils.time_handling.time_utils import find_time_key
 
 #-------------------------#
 # Define custom functions #
