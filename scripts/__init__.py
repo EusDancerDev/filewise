@@ -3,11 +3,13 @@
 
 # filewise/scripts/__init__.py
 
-from . import __init__
-from . import bulk_rename
-from . import compress_pdf
-from . import copy_compress
-from . import eml2pdf_exec
-from . import modify_properties
-from . import msg2pdf_exec
-from . import tweak_pdf
+# Define what should be available when using 'from filewise.scripts import *'
+__all__ = [
+    "bulk_rename",
+    "compress_pdf",
+    "copy_compress",
+    "eml2pdf_exec",
+    "modify_properties",
+    "msg2pdf_exec",
+    "tweak_pdf"
+]
