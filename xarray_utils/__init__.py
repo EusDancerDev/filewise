@@ -3,9 +3,11 @@
 
 # filewise/xarray_utils/__init__.py
 
-from . import __init__
-from . import conversions
-from . import data_manipulation
-from . import file_utils
-from . import patterns
-from . import xarray_obj_handler
+# Define what should be available when using 'from filewise.xarray_utils import *'
+__all__ = [
+    'conversions',
+    'data_manipulation',
+    'file_utils',
+    'patterns',
+    'xarray_obj_handler'
+]
