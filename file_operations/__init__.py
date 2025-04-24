@@ -3,10 +3,12 @@
 
 # filewise/file_operations/__init__.py
 
-from . import __init__
-from . import bulk_rename_auto
-from . import bulk_rename_manual
-from . import cat_file_content
-from . import ops_handler
-from . import path_utils
-from . import permission_manager
+# Define what should be available when using 'from filewise.file_operations import *'
+__all__ = [
+    'bulk_rename_auto',
+    'bulk_rename_manual',
+    'cat_file_content',
+    'ops_handler',
+    'path_utils',
+    'permission_manager'
+]
