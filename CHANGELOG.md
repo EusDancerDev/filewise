@@ -4,9 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.7.0] - 2025-04-18
+## [v3.7.0] - 2025-04-23
 
 ### Changed
+
+#### **General**
+
+- Refactored package import structure:
+  - Replace direct imports with `__all__` definitions in package initiator files:
+    - `filewise/__init__.py`
+    - `filewise/file_operations/__init__.py`
+    - `filewise/format_converters/__init__.py`
+    - `filewise/general/__init__.py`
+    - `filewise/json_utils/__init__.py`
+    - `filewise/pandas_utils/__init__.py`
+    - `filewise/scripts/__init__.py`
+    - `filewise/xarray_utils/__init__.py`
+  - Improved control over exported symbols when using 'from package import *'
+  - Maintained consistent public API while following Python best practices
 
 #### **Pandas utils**
 
@@ -66,7 +81,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.6.0)
 
-#### **General**
+#### **General** (v3.6.0)
 
 - Improved variable naming conventions across multiple modules for better clarity and consistency:
   - Renamed variables with "_command" suffix to use "template" suffix where they represent formatteable strings
