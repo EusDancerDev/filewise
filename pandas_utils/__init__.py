@@ -3,7 +3,9 @@
 
 # filewise/pandas_utils/__init__.py
 
-from . import __init__
-from . import conversions
-from . import data_manipulation
-from . import pandas_obj_handler
+# Define what should be available when using 'from filewise.pandas_utils import *'
+__all__ = [
+    'conversions',
+    'data_manipulation',
+    'pandas_obj_handler'
+]
