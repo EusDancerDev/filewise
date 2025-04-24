@@ -3,6 +3,8 @@
 
 # filewise/json_utils/__init__.py
 
-from . import __init__
-from . import json_encoding_operations
-from . import json_obj_handler
+# Define what should be available when using 'from filewise.json_utils import *'
+__all__ = [
+    'json_encoding_operations',
+    'json_obj_handler'
+]
