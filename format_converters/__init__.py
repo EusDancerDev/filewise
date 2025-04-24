@@ -3,5 +3,7 @@
 
 # filewise/format_converters/__init__.py
 
-from . import __init__
-from . import pdf_tools
+# Define what should be available when using 'from filewise.format_converters import *'
+__all__ = [
+    'pdf_tools'
+]
