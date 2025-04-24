@@ -3,5 +3,7 @@
 
 # filewise/general/__init__.py
 
-from . import __init__
-from . import introspection_utils
+# Define what should be available when using 'from filewise.general import *'
+__all__ = [
+    'introspection_utils'
+]
