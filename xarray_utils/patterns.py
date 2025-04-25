@@ -12,8 +12,8 @@ import xarray as xr
 # Import custom modules #
 #-----------------------#
 
-from paramlib.global_parameters import common_delim_list
 from filewise.xarray_utils.file_utils import ncfile_integrity_status
+from paramlib.global_parameters import COMMON_DELIM_LIST
 
 #-------------------------#
 # Define custom functions #
@@ -110,7 +110,7 @@ def get_file_variables(nc_file):
     return varlist_nodim[0] if len(varlist_nodim) == 1 else varlist_nodim
 
 
-def get_model_list(path_list, split_pos, splitdelim="_"):
+def get_model_list(path_list, split_pos, SPLIT_DELIM="_"):
     """
     Extracts model names from a list of file paths or file names by splitting the file
     name at a specified position. The function can handle both absolute/relative paths 
@@ -123,7 +123,7 @@ def get_model_list(path_list, split_pos, splitdelim="_"):
     split_pos : int
         Position in the split file name (after splitting by the delimiter) that contains
         the model name.
-    splitdelim : str, optional
+    SPLIT_DELIM : str, optional
         Delimiter used to split the file name. Default is "_".
 
     Returns
@@ -135,7 +135,7 @@ def get_model_list(path_list, split_pos, splitdelim="_"):
     grib_file_list = [path.split("/")[-1] for path in path_list]
 
     # Split file names by the delimiter and extract model names from the specified position
-    model_list = [f.split(splitdelim)[split_pos] for f in grib_file_list]
+    model_list = [f.split(SPLIT_DELIM)[split_pos] for f in grib_file_list]
 
     # Return unique model names
     unique_model_list = np.unique(model_list).tolist()
@@ -348,4 +348,4 @@ def find_nearest_coordinates(nc_file, lats_obs, lons_obs, roundoff=3):
 #--------------------------#
 
 # String splitting character #
-splitdelim = common_delim_list[0]
+SPLIT_DELIM = COMMON_DELIM_LIST[0]
