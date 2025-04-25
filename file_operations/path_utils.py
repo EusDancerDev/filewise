@@ -101,9 +101,9 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     if isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
 
-    modify_pattern_func = match_pattern_modifier.get(match_type)
+    modify_pattern_func = MATCH_PATTERN_MODIFIER.get(match_type)
     if not modify_pattern_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
     
     patterns = modify_pattern_func(patterns)
 
@@ -115,9 +115,9 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     if dirs_to_exclude:
         files = [file for file in files if not any(excluded in file for excluded in dirs_to_exclude)]
 
-    match_func = match_type_dict.get(match_type)
+    match_func = MATCH_TYPE_DICT.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
 
     return list(np.unique([file for file in files if match_func(file, patterns)]))
 
@@ -165,9 +165,9 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     if isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
 
-    modify_pattern_func = match_pattern_modifier.get(match_type)
+    modify_pattern_func = MATCH_PATTERN_MODIFIER.get(match_type)
     if not modify_pattern_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
     
     patterns = modify_pattern_func(patterns)
 
@@ -179,9 +179,9 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     if dirs_to_exclude:
         files = [file for file in files if not any(excluded in file for excluded in dirs_to_exclude)]
 
-    match_func = match_type_dict.get(match_type)
+    match_func = MATCH_TYPE_DICT.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
 
     dirs = [os.path.dirname(file) for file in files if match_func(file, patterns)]
     return list(np.unique(dirs))
@@ -248,7 +248,7 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions", di
 #--------------------------#
 
 # Define a switch-case dictionary to handle 'match_type' options
-match_type_dict = {
+MATCH_TYPE_DICT = {
     "ext": lambda file, patterns: any(file.endswith(f".{ext}") for ext in patterns),
     "glob_left": lambda file, patterns: any(pattern in file for pattern in patterns),
     "glob_right": lambda file, patterns: any(pattern in file for pattern in patterns),
@@ -256,9 +256,9 @@ match_type_dict = {
     "ww": lambda file, patterns: any(pattern == file for pattern in patterns)
 }
 
-mtd_keys = list(match_type_dict.keys())
+MTD_KEYS = list(MATCH_TYPE_DICT.keys())
 
-match_pattern_modifier = {
+MATCH_PATTERN_MODIFIER = {
     "ext": lambda patterns: patterns,
     "glob_left": _add_glob_left,
     "glob_right": _add_glob_right,
