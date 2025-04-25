@@ -5,30 +5,19 @@
 # Import modules #
 #----------------#
 
-import grp
-import pwd
-
 import os
+import pwd
 import shutil
+import grp
 
 #-----------------------#
 # Import custom modules #
 #-----------------------#
 
-from filewise.file_operations import path_utils
-from pygenutils.strings import text_formatters, string_handler
+from filewise.file_operations.path_utils import find_files, find_items
 from filewise.general.introspection_utils import get_caller_args
-
-# Create aliases #
-#----------------#
-
-find_files = path_utils.find_files
-find_items = path_utils.find_items
-
-format_string = text_formatters.format_string
-print_format_string = text_formatters.print_format_string
-
-find_substring_index = string_handler.find_substring_index
+from pygenutils.strings.string_handler import find_substring_index
+from pygenutils.strings.text_formatters import print_format_string
 
 #-------------------------#
 # Define custom functions #
@@ -176,8 +165,8 @@ def modify_obj_owner(path, module="shutil", extensions2skip="", new_owner=-1, ne
                         f"got '{type(new_group)}' instead.")
     
     # Module selection
-    if module not in modules:
-        raise ValueError(f"Unsupported module '{module}'. Choose one from {modules}")
+    if module not in MODULES:
+        raise ValueError(f"Unsupported module '{module}'. Choose one from {MODULES}")
 
     # Operations #
     ##############
@@ -225,4 +214,4 @@ def modify_obj_owner(path, module="shutil", extensions2skip="", new_owner=-1, ne
 # OS-related #
 #------------#
 
-modules = ["os", "shutil"]
+MODULES = ["os", "shutil"]
