@@ -12,9 +12,9 @@ import xarray as xr
 #-----------------------#
 
 from filewise.xarray_utils.xarray_obj_handler import _save_ds_as_nc
-from paramlib.global_parameters import climate_file_extensions
+from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
 from pygenutils.arrays_and_lists.conversions import flatten_to_string
-from pygenutils.operative_systems.os_operations import run_system_command, exit_info
+from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 from pygenutils.strings.string_handler import (
     find_substring_index,
     get_obj_specs,
@@ -67,7 +67,7 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
     if on_shell:
         # Handle single GRIB file
         if isinstance(grib_file_list, str):
-            nc_file_new = modify_obj_specs(grib_file_list, "ext", extensions[0])
+            nc_file_new = modify_obj_specs(grib_file_list, "ext", EXTENSIONS[0])
         
         # Handle list of GRIB files
         else:
@@ -80,7 +80,7 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
             
             # Validate the file name using RegEx
             allowed_minimum_char_idx = find_substring_index(nc_file_new_noext,
-                                                            regex_grib2nc,
+                                                            REGEX_GRIB2NC,
                                                             advanced_search=True)
             
             while allowed_minimum_char_idx == -1:
@@ -88,13 +88,13 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
                       "as well as the following non-word characters: {. _ -}")
                 nc_file_new_noext = input("Please introduce a valid name: ")
                 allowed_minimum_char_idx = find_substring_index(nc_file_new_noext,
-                                                                regex_grib2nc,
+                                                                REGEX_GRIB2NC,
                                                                 advanced_search=True)
             
             # Modify the file name to have the .nc extension
             nc_file_new_noext = modify_obj_specs(nc_file_new_noext,
                                                  obj2modify="ext",
-                                                 new_obj=extensions[0])
+                                                 new_obj=EXTENSIONS[0])
         
         # Construct the shell command for conversion
         grib2nc_template = "grib_to_netcdf "
@@ -118,7 +118,7 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
 
         # Convert each GRIB file in the list to netCDF
         for grib_file in grib_file_list:
-            grib_file_noext = get_obj_specs(grib_file, "name_noext", extensions[0])
+            grib_file_noext = get_obj_specs(grib_file, "name_noext", EXTENSIONS[0])
             ds = xr.open_dataset(grib_file, engine="cfgrib")
             _save_ds_as_nc(ds, grib_file_noext)
 
@@ -128,7 +128,7 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
 #--------------------------#
 
 # Valid file extensions #
-extensions = climate_file_extensions[::3]
+EXTENSIONS = CLIMATE_FILE_EXTENSIONS[::3]
   
 # RegEx control for GRIB-to-netCDF single file name #
-regex_grib2nc = r"^[a-zA-Z0-9\._-]$"
+REGEX_GRIB2NC = r"^[a-zA-Z0-9\._-]$"
