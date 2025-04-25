@@ -146,7 +146,7 @@ All notable changes to this project will be documented in this file.
 - Modules `bulk_rename_auto` and `bulk_rename_manual`: renamed all `arg_tuple_*` variables to `format_args_*` for clarity and consistency
 - Module `file_utils`: renamed `arg_tuple_scanf` to `format_args_scan_progress` and `scandir_arg_tuple` to `format_args_dir_info`
 
-#### **Format Converters**
+#### **Format Converters** (v3.6.0)
 
 - Module `pdf_tools`:
   - Renamed `pdfunite_command_prefmt` to `pdfunite_template`
@@ -157,7 +157,7 @@ All notable changes to this project will be documented in this file.
     - `msg_converter_template` for MSG file conversion
     - `dpkg_check_template` for program installation checks
 
-#### **Xarray Utils**
+#### **Xarray Utils** (v3.6.0)
 
 - Module `conversions`: renamed `grib2nc_syntax` to `grib2nc_template`
 - Module `file_utils`: renamed `arg_tuple_scanf` to `format_args_scan_progress` and `scandir_arg_tuple` to `format_args_dir_info`
