@@ -21,20 +21,14 @@ import os
 # Import custom modules #
 #-----------------------#
 
-from filewise.file_operations import path_utils
-from paramlib.global_parameters import climate_file_extensions
-from pygenutils.strings import text_formatters, string_handler
-
-# Create aliases #
-#----------------#
-
-find_files = path_utils.find_files
-
-format_string = text_formatters.format_string
-print_format_string = text_formatters.print_format_string
-string_underliner = text_formatters.string_underliner
-
-get_obj_specs = string_handler.get_obj_specs
+from filewise.file_operations.path_utils import find_files
+from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
+from pygenutils.strings.string_handler import get_obj_specs
+from pygenutils.strings.text_formatters import (
+    format_string,
+    print_format_string,
+    string_underliner
+)
 
 #-------------------------#
 # Define custom functions #
@@ -101,14 +95,14 @@ def scan_ncfiles(search_path):
         
     # Step 1: Search for all netCDF files #
     #######################################
-    all_files = find_files(extensions[0], search_path)
+    all_files = find_files(EXTENSIONS[0], search_path)
     
     # Step 2: Check each file's integrity and collect faulty files  #
     #################################################################
     file_vs_err_list = []
     for idx, file in enumerate(all_files, start=1):
         format_args_scan_progress = (idx, len(all_files), file)
-        print_format_string(scan_progress_template, format_args_scan_progress)
+        print_format_string(SCAN_PROGRESS_TEMPLATE, format_args_scan_progress)
         try:
             ncfile_integrity_status(file)
         except Exception as ncf_err:
@@ -133,14 +127,14 @@ def scan_ncfiles(search_path):
     total_faulties = sum(len(lst) for lst in file_vs_errs_dict.values())
     
     # Report generation #
-    with open(report_file_path, "w") as report:
-        report.write(report_info_template.format(*(total_dirs, total_files, total_faulties)))
+    with open(REPORT_FILE_PATH, "w") as report:
+        report.write(REPORT_INFO_TEMPLATE.format(*(total_dirs, total_files, total_faulties)))
         
         for dirc in file_vs_errs_dict.keys():
             format_args_dir_info = (dirc, len(file_vs_errs_dict[dirc]))
-            report.write(format_string(string_underliner(dir_info_template, format_args_dir_info), "="))
+            report.write(format_string(string_underliner(DIR_INFO_TEMPLATE, format_args_dir_info), "="))
             for values in file_vs_errs_dict[dirc]:
-                report.write(format_string(file_info_writing_template, values))
+                report.write(format_string(FILE_INFO_WRITING_TEMPLATE, values))
 
 
 # Helpers #
@@ -195,28 +189,28 @@ def ncfile_integrity_status(ncfile_name):
 #--------------------------#
 
 # Directory from where this code is being called #
-code_call_dir = os.getcwd()
+CODE_CALL_DIR = os.getcwd()
 
 # File extensions #
-extensions = climate_file_extensions[::3]
+EXTENSIONS = CLIMATE_FILE_EXTENSIONS[::3]
 
 # Template strings #
 #----------------------#
 
 # File scanning progress information strings #
-scan_progress_template =\
+SCAN_PROGRESS_TEMPLATE =\
 """
 File number: {} out of {}
 File name: {}
 """
 
-dir_info_template = """\nDirectory: {} | Faulty files in this directory: {}"""
-file_info_writing_template = """\nFile: {} -> {}\n"""
+DIR_INFO_TEMPLATE = """\nDirectory: {} | Faulty files in this directory: {}"""
+FILE_INFO_WRITING_TEMPLATE = """\nFile: {} -> {}\n"""
 
 # Report results
-report_fn_noext = "faulty_netcdf_file_report"
-report_file_path = f"{code_call_dir}/{report_fn_noext}.txt"
-report_info_template =\
+REPORT_FN_NOEXT = "faulty_netcdf_file_report"
+REPORT_FILE_PATH = f"{CODE_CALL_DIR}/{REPORT_FN_NOEXT}.txt"
+REPORT_INFO_TEMPLATE =\
 """
 +--------------------------------+
 |Faulty NETCDF format file report|
