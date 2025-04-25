@@ -168,9 +168,9 @@ def excel_handler(file_path,
     """
     
     # Validate the return type argument #
-    if return_obj_type not in excel_handling_return_options:
+    if return_obj_type not in EXCEL_HANDLING_RETURN_OPTIONS:
         raise TypeError("Invalid type of the object to return. "
-                        f"Choose one from {excel_handling_return_options}.")
+                        f"Choose one from {EXCEL_HANDLING_RETURN_OPTIONS}.")
 
     else:
         sheetname_and_data_dict = pd.read_excel(file_path,
@@ -288,7 +288,7 @@ def save2excel(file_path,
     extension_length = len(file_ext)
     
     if extension_length == 0:
-        file_path = append_ext(file_path, extensions[1])
+        file_path = append_ext(file_path, EXTENSIONS[1])
     
     # Name and parent #
     file_name = get_obj_specs(file_path, obj_spec_key="name")
@@ -316,10 +316,10 @@ def save2excel(file_path,
         if file_already_exists:
             format_args_file_exists = [file_name, fn_parent]
             overwrite_stdin\
-            = input(format_string(already_existing_file_warning_template, format_args_file_exists))
+            = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
             
             while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                overwrite_stdin = input(overwrite_prompt_warning)
+                overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
             else:  
                 # In this case, save the file directly
                 if overwrite_stdin == "y":
@@ -340,10 +340,10 @@ def save2excel(file_path,
         if file_already_exists:
             format_args_file_exists = [file_name, fn_parent]
             overwrite_stdin\
-            = input(format_string(already_existing_file_warning_template, format_args_file_exists))
+            = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
             
             while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                overwrite_stdin = input(overwrite_prompt_warning)
+                overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
             else:
                 # If chosen to overwrite, data cannot be directly overriden.
                 # Instead, delete the original file and create a new one
@@ -426,7 +426,7 @@ def merge_excel_files(input_file_list,
         
     input_file_count = len(input_file_list)    
     if input_file_count == 1:
-        raise ValueError(below_minimum_file_warning)
+        raise ValueError(BELOW_MINIMUM_FILE_WARNING)
         
     # For simplicity and convenience, even if any file has only one sheet, 
     # follow the natural behaviour, that is, conserving the key containing
@@ -569,7 +569,7 @@ def save2csv(file_path,
         extension_length = len(file_ext)
         
         if extension_length == 0:
-            file_path = append_ext(file_path, extensions[0])
+            file_path = append_ext(file_path, EXTENSIONS[0])
         
         
         # Name and parent #
@@ -591,10 +591,10 @@ def save2csv(file_path,
             if file_already_exists:
                 format_args_file_exists = [file_name, fn_parent]
                 overwrite_stdin\
-                = input(format_string(already_existing_file_warning_template, format_args_file_exists))
+                = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
                 
                 while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                    overwrite_stdin = input(overwrite_prompt_warning)
+                    overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
                 else:
                     # If chosen to overwrite, data cannot be directly overriden.
                     # Instead, delete the original file and create a new one
@@ -625,10 +625,10 @@ def save2csv(file_path,
             if file_already_exists:
                 format_args_file_exists = [file_name, fn_parent]
                 overwrite_stdin\
-                = input(format_string(already_existing_file_warning_template, format_args_file_exists))
+                = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
                 
                 while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                    overwrite_stdin = input(overwrite_prompt_warning)
+                    overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
                 else:
                     # If chosen to overwrite, data cannot be directly overriden.
                     # Instead, delete the original file and create a new one
@@ -657,7 +657,7 @@ def save2csv(file_path,
             
     else:        
         input_obj_type = get_type_str(data_frame)
-        raise TypeError(format_string(unsupported_obj_type_err_template, input_obj_type))
+        raise TypeError(format_string(UNSUPPORTED_OBJ_TYPE_ERR_TEMPLATE, input_obj_type))
         
         
     
@@ -898,7 +898,7 @@ def merge_csv_files(input_file_list,
     input_file_count = len(input_file_list)
     
     if input_file_count == 1:
-        raise ValueError(below_minimum_file_warning)
+        raise ValueError(BELOW_MINIMUM_FILE_WARNING)
         
     # Option 1: merge data of all files into a single DataFrame #
     #-----------------------------------------------------------#
@@ -1143,27 +1143,27 @@ def merge_ods_files(input_file_list,
 #--------------------------#
 
 # File extension list #
-extensions = ["csv", "xlsx"]
+EXTENSIONS = ["csv", "xlsx"]
 
 # Template strings #
 #----------------------#
 
-already_existing_file_warning_template = """Warning: file '{}' at directory '{}' \
+ALREADY_EXISTING_FILE_WARNING_TEMPLATE = """Warning: file '{}' at directory '{}' \
 already exists.\nDo you want to overwrite it? (y/n) """
 
 # Warning strings #
 #-----------------#
 
-overwrite_prompt_warning = "\nPlease select 'y' for 'yes' or 'n' for 'no': "
-below_minimum_file_warning = """At least 2 files must be given \
+OVERWRITE_PROMPT_WARNING = "\nPlease select 'y' for 'yes' or 'n' for 'no': "
+BELOW_MINIMUM_FILE_WARNING = """At least 2 files must be given \
 in order to perform the merge."""
 
 # Error strings #
 #---------------#
 
-unsupported_obj_type_err_template = "Expected a pandas.DataFrame object, got {}"
+UNSUPPORTED_OBJ_TYPE_ERR_TEMPLATE = "Expected a pandas.DataFrame object, got {}"
 
 # Argument choice options #
 #-------------------------#
 
-excel_handling_return_options = ["dict", "df"]
+EXCEL_HANDLING_RETURN_OPTIONS = ["dict", "df"]
