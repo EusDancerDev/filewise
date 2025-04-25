@@ -22,7 +22,7 @@ from filewise.xarray_utils.patterns import (
 )
 from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
 from pygenutils.strings.text_formatters import format_string, string_underliner
-from pygenutils.time_handling.time_utils import find_time_key
+from pygenutils.time_handling.date_and_time_utils import find_time_key
 
 #-------------------------#
 # Define custom functions #
