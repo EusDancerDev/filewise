@@ -67,9 +67,9 @@ def move_files(patterns, input_directories, destination_directories, match_type=
     if isinstance(destination_directories, str):
         destination_directories = [destination_directories]
 
-    match_func = match_type_dict.get(match_type)
+    match_func = MATCH_TYPE_DICT.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}.")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}.")
 
     for input_directory in input_directories:
         files = _get_files_in_directory(input_directory)  # Using the helper
@@ -103,9 +103,9 @@ def copy_files(patterns, input_directories, destination_directories, match_type=
     if isinstance(destination_directories, str):
         destination_directories = [destination_directories]
 
-    match_func = match_type_dict.get(match_type)
+    match_func = MATCH_TYPE_DICT.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}.")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}.")
 
     for input_directory in input_directories:
         files = _get_files_in_directory(input_directory)  # Using the helper
@@ -134,9 +134,9 @@ def remove_files(patterns, input_directories, match_type="ext"):
     if isinstance(input_directories, str):
         input_directories = [input_directories]
 
-    match_func = match_type_dict.get(match_type)
+    match_func = MATCH_TYPE_DICT.get(match_type)
     if not match_func:
-        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {mtd_keys}.")
+        raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}.")
 
     for input_directory in input_directories:
         files = _get_files_in_directory(input_directory)  # Using the helper
@@ -310,14 +310,14 @@ def rename_objects(relative_paths, renaming_relative_paths):
     """
     if isinstance(relative_paths, list) and isinstance(renaming_relative_paths, list):
         if len(relative_paths) != len(renaming_relative_paths):
-            raise ValueError(unequal_length_error)
+            raise ValueError(UNEQUAL_LENGTH_ERROR)
         else:
             for rp, rrp in zip(relative_paths, renaming_relative_paths):
                 os.rename(rp, rrp)
     elif isinstance(relative_paths, str) and isinstance(renaming_relative_paths, str):
         os.rename(relative_paths, renaming_relative_paths)
     else:
-        raise TypeError(objtype_error)
+        raise TypeError(OBJTYPE_ERROR)
 
 
 #--------------------------#
@@ -325,16 +325,16 @@ def rename_objects(relative_paths, renaming_relative_paths):
 #--------------------------#
 
 # Errors #
-unequal_length_error = """File and renamed file lists are not of the same length."""
-objtype_error = "Both input arguments must either be strings or lists simultaneously."
+UNEQUAL_LENGTH_ERROR = """File and renamed file lists are not of the same length."""
+OBJTYPE_ERROR = "Both input arguments must either be strings or lists simultaneously."
 
 # Switch-case Dictionary #
 #------------------------#
 
 # Define a switch-case dictionary to handle 'match_type' options
-match_type_dict = {
+MATCH_TYPE_DICT = {
     "ext": lambda file, patterns: any(file.endswith(f".{ext}") for ext in patterns),
     "glob": lambda file, patterns: any(pattern in file for pattern in patterns)
 }
 
-mtd_keys = list(match_type_dict.keys())
+MTD_KEYS = list(MATCH_TYPE_DICT.keys())
