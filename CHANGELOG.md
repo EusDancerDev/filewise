@@ -4,9 +4,53 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.7.0] - 2025-04-23
+## [v3.8.0] - 2025-04-25
 
 ### Changed
+
+#### **File Operations**
+
+- Modules `permission_manager.py`, `bulk_rename_auto.py`, `path_utils.py`, `ops_handler.py`:
+  - Convert all configuration constants to uppercase
+  - Update all references to these constants throughout the code
+  - Reorganise imports to be more direct by removing unnecessary aliases
+  - Sort standard library imports according to PEP 8 guidelines
+  - For `bulk_rename_auto.py`, toggle uppercase all constants imported from `global_parameters.py` in `paramlib`
+
+#### **Pandas Utils**
+
+- Module `pandas_obj_handler.py`:
+  - Convert all configuration constants to uppercase
+  - Update all references to these constants throughout the code
+
+#### **Format Converters**
+
+- Module `pdf_tools.py`:
+  - Convert all configuration constants to uppercase
+  - Toggle uppercase all constants imported from `global_parameters.py` in `paramlib`
+  - Update all references to these constants throughout the code
+  - Reorganise imports to be more direct by removing unnecessary aliases
+
+#### **JSON Utils**
+
+- Module `json_obj_handler.py`:
+  - Convert all configuration constants to uppercase
+  - Toggle uppercase all constants imported from `global_parameters.py` in `paramlib`
+  - Update all references to these constants throughout the code
+
+#### **Xarray Utils**
+
+- Modules `conversions.py`, `data_manipulation.py`, `file_utils.py`, `patterns.py`, `xarray_obj_handler.py`:
+  - Convert all configuration constants to uppercase
+  - Toggle uppercase all constants imported from `global_parameters.py` in `paramlib`
+  - Update all references to these constants throughout the code
+  - Sort and reorganise imports to be more direct by removing unnecessary aliases
+
+---
+
+## [v3.7.0] - 2025-04-23
+
+### Changed (v3.7.0)
 
 #### **General**
 
@@ -37,7 +81,7 @@ All notable changes to this project will be documented in this file.
   - Add the function `polish_df_column_names` originally from `data_manipulation` in the package
   - Remove the redundant import of that function
 
-#### **Xarray utils**
+#### **Xarray utils** (v3.7.0)
 
 - Module `file_utils.py`:
   - Correct the import paths of the modules `text_formatters` and `string_handler`
@@ -68,7 +112,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed (v3.6.1)
 
-#### **Pandas Utils**
+#### **Pandas Utils** (v3.6.1)
 
 - Module `pandas_obj_handler`:
   - Corrected import paths for the `filewise` package
@@ -97,7 +141,7 @@ All notable changes to this project will be documented in this file.
     - `ldsid` → `duplicate_sheet_count`
     - `lifdnu` → `unique_row_count`
 
-#### **File Operations**
+#### **File Operations** (v3.6.0)
 
 - Modules `bulk_rename_auto` and `bulk_rename_manual`: renamed all `arg_tuple_*` variables to `format_args_*` for clarity and consistency
 - Module `file_utils`: renamed `arg_tuple_scanf` to `format_args_scan_progress` and `scandir_arg_tuple` to `format_args_dir_info`
@@ -135,7 +179,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.5.0)
 
-#### **JSON utils**
+#### **JSON utils** (v3.5.0)
 
 - Module `json_obj_handler`: enhanced JSON serialization functions to support dictionaries and lists of dictionaries; improved naming and documentation for clarity.
 
