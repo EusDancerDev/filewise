@@ -5,27 +5,14 @@
 # Import custom modules #
 #-----------------------#
 
-from filewise import introspection_utils 
-from filewise.file_operations import ops_handler, path_utils
-from paramlib.global_parameters import common_delim_list
+from filewise.file_operations.ops_handler import remove_files
+from filewise.file_operations.path_utils import find_files
+from filewise.introspection_utils import get_caller_args, get_type_str
+from paramlib.global_parameters import COMMON_DELIM_LIST
 from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
-from pygenutils.strings import string_handler, text_formatters
-
-# Aliases for functions #
-#-----------------------#
-
-format_string = text_formatters.format_string
-format_table_from_lists = text_formatters.format_table_from_lists
-
-get_caller_args = introspection_utils.get_caller_args
-get_type_str = introspection_utils.get_type_str
-
-remove_files = ops_handler.remove_files
-find_files = path_utils.find_files
-
-ext_adder = string_handler.ext_adder
-add_str_to_path = string_handler.add_str_to_aux_path
+from pygenutils.strings.string_handler import ext_adder, add_str_to_path
+from pygenutils.strings.text_formatters import format_string, format_table_from_lists
 
 #------------------#
 # Define functions #
@@ -50,7 +37,7 @@ def tweak_pages(file, cat_str, out_path=None):
             out_path = add_str_to_path(file, "_lotsOfPagesTweaked")
 
     # Define the command based on the given options
-    pdftk_template_formatted = f"{essential_command_list[1]} '{file}' cat {cat_str} output '{out_path}'"
+    pdftk_template_formatted = f"{ESSENTIAL_COMMAND_LIST[1]} '{file}' cat {cat_str} output '{out_path}'"
     process_exit_info = run_system_command(pdftk_template_formatted)
     exit_info(process_exit_info)
 
@@ -76,28 +63,28 @@ def file_tweaker(path, cat_obj):
         - str and dict
         - list and list
     """
-    split_delim = common_delim_list[2]
+    split_delim = COMMON_DELIM_LIST[2]
     if isinstance(path, str) and isinstance(cat_obj, str):
         if split_delim not in cat_obj:
-            raise SyntaxError(syntax_error_str)
+            raise SyntaxError(SYNTAX_ERROR_STR)
         cat_str, out_path = cat_obj.split(split_delim)
-        out_path = ext_adder(out_path, extensions[0])
+        out_path = ext_adder(out_path, EXTENSIONS[0])
         tweak_pages(path, cat_str, out_path)
     elif isinstance(path, str) and isinstance(cat_obj, dict):
         for out_path, cat_str in cat_obj.items():
-            out_path = ext_adder(out_path, extensions[0])
+            out_path = ext_adder(out_path, EXTENSIONS[0])
             tweak_pages(path, cat_str, out_path)
     elif isinstance(path, list) and isinstance(cat_obj, list):
         for p, co_obj in zip(path, cat_obj):
             for out_path, cat_str in co_obj.items():
-                out_path = ext_adder(out_path, extensions[0])
+                out_path = ext_adder(out_path, EXTENSIONS[0])
                 tweak_pages(p, cat_str, out_path)
     else:
         param_keys = get_caller_args()
         type_param1, type_param2 = get_type_str(path), get_type_str(cat_obj)
         type_combo_list1 = [["str", "str"], ["str", "dict"], ["list", "list"]]
         
-        raise TypeError(format_string(format_string(type_error_str, (type_param1, type_param2)), 
+        raise TypeError(format_string(format_string(TYPE_ERROR_STR, (type_param1, type_param2)), 
                                       format_table_from_lists(param_keys, type_combo_list1)))
    
     
@@ -113,9 +100,9 @@ def merge_files(in_path_list, out_path=None):
         Path for the merged PDF file. Defaults to 'merged_doc.pdf' if None.
     """
     all_in_paths = flatten_to_string(in_path_list)
-    out_path = out_path or ext_adder("merged_doc", extensions[0])
+    out_path = out_path or ext_adder("merged_doc", EXTENSIONS[0])
     # Define the command for merging files
-    pdfunite_cmd = format_string(pdfunite_template, (all_in_paths, out_path))
+    pdfunite_cmd = format_string(PDFUNITE_TEMPLATE, (all_in_paths, out_path))
     process_exit_info = run_system_command(pdfunite_cmd)
     exit_info(process_exit_info)
 
@@ -149,13 +136,13 @@ def file_compressor(in_path, out_path=None):
         type_param1, type_param2 = get_type_str(in_path), get_type_str(out_path)
         type_combo_list2 = [["str", "str"], ["str", "None"], ["list", "list"]]
         
-        raise TypeError(format_string(format_string(type_error_str, (type_param1, type_param2)), 
+        raise TypeError(format_string(format_string(TYPE_ERROR_STR, (type_param1, type_param2)), 
                                       format_table_from_lists(param_keys, type_combo_list2)))
 
     for ip, op_aux in zip(in_path, out_path):
-        op = ext_adder(op_aux, extensions[0])
+        op = ext_adder(op_aux, EXTENSIONS[0])
         # Define the command for compression
-        ps2pdf_template_formatted = f"{essential_command_list[0]} -dPDFSETTINGS=/ebook {ip} {op}"
+        ps2pdf_template_formatted = f"{ESSENTIAL_COMMAND_LIST[0]} -dPDFSETTINGS=/ebook {ip} {op}"
         process_exit_info = run_system_command(ps2pdf_template_formatted)
         exit_info(process_exit_info)
    
@@ -174,14 +161,14 @@ def eml_to_pdf(search_path, delete_eml_files=False):
     del_eml : bool, optional
         Whether to delete '.eml' files after conversion. Defaults to False.
     """
-    eml_files = find_files(extensions[1], search_path, match_type="ext", top_path_only=True)
-    converter_tool_path = find_files(f"*emailconverter*.{extensions[-1]}", alldoc_dirpath, match_type="glob")
+    eml_files = find_files(EXTENSIONS[1], search_path, match_type="ext", top_path_only=True)
+    converter_tool_path = find_files(f"*emailconverter*.{EXTENSIONS[-1]}", ALLDOC_DIRPATH, match_type="glob")
     for emlf in eml_files:
         converter_template_formatted = f"java -jar {converter_tool_path} '{emlf}'"
         process_exit_info = run_system_command(converter_template_formatted)
         exit_info(process_exit_info)
     if delete_eml_files:
-        remove_files(extensions[1], search_path)
+        remove_files(EXTENSIONS[1], search_path)
 
 
 def msg_to_pdf(search_path, delete_msg_files=False, delete_eml_files=False):
@@ -197,14 +184,14 @@ def msg_to_pdf(search_path, delete_msg_files=False, delete_eml_files=False):
     del_eml : bool, optional
         If True, deletes '.eml' files after conversion.
     """
-    msg_files = find_files(extensions[2], search_path, match_type="ext", top_path_only=True)
+    msg_files = find_files(EXTENSIONS[2], search_path, match_type="ext", top_path_only=True)
     for msgf in msg_files:
-        msg_to_pdf_template_formatted = f"{essential_command_list[3]} '{msgf}'"
+        msg_to_pdf_template_formatted = f"{ESSENTIAL_COMMAND_LIST[3]} '{msgf}'"
         process_exit_info = run_system_command(msg_to_pdf_template_formatted)
         exit_info(process_exit_info)
     eml_to_pdf(search_path, delete_eml_files=delete_eml_files)
     if delete_msg_files:
-        remove_files(extensions[2], search_path)
+        remove_files(EXTENSIONS[2], search_path)
 
 # Utility Functions #
 #-------------------#
@@ -219,23 +206,23 @@ def _check_essential_progs():
         If any required program is not installed, lists missing programs.
     """
     non_installed_prog_list = []
-    for prog in essential_program_list:
+    for prog in ESSENTIAL_PROGRAM_LIST:
         dpkg_template_formatted = f"dpkg -l | grep -i {prog} | wc -l"
         process_exit_info = run_system_command(dpkg_template_formatted, capture_output=True)
         exit_info(process_exit_info)
         if int(process_exit_info.get("stdout")) < 1:
             non_installed_prog_list.append(prog)
     if non_installed_prog_list:
-        raise ModuleNotFoundError(format_string(essential_prog_not_found_error, non_installed_prog_list))
+        raise ModuleNotFoundError(format_string(ESSENTIAL_PROG_NOT_FOUND_ERROR, non_installed_prog_list))
 
 
 # Parameters and Constants #
 #--------------------------#
 
-alldoc_dirpath = "/home/jonander/Documents"
-extensions = ["pdf", "eml", "msg", "jar"]
+ALLDOC_DIRPATH = "/home/jonander/Documents"
+EXTENSIONS = ["pdf", "eml", "msg", "jar"]
 
-essential_program_list = [
+ESSENTIAL_PROGRAM_LIST = [
     "ghostscript", 
     "pdftk", 
     "wkhtmltopdf", 
@@ -243,7 +230,7 @@ essential_program_list = [
     "poppler-utils"
     ]
 
-essential_command_list = [
+ESSENTIAL_COMMAND_LIST = [
     "ps2pdf",
     "pdftk",
     "wkhtmltopdf",
@@ -251,17 +238,17 @@ essential_command_list = [
     "pdfunite"
     ]
 
-syntax_error_str = """Please use a semicolon (';') to separate the page cat string\
+SYNTAX_ERROR_STR = """Please use a semicolon (';') to separate the page cat string\
 from the output path. For example: '{cat_str}; {out_path}'"""
      
-type_error_str = """Unsupported parameter type pair '{}' and '{}'. It must be\
+TYPE_ERROR_STR = """Unsupported parameter type pair '{}' and '{}'. It must be\
 one of the following table:
 {}
 """
 
-essential_prog_not_found_error = "Programs missing for module functionality:\n{}"
+ESSENTIAL_PROG_NOT_FOUND_ERROR = "Programs missing for module functionality:\n{}"
 
-pdfunite_template = "pdfunite {} {}"
+PDFUNITE_TEMPLATE = "pdfunite {} {}"
 
 # Initialize #
 #------------#
