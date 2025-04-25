@@ -133,9 +133,9 @@ def save2nc(file_name, data=None, file_format="NETCDF4",
       `vardim_list`, `data_arrays`, `dimlists`, etc.
     """
     # File format validation
-    if file_format not in nc_file_formats:
+    if file_format not in NC_FILE_FORMATS:
         raise ValueError(f"Unsupported file format '{file_format}'. "
-                         f"Choose one from {nc_file_formats}.")
+                         f"Choose one from {NC_FILE_FORMATS}.")
         
     # Convert arguments to lists if they are not already lists
     vardim_list = _ensure_list(vardim_list)
@@ -164,8 +164,8 @@ def save2nc(file_name, data=None, file_format="NETCDF4",
             ds = ds.merge(data_array_dict)
     
         # Add netCDF file extension ('.nc') if not present
-        if get_obj_specs(file_name, "ext") != f".{extensions[0]}":
-            file_name = append_ext(file_name, extensions[0])
+        if get_obj_specs(file_name, "ext") != f".{EXTENSIONS[0]}":
+            file_name = append_ext(file_name, EXTENSIONS[0])
         
         # Save to file
         _save_ds_as_nc(ds, file_name, global_attrs_dict)
@@ -339,7 +339,7 @@ def _ensure_list(arg):
 #--------------------------#
 
 # File extensions #
-extensions = ["nc", "csv"]
+EXTENSIONS = ["nc", "csv"]
 
 # Valid netCDF file formats #
-nc_file_formats = ["NETCDF4", "NETCDF4_CLASSIC", "NETCDF3_64BIT", "NETCDF3_CLASSIC"]
+NC_FILE_FORMATS = ["NETCDF4", "NETCDF4_CLASSIC", "NETCDF3_64BIT", "NETCDF3_CLASSIC"]
