@@ -20,7 +20,7 @@ from filewise.xarray_utils.patterns import (
     get_latlon_deltas,
     get_times
 )
-from paramlib.global_parameters import climate_file_extensions
+from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
 from pygenutils.strings.text_formatters import format_string, string_underliner
 from pygenutils.time_handling.time_utils import find_time_key
 
@@ -53,17 +53,17 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
     - If any files are faulty or cannot be processed, relevant error information 
       is recorded in the report.
     """
-    nc_dirs = find_dirs_with_files(extensions[0], search_path=code_call_dir)
+    nc_dirs = find_dirs_with_files(EXTENSIONS[0], search_path=CODE_CALL_DIR)
     
     for dir_num, dir_name in enumerate(nc_dirs, start=1):
-        nc_files = find_files(extensions[0], dir_name, match_type="ext", top_path_only=True)
+        nc_files = find_files(EXTENSIONS[0], dir_name, match_type="ext", top_path_only=True)
         
-        with open(coord_info_fname, "w") as report:
+        with open(COORD_INFO_FNAME, "w") as report:
             if nc_files:
                 for file_num, nc_file in enumerate(nc_files, start=1):
                     print(f"Processing file {file_num} out of {len(nc_files)} "
                           f"in directory {dir_num} out of {len(nc_dirs)}...")
-                    report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
+                    report.write(format_string(string_underliner(DIR_INFO_TEMPLATE, dir_name), "+"))
                     
                     try:
                         ncfile_integrity_status(nc_file)
@@ -88,14 +88,14 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                                 lon_delta
                                 )
                             
-                            report.write(format_string(latlon_info_template, format_args_latlon_bounds))
-                            move_files(coord_info_fname,
+                            report.write(format_string(LATLON_INFO_TEMPLATE, format_args_latlon_bounds))
+                            move_files(COORD_INFO_FNAME,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
                                        match_type="glob")
             else:
                 report.write(f"No netCDF files in directory {dir_name}\n")
-                move_files(coord_info_fname,
+                move_files(COORD_INFO_FNAME,
                            input_directories=".", 
                            destination_directories=dir_name, 
                            match_type="glob")
@@ -120,17 +120,17 @@ def extract_time_bounds():
     - If any files are faulty or cannot be processed, relevant error information 
       is recorded in the report.
     """
-    nc_dirs = find_dirs_with_files(extensions[0], search_path=code_call_dir)
+    nc_dirs = find_dirs_with_files(EXTENSIONS[0], search_path=CODE_CALL_DIR)
     
     for dir_num, dir_name in enumerate(nc_dirs, start=1):
-        nc_files = find_files(extensions[0], dir_name, match_type="ext", top_path_only=True)
+        nc_files = find_files(EXTENSIONS[0], dir_name, match_type="ext", top_path_only=True)
         
-        with open(date_range_info_fname, "w") as report:
+        with open(DATE_RANGE_INFO_FNAME, "w") as report:
             if nc_files:
                 for file_num, nc_file in enumerate(nc_files, start=1):
                     print(f"Processing file {file_num} out of {len(nc_files)} "
                           f"in directory {dir_num} out of {len(nc_dirs)}...")
-                    report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
+                    report.write(format_string(string_underliner(DIR_INFO_TEMPLATE, dir_name), "+"))
                     
                     try:
                         ncfile_integrity_status(nc_file)
@@ -150,14 +150,14 @@ def extract_time_bounds():
                                 len(times)
                                 )
                             
-                            report.write(format_string(period_info_template, format_args_time_periods))
-                            move_files(date_range_info_fname,
+                            report.write(format_string(PERIOD_INFO_TEMPLATE, format_args_time_periods))
+                            move_files(DATE_RANGE_INFO_FNAME,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
                                        match_type="glob")
             else:
                 report.write(f"No netCDF files in directory {dir_name}\n")
-                move_files(date_range_info_fname,
+                move_files(DATE_RANGE_INFO_FNAME,
                            input_directories=".", 
                            destination_directories=dir_name, 
                            match_type="glob")
@@ -183,17 +183,17 @@ def extract_time_formats():
       is recorded in the report.
     """
 
-    nc_dirs = find_dirs_with_files(extensions[0], search_path=code_call_dir)
+    nc_dirs = find_dirs_with_files(EXTENSIONS[0], search_path=CODE_CALL_DIR)
     
     for dir_num, dir_name in enumerate(nc_dirs, start=1):
-        nc_files = find_files(extensions[0], dir_name, match_type="ext", top_path_only=True)
+        nc_files = find_files(EXTENSIONS[0], dir_name, match_type="ext", top_path_only=True)
         
-        with open(time_formats_file_name, "w") as report:
+        with open(TIME_FORMATS_FILE_NAME, "w") as report:
             if nc_files:
                 for file_num, nc_file in enumerate(nc_files, start=1):
                     print(f"Processing file {file_num} out of {len(nc_files)} "
                           f"in directory {dir_num} out of {len(nc_dirs)}...")
-                    report.write(format_string(string_underliner(dir_info_template, dir_name), "+"))
+                    report.write(format_string(string_underliner(DIR_INFO_TEMPLATE, dir_name), "+"))
                     
                     try:
                         ncfile_integrity_status(nc_file)
@@ -211,14 +211,14 @@ def extract_time_formats():
                                 times.values, 
                                 len(times)
                                 )
-                            report.write(format_string(time_format_info_template, format_args_time_formats))
-                            move_files(time_formats_file_name,
+                            report.write(format_string(TIME_FORMAT_INFO_TEMPLATE, format_args_time_formats))
+                            move_files(TIME_FORMATS_FILE_NAME,
                                        input_directories=".", 
                                        destination_directories=dir_name, 
                                        match_type="glob")
             else:
                 report.write(f"No netCDF files in directory {dir_name}\n")
-                move_files(time_formats_file_name,
+                move_files(TIME_FORMATS_FILE_NAME,
                            input_directories=".", 
                            destination_directories=dir_name, 
                            match_type="glob")
@@ -261,15 +261,15 @@ def netcdf_regridder(ds_in, ds_image, regrid_method="bilinear"):
 #--------------------------#
 
 # Directory from where this code is being called #
-code_call_dir = os.getcwd()
+CODE_CALL_DIR = os.getcwd()
 
 # File extensions #
-extensions = climate_file_extensions[::3]
+EXTENSIONS = CLIMATE_FILE_EXTENSIONS[::3]
 
 # Main file names #
-coord_info_fname = "latlon_bounds.txt"
-date_range_info_fname = "period_bounds.txt"
-time_formats_file_name = "time_formats.txt"
+COORD_INFO_FNAME = "latlon_bounds.txt"
+DATE_RANGE_INFO_FNAME = "period_bounds.txt"
+TIME_FORMATS_FILE_NAME = "time_formats.txt"
 
 # Regridding method options #
 regrid_method_list = [
@@ -285,7 +285,7 @@ regrid_method_list = [
 #------------------#
 
 # Main parameter scanning info strings #
-latlon_info_template = \
+LATLON_INFO_TEMPLATE = \
 """=========================================================
 ·File: {}
 
@@ -300,7 +300,7 @@ latlon_info_template = \
     
 """
 
-period_info_template = \
+PERIOD_INFO_TEMPLATE = \
 """=========================================================
 ·File: {}
 ·Time range: {} -- {}
@@ -308,7 +308,7 @@ period_info_template = \
 
 """
     
-time_format_info_template = \
+TIME_FORMAT_INFO_TEMPLATE = \
 """=========================================================
 ·File: {}
     
@@ -319,4 +319,4 @@ time_format_info_template = \
 """
 
 # File scanning progress information strings #
-dir_info_template = """\nDirectory: {}"""
+DIR_INFO_TEMPLATE = """\nDirectory: {}"""
