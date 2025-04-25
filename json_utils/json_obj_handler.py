@@ -23,7 +23,7 @@ from pygenutils.strings.string_handler import append_ext, get_obj_specs
 # Read from and write to JSON files #
 #-----------------------------------#
 
-# Basic JSON Data Serialization #
+# Basic JSON Data Serialisation #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 def serialise_to_json(data, 
@@ -87,7 +87,7 @@ def serialise_to_json(data,
     if out_file_path:
         # Determine the output file path and add extension if missing
         if not os.path.splitext(out_file_path)[1]:
-            out_file_path = append_ext(out_file_path, extensions[0])
+            out_file_path = append_ext(out_file_path, EXTENSIONS[0])
 
         try:
             # Handle existing files with user confirmation
@@ -444,4 +444,4 @@ def deserialise_json_to_df(json_obj_list,
 #--------------------------#
 
 # File extension list #
-extensions = ["json"]
+EXTENSIONS = ["json"]
