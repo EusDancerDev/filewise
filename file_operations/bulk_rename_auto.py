@@ -11,47 +11,52 @@ from pathlib import Path
 # Import custom modules #
 #-----------------------#
 
-from filewise.file_operations import ops_handler, path_utils
+from filewise.file_operations.ops_handler import (
+    find_dirs_with_files,
+    find_files,
+    find_items,
+    rename_objects
+)
+from filewise.file_operations.path_utils import (
+    find_dirs_with_files,
+    find_files,
+    find_items
+)
 from filewise.general.introspection_utils import get_all_caller_args
-from paramlib import global_parameters
+from paramlib.global_parameters import (
+    BASIC_OBJECT_TYPES,
+    BASIC_TIME_FORMAT_STRS,
+    NON_STD_TIME_FORMAT_STRS
+)
 from pygenutils.arrays_and_lists.patterns import select_elements
-from pygenutils.strings import text_formatters, string_handler
-from pygenutils.time_handling.datetime_operators import get_current_datetime, get_obj_operation_datetime
-
-# Create aliases #
-#----------------#
-
-rename_objects = ops_handler.rename_objects
-
-find_dirs_with_files = path_utils.find_dirs_with_files
-find_files = path_utils.find_files
-find_items = path_utils.find_items
-
-basic_object_types = global_parameters.basic_object_types
-basic_time_format_strs = global_parameters.basic_time_format_strs
-non_std_time_format_strs = global_parameters.non_std_time_format_strs
-
-format_string = text_formatters.format_string
-print_format_string = text_formatters.print_format_string
-
-find_substring_index = string_handler.find_substring_index
-modify_obj_specs = string_handler.modify_obj_specs
-obj_path_specs = string_handler.obj_path_specs
+from pygenutils.strings.string_handler import (
+    find_substring_index,
+    modify_obj_specs,
+    obj_path_specs
+)
+from pygenutils.strings.text_formatters import (
+    format_string,
+    print_format_string
+)
+from pygenutils.time_handling.datetime_operators import (
+    get_current_datetime,
+    get_obj_operation_datetime
+)
 
 #------------------#
 # Define functions #
 #------------------#
 
 def shorten_conflicting_obj_list():
-    if not ((not isinstance(lcos_upper_limit, int) \
-             and (isinstance(lcos_upper_limit, str) and lcos_upper_limit == 'inf'))\
-            or (isinstance(lcos_upper_limit, int) and lcos_upper_limit >= 1)):
+    if not ((not isinstance(LCOS_UPPER_LIMIT, int) \
+             and (isinstance(LCOS_UPPER_LIMIT, str) and LCOS_UPPER_LIMIT == 'inf'))\
+            or (isinstance(LCOS_UPPER_LIMIT, int) and LCOS_UPPER_LIMIT >= 1)):
         
         raise ValueError("Limit of the number of conflicting files "
                          "to be written to an output file "
                          "must be an integer ranging from 1 to 'inf'.")
     else:
-        if lcos_upper_limit == 'inf':
+        if LCOS_UPPER_LIMIT == 'inf':
             return False
         else:
             return True
@@ -68,21 +73,21 @@ def loop_renamer(obj_list,
     obj_type_arg_pos = find_substring_index(param_keys, "obj_type")
     zero_pad_pos = find_substring_index(param_keys, "zero_padding")
     
-    if obj_type not in basic_object_types:
+    if obj_type not in BASIC_OBJECT_TYPES:
         raise ValueError("Unsupported object type "
                          f"(argument '{param_keys[obj_type_arg_pos]}'). "
-                         f"Choose one from {basic_object_types}.")
+                         f"Choose one from {BASIC_OBJECT_TYPES}.")
             
     if not isinstance(zero_padding, int) or zero_padding < 1:
         raise ValueError(f"'zero_padding' (number {zero_pad_pos}) "
                          f"must be an integer >= 1, got {zero_padding}.")
         
     num_formatted_objs = []
-    obj2change = obj2change_dict.get(obj_type)
+    obj2change = OBJ2CHANGE_DICT.get(obj_type)
 
     for obj_num, obj_name in enumerate(obj_list, start=starting_number):
         num_format = str(obj_num).zfill(zero_padding)
-        if obj_type == basic_object_types[0]:
+        if obj_type == BASIC_OBJECT_TYPES[0]:
             num_formatted_obj = modify_obj_specs(obj_name,
                                                  obj2change, 
                                                  num_format)
@@ -159,11 +164,11 @@ def reorder_objs(path,
                         "Select 'all' if the whole available range "
                         "wants to be taken into account.")
     
-    if obj_type == basic_object_types[0]:
+    if obj_type == BASIC_OBJECT_TYPES[0]:
         ext_list = find_items(search_path=path, skip_ext=extensions2skip, top_only=True)
         obj_list_uneven = find_files(ext_list, path, match_type="ext", top_only=True)
     
-    elif obj_type == basic_object_types[1]:
+    elif obj_type == BASIC_OBJECT_TYPES[1]:
         obj_list_uneven = find_items(search_path=path, top_only=True, include_root=True, task="directories")
         
     lou = len(obj_list_uneven)
@@ -221,14 +226,14 @@ def reorder_objs(path,
         # Check for equally named, conflicting objects #
         #----------------------------------------------#
         
-        if obj_type == basic_object_types[0]:
+        if obj_type == BASIC_OBJECT_TYPES[0]:
             conflicting_objs = [find_files(f"*{Path(nff_dR2).stem}*",
                                            path,
                                            match_type="glob",
                                            top_only=True)
                                 for nff_dR2 in num_formatted_objs_dry_run_2]
             
-        elif obj_type == basic_object_types[1]:
+        elif obj_type == BASIC_OBJECT_TYPES[1]:
             conflicting_objs = [find_dirs_with_files(f"*{Path(nff_dR2).stem}*",
                                                                      path,
                                                                      match_type="glob",
@@ -242,27 +247,27 @@ def reorder_objs(path,
             # Set maximum length of the conflicting objects to write on file, if not 'inf'
             wantlimit = shorten_conflicting_obj_list()
             if wantlimit:
-                conflicting_objs = conflicting_objs[:lcos_upper_limit]            
+                conflicting_objs = conflicting_objs[:LCOS_UPPER_LIMIT]            
             
-            report_file_name = report_filename_dict.get(obj_type)     
+            report_file_name = REPORT_FILENAME_DICT.get(obj_type)     
             report_file_path = return_report_file_fixed_path(path,
                                                              report_file_name,
-                                                             fixed_ext)
+                                                             FIXED_EXT)
             
             report_file_obj = open(report_file_path, "w")                    
          
             timestamp_str_objname_uneven\
             = get_obj_operation_datetime(obj_list_uneven,
                                          "modification", 
-                                         time_format_str)
+                                         TIME_FORMAT_STR)
             
             timestamp_str_nff_dR2\
-            = get_current_datetime(time_fmt_string=ctime_format_str)
+            = get_current_datetime(time_fmt_string=CTIME_FORMAT_STR)
             
             timestamp_str_confl_obj\
             = get_obj_operation_datetime(conflicting_objs,
                                          "modification", 
-                                         time_format_str)
+                                         TIME_FORMAT_STR)
             
             for objname_uneven, nff_dR2, confl_obj in zip(obj_list_uneven,
                                                           num_formatted_objs_dry_run_2,
@@ -274,24 +279,24 @@ def reorder_objs(path,
                                              timestamp_str_nff_dR2,
                                              confl_obj, 
                                              timestamp_str_confl_obj)
-                report_file_obj.write(format_string(conf_obj_info_template, format_args_conflict_info))
+                report_file_obj.write(format_string(CONF_OBJ_INFO_TEMPLATE, format_args_conflict_info))
                          
             report_file_obj.close()
                 
-            if obj_type == basic_object_types[0]:
+            if obj_type == BASIC_OBJECT_TYPES[0]:
                 format_args_conflict_warning_files = ("files", report_file_name)
-                print_format_string(conflicting_objects_warning, format_args_conflict_warning_files)
+                print_format_string(CONFLICTING_OBJECTS_WARNING, format_args_conflict_warning_files)
                 
-            elif obj_type == basic_object_types[1]:
+            elif obj_type == BASIC_OBJECT_TYPES[1]:
                 format_args_conflict_warning_dirs = ("directories", report_file_name)
-                print_format_string(conflicting_objects_warning, format_args_conflict_warning_dirs) 
+                print_format_string(CONFLICTING_OBJECTS_WARNING, format_args_conflict_warning_dirs) 
  
         else:
             
             report_file_name = "dry-run_renaming_report"    
             report_file_path = return_report_file_fixed_path(path,
                                                              report_file_name,
-                                                             fixed_ext)
+                                                             FIXED_EXT)
             report_file_obj = open(report_file_path, "w")                    
             
             for objname_uneven, nff_dR2 in zip(obj_list_uneven, num_formatted_objs_dry_run_2):
@@ -299,17 +304,17 @@ def reorder_objs(path,
                                             timestamp_str_objname_uneven,
                                             nff_dR2,
                                             timestamp_str_nff_dR2)
-                report_file_obj.write(format_string(conf_obj_info_template, format_args_dry_run_info))
+                report_file_obj.write(format_string(CONF_OBJ_INFO_TEMPLATE, format_args_dry_run_info))
                          
             report_file_obj.close()
                 
-            if obj_type == basic_object_types[0]:
+            if obj_type == BASIC_OBJECT_TYPES[0]:
                 format_args_no_conflict_files = ("files", report_file_name)
-                print_format_string(no_conflicting_object_message, format_args_no_conflict_files)
+                print_format_string(NO_CONFLICTING_OBJECT_MESSAGE, format_args_no_conflict_files)
                 
-            elif obj_type == basic_object_types[1]:
+            elif obj_type == BASIC_OBJECT_TYPES[1]:
                 format_args_no_conflict_dirs = ("directories", report_file_name)
-                print_format_string(no_conflicting_object_message, format_args_no_conflict_dirs)
+                print_format_string(NO_CONFLICTING_OBJECT_MESSAGE, format_args_no_conflict_dirs)
                 
             ansPerformChanges\
             = input("Would you like to perform the changes? [y/n] ")
@@ -340,14 +345,14 @@ def reorder_objs(path,
         # Check for equally named, conflicting objects #
         #----------------------------------------------#
         
-        if obj_type == basic_object_types[0]:
+        if obj_type == BASIC_OBJECT_TYPES[0]:
             conflicting_objs = [find_files(f"*{Path(nff_dR).stem}*",
                                            path,
                                            match_type="glob",
                                            top_only=True)
                                 for nff_dR in num_formatted_objs_dry_run]
         
-        elif obj_type == basic_object_types[1]:
+        elif obj_type == BASIC_OBJECT_TYPES[1]:
             conflicting_objs = [find_dirs_with_files(f"*{Path(nff_dR).stem}*",
                                                      path,
                                                      match_type="glob",
@@ -361,27 +366,27 @@ def reorder_objs(path,
             # Set maximum length of the conflicting objects to write on file, if not 'inf'
             wantlimit = shorten_conflicting_obj_list()
             if wantlimit:
-                conflicting_objs = conflicting_objs[:lcos_upper_limit]   
+                conflicting_objs = conflicting_objs[:LCOS_UPPER_LIMIT]   
                 
-            report_file_name = report_filename_dict.get(obj_type)
+            report_file_name = REPORT_FILENAME_DICT.get(obj_type)
             report_file_path = return_report_file_fixed_path(path,
                                                              report_file_name,
-                                                             fixed_ext)
+                                                             FIXED_EXT)
             
             report_file_obj = open(report_file_path, "w")                    
               
             timestamp_str_objname_unevens\
             = get_obj_operation_datetime(obj_list_uneven_slice,
                                          "modification", 
-                                         time_format_str)
+                                         TIME_FORMAT_STR)
             
             timestamp_str_nff_dR\
-            = get_current_datetime(time_fmt_string=ctime_format_str)
+            = get_current_datetime(time_fmt_string=CTIME_FORMAT_STR)
             
             timestamp_str_confl_obj\
             = get_obj_operation_datetime(conflicting_objs,
                                          "modification", 
-                                         time_format_str)
+                                         TIME_FORMAT_STR)
             
             for objname_unevens, nff_dR, confl_obj in zip(obj_list_uneven_slice,
                                                           num_formatted_objs_dry_run,
@@ -393,7 +398,7 @@ def reorder_objs(path,
                                                    timestamp_str_nff_dR,
                                                    confl_obj,
                                                    timestamp_str_confl_obj)
-                report_file_obj.write(format_string(conf_obj_info_template, format_args_conflict_info_slice))
+                report_file_obj.write(format_string(CONF_OBJ_INFO_TEMPLATE, format_args_conflict_info_slice))
                          
             report_file_obj.close()
                 
@@ -405,13 +410,13 @@ def reorder_objs(path,
             report_file_name = "dry-run_renaming_report"    
             report_file_path = return_report_file_fixed_path(path,
                                                              report_file_name,
-                                                             fixed_ext)
+                                                             FIXED_EXT)
             report_file_obj = open(report_file_path, "w")                    
             
             for objname_unevens, nff_dr in zip(obj_list_uneven_slice, 
                                                num_formatted_objs_dry_run):
                 format_args_dry_run_info_slice = (objname_unevens, nff_dR)
-                report_file_obj.write(format_string(dry_run_info_template, format_args_dry_run_info_slice))
+                report_file_obj.write(format_string(DRY_RUN_INFO_TEMPLATE, format_args_dry_run_info_slice))
                          
             report_file_obj.close()
                 
@@ -434,44 +439,44 @@ def reorder_objs(path,
 #--------------------------#
 
 # Time formatting strings #
-time_format_str = basic_time_format_strs["H"]
-ctime_format_str = non_std_time_format_strs["CFT_H"]
+TIME_FORMAT_STR = BASIC_TIME_FORMAT_STRS["H"]
+CTIME_FORMAT_STR = NON_STD_TIME_FORMAT_STRS["CFT_H"]
 
 # Fixed extension to reuse at different parts of the objname_unevennctions #
-fixed_ext = "txt"
+FIXED_EXT = "txt"
 
 # Fixed length of the list containing the conflicting file or directory names #
 """Set the minimum limit to 1.
 If no limit wants to be considered, set the parameter to 'inf'
 """
-lcos_upper_limit = 2
+LCOS_UPPER_LIMIT = 2
         
 
 # Template strings #
 #------------------#
 
 # Object path comparisons and conflicts, if any, due to already existing ones #
-conf_obj_info_template\
+CONF_OBJ_INFO_TEMPLATE\
 = """'{}' <--> '{}' renamed to '{}' <--> '{}' conflicts with '{}' <--> '{}'\n"""
 
-dry_run_info_template = """'{}' renamed to '{}'\n"""
+DRY_RUN_INFO_TEMPLATE = """'{}' renamed to '{}'\n"""
 
-conflicting_objects_warning = """\n\nSome renamed {} conflict!
+CONFLICTING_OBJECTS_WARNING = """\n\nSome renamed {} conflict!
 Information is stored at file '{}'."""
 
-no_conflicting_object_message = """No conflicting {} found
+NO_CONFLICTING_OBJECT_MESSAGE = """No conflicting {} found
 Please check the dry-run renaming information at file '{}'."""
 
 
 # Switch case dictionaries #
 #--------------------------#
 
-report_filename_dict = {
-    basic_object_types[0] : "conflicting_files_report",
-    basic_object_types[1] : "conflicting_directories_report"
+REPORT_FILENAME_DICT = {
+    BASIC_OBJECT_TYPES[0] : "conflicting_files_report",
+    BASIC_OBJECT_TYPES[1] : "conflicting_directories_report"
     }
 
-obj2change_dict = {
-    basic_object_types[0] : "name_noext",
-    basic_object_types[1] : "name_noext_parts"
+OBJ2CHANGE_DICT = {
+    BASIC_OBJECT_TYPES[0] : "name_noext",
+    BASIC_OBJECT_TYPES[1] : "name_noext_parts"
     }
