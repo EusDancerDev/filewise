@@ -20,25 +20,25 @@ from filewise.file_operations.bulk_rename_auto import reorder_objs
 # Define parameters #
 #-------------------#
 
-path = "/home/jonander/Pictures/2023/Tenerife_test_rename_pygenutils"
-obj_type = "file"
+PATH = "/home/jonander/Pictures/2023/Tenerife_test_rename_pygenutils"
+OBJ_TYPE = "file"
 
-zero_padding = 3
-extensions2skip = ""
+ZERO_PADDING = 3
+EXTENSIONS2SKIP = ""
 
-starting_number = "default"
-index_range = "all"
+STARTING_NUMBER = "default"
+INDEX_RANGE = "all"
 
-splitdelim = None
+SPLIT_DELIM = None
 
 #------------------#
 # Perform the task #
 #------------------#
 
-reorder_objs(path,
-             obj_type,
-             extensions2skip,
-             index_range,
-             starting_number,
-             zero_padding,
-             splitdelim=splitdelim)
+reorder_objs(PATH,
+             OBJ_TYPE,
+             EXTENSIONS2SKIP,
+             INDEX_RANGE,
+             STARTING_NUMBER,
+             ZERO_PADDING,
+             splitdelim=SPLIT_DELIM)

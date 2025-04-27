@@ -28,30 +28,30 @@ from filewise.file_operations.permission_manager import modify_obj_owner, modify
 #--------------#
 
 # Path to search for directories and files
-path = "/home/jonander/Documents"
+PATH = "/home/jonander/Documents"
 
 # Extensions excluded from searching #
-extensions2skip = ""
+EXTENSIONS2SKIP = ""
 
 # File object properties #
 #------------------------#
     
 # Permission ID #
-attr_id = -1
+ATTR_ID = -1
     
 # Owner and group names or IDs 
-new_owner = -1
-new_group = -1
+NEW_OWNER = -1
+NEW_GROUP = -1
 
 # Owner modification function params #
 #-----------------------------------#
 
 # Module to use for #
-module = "shutil"
+MODULE = "shutil"
 
 #------------#
 # Operations #
 #------------#
 
-modify_obj_permissions(path, extensions2skip, attr_id)
-modify_obj_owner(path, module, extensions2skip, new_owner, new_group)
+modify_obj_permissions(PATH, EXTENSIONS2SKIP, ATTR_ID)
+modify_obj_owner(PATH, MODULE, EXTENSIONS2SKIP, NEW_OWNER, NEW_GROUP)

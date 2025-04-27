@@ -27,27 +27,27 @@ from filewise.format_converters.pdf_tools import file_compressor
 # 1st case usage #
 #----------------#
 
-in_path_str  = "/home/jonander/Documents/apunteak.pdf"
-out_path_str = "/home/jonander/Documents/tweaked.pdf"
+IN_PATH_STR = "/home/jonander/Documents/apunteak.pdf"
+OUT_PATH_STR = "/home/jonander/Documents/tweaked.pdf"
 
 # For readability purposes, place the function here,
 # alongside with the case usage parameters 
-file_compressor(in_path_str, out_path_str)
+file_compressor(IN_PATH_STR, OUT_PATH_STR)
 
 #%%
 # 2nd case usage #
 #----------------#
 
-in_path_list = ["/home/jonander/Documents/sample_1.pdf",
+IN_PATH_LIST = ["/home/jonander/Documents/sample_1.pdf",
                 "/home/jonander/Documents/sample_2.pdf",
                 "/home/jonander/Documents/sample_3.pdf",
                 "/home/jonander/Documents/sample_4.pdf"]
 
-out_path_list = ["/home/jonander/Documents/compressed_sample1.pdf",
+OUT_PATH_LIST = ["/home/jonander/Documents/compressed_sample1.pdf",
                  "/home/jonander/Documents/compressed_sample2.pdf",
                  "/home/jonander/Documents/compressed_sample3.pdf",
                  "/home/jonander/Documents/compressed_sample4.pdf",]
 
 # For readability purposes, place the function here,
 # alongside with the case usage parameters 
-file_compressor(in_path_list, out_path_list)
+file_compressor(IN_PATH_LIST, OUT_PATH_LIST)

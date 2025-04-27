@@ -112,29 +112,29 @@ def print_format_string(string2format, format_args_list):
 #--------------#
 
 # Define the main path #
-main_path = "/home/jonander/Pictures/2024"
+MAIN_PATH = "/home/jonander/Pictures/2024"
 
 # Change to the desired directory and get that path #
-change_to_path_and_store(main_path)
+change_to_path_and_store(MAIN_PATH)
 cwd_path = get_current_path()
 
 # Progress information template string #
-rename_progress_info_template = """Current directory : {}
+RENAME_PROGRESS_INFO_TEMPLATE = """Current directory : {}
 File or directory list : {}
 Length of the list : {}
 """
 
 # Supported object types #
-obj_type_list = ["file" ,"directory"]
+OBJ_TYPE_LIST = ["file" ,"directory"]
 
 # Switch case dictionaries #
 #--------------------------#
 
-object_listing_dict = {
-    obj_type_list[0] : lambda path : [file
+OBJECT_LISTING_DICT = {
+    OBJ_TYPE_LIST[0] : lambda path : [file
                                       for file in path.iterdir() 
                                       if file.is_file()],
-    obj_type_list[1] : lambda path : [dirc
+    OBJ_TYPE_LIST[1] : lambda path : [dirc
                                       for dirc in path.iterdir() 
                                       if dirc.is_dir()]
     }
@@ -145,11 +145,11 @@ object_listing_dict = {
 
 # List of files (or directories) in the previously given path #
 obj_list = get_obj_list(cwd_path, "directory", return_path_obj=True)
-len_obj_list = len(obj_list)
+LEN_OBJ_LIST = len(obj_list)
 
 # Print basic information such as current path, list of files and its length #
-format_args_list = [cwd_path, obj_list, len_obj_list]
-print_format_string(rename_progress_info_template, format_args_list)
+format_args_list = [cwd_path, obj_list, LEN_OBJ_LIST]
+print_format_string(RENAME_PROGRESS_INFO_TEMPLATE, format_args_list)
 
 # Perform the file renaming #
 for num, file in enumerate(obj_list, start=1):
