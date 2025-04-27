@@ -10,9 +10,9 @@ import pwd
 import shutil
 import grp
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.path_utils import find_files, find_items
 from filewise.general.introspection_utils import get_caller_args

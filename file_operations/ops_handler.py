@@ -8,9 +8,9 @@
 import os
 import shutil
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 

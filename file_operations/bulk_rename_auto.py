@@ -7,9 +7,9 @@
 
 from pathlib import Path
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.ops_handler import (
     find_dirs_with_files,
