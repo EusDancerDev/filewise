@@ -4,9 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.8.0] - 2025-04-25
+## [v3.8.1] - 2025-04-27
 
 ### Changed
+
+- Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
+
+---
+
+## [v3.8.0] - 2025-04-25
+
+### Changed (v3.8.0)
 
 #### **File Operations**
 
