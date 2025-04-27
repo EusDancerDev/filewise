@@ -27,20 +27,14 @@ import time
 # Import project modules #
 #------------------------#
 
-from filewise.file_operations import ops_handler, path_utils
-from pygenutils.arrays_and_lists import conversions
+from filewise.file_operations.ops_handler import (
+    copy_files,
+    remove_files,
+    rename_objects
+)
+from filewise.file_operations.path_utils import find_dirs_with_files
+from pygenutils.arrays_and_lists.conversions import flatten_to_string
 from pygenutils.operative_systems.os_operations import run_system_command
-
-# Create aliases #
-#----------------#
-
-flatten_to_string = conversions.flatten_to_string
-
-copy_files = ops_handler.copy_files
-remove_files = ops_handler.remove_files
-rename_objects = ops_handler.rename_objects
-
-find_dirs_with_files = path_utils.find_dirs_with_files
 
 #-------------------#
 # Define parameters #
