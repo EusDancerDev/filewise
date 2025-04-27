@@ -41,4 +41,4 @@ reorder_objs(PATH,
              INDEX_RANGE,
              STARTING_NUMBER,
              ZERO_PADDING,
-             splitdelim=SPLIT_DELIM)
+             SPLIT_DELIM=SPLIT_DELIM)

@@ -67,7 +67,7 @@ def loop_renamer(obj_list,
                  starting_number="default",  
                  zero_padding=1,
                  dry_run=False,
-                 splitdelim=None):
+                 SPLIT_DELIM=None):
     
     param_keys = list(get_all_caller_args().values())
     obj_type_arg_pos = find_substring_index(param_keys, "obj_type")
@@ -94,7 +94,7 @@ def loop_renamer(obj_list,
         else:
             fpn_parts = obj_path_specs(obj_name,
                                        obj_spec_key="name_noext_parts",
-                                       splitdelim=splitdelim)
+                                       SPLIT_DELIM=SPLIT_DELIM)
                     
             nf_changes_tuple = (fpn_parts[0], num_format)
             num_formatted_obj = modify_obj_specs(obj_name,
@@ -135,7 +135,7 @@ def reorder_objs(path,
                  index_range="all",
                  starting_number="default",
                  zero_padding="default",
-                 splitdelim=None):
+                 SPLIT_DELIM=None):
     
     # Input parameter validation #
     all_arg_dict = get_all_caller_args()    
@@ -210,7 +210,7 @@ def reorder_objs(path,
                                                     starting_number=resetting_number,
                                                     zero_padding=zero_padding,
                                                     dry_run=True,
-                                                    splitdelim=splitdelim)
+                                                    SPLIT_DELIM=SPLIT_DELIM)
                           
         """2nd step:
         Rename directories starting from 1, now that object numbering
@@ -221,7 +221,7 @@ def reorder_objs(path,
                                                     starting_number=1, 
                                                     zero_padding=zero_padding,
                                                     dry_run=True,
-                                                    splitdelim=splitdelim)
+                                                    SPLIT_DELIM=SPLIT_DELIM)
                                         
         # Check for equally named, conflicting objects #
         #----------------------------------------------#
@@ -340,7 +340,7 @@ def reorder_objs(path,
                                                   starting_number=starting_number, 
                                                   zero_padding=zero_padding,
                                                   dry_run=True,
-                                                  splitdelim=splitdelim)
+                                                  SPLIT_DELIM=SPLIT_DELIM)
               
         # Check for equally named, conflicting objects #
         #----------------------------------------------#
