@@ -15,8 +15,8 @@ of the module `permission_manager` (sub-package `file_operations` in `filewise`)
 """
 
 #-----------------------#
-# Import custom modules #
-#-----------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.permission_manager import modify_obj_owner, modify_obj_permissions
 

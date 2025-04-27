@@ -13,9 +13,9 @@ It is reccommended to firsly run this first cell, and then one of the
 following cells, instead of running the whole program.
 """
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.format_converters.pdf_tools import file_compressor
 

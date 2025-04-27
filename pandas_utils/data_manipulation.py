@@ -7,9 +7,9 @@
 
 import pandas as pd
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.pandas_utils.pandas_obj_handler import csv2df
 

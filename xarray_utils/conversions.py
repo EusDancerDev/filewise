@@ -7,9 +7,9 @@
 
 import xarray as xr
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.xarray_utils.xarray_obj_handler import _save_ds_as_nc
 from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS

@@ -7,9 +7,9 @@
 
 import os
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.ops_handler import move_files
 from filewise.file_operations.path_utils import find_dirs_with_files, find_files

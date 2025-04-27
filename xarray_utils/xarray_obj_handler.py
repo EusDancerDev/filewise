@@ -7,9 +7,9 @@
 
 import xarray as xr
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.pandas_utils.pandas_obj_handler import save2csv
 from filewise.xarray_utils.patterns import find_coordinate_variables

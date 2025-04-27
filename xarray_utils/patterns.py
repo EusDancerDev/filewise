@@ -8,9 +8,9 @@
 import numpy as np
 import xarray as xr
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.xarray_utils.file_utils import ncfile_integrity_status
 from paramlib.global_parameters import COMMON_DELIM_LIST

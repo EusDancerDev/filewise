@@ -10,9 +10,9 @@ import os
 
 import pandas as pd
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from pygenutils.strings.string_handler import append_ext, get_obj_specs
 

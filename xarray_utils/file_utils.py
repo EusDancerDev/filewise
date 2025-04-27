@@ -17,9 +17,9 @@ import numpy as np
 import xarray as xr
 import os
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.path_utils import find_files
 from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS

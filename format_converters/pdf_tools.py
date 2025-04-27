@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
-from filewise.introspection_utils import get_caller_args, get_type_str
+from filewise.general.introspection_utils import get_caller_args, get_type_str
 from paramlib.global_parameters import COMMON_DELIM_LIST
 from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command

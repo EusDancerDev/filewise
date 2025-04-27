@@ -8,9 +8,9 @@
 from numpy import unique
 import pandas as pd
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files

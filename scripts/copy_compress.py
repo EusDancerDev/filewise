@@ -23,9 +23,9 @@ Workflow Overview:
 
 import time
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.file_operations import ops_handler, path_utils
 from pygenutils.arrays_and_lists import conversions
