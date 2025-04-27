@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 #### **General**
 
 - Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
+- Modify the constant `splitdelim` to `SPLIT_DELIM` in all modules having it.
 
 #### **File Operations**
 
@@ -28,13 +29,15 @@ All notable changes to this project will be documented in this file.
   - `modify_properties.py`
   - `bulk_rename.py`
 
+- Module `copy_compress.py`: reorganise imports to be more direct, instead of using aliases.
+
 ---
 
 ## [v3.8.0] - 2025-04-25
 
 ### Changed (v3.8.0)
 
-#### **File Operations**
+#### **File Operations** (changing)
 
 - Modules `permission_manager.py`, `bulk_rename_auto.py`, `path_utils.py`, `ops_handler.py`:
   - Convert all configuration constants to uppercase
