@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### **General**
+
 - Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
 
 ---
