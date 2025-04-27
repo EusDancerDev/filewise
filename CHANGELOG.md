@@ -62,7 +62,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.7.0)
 
-#### **General**
+#### **General** (v3.7.0)
 
 - Refactored package import structure:
   - Replace direct imports with `__all__` definitions in package initiator files:
