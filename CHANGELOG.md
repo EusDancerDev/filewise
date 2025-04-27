@@ -12,6 +12,22 @@ All notable changes to this project will be documented in this file.
 
 - Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
 
+#### **File Operations**
+
+- Modules `bulk_rename_auto.py` and `bulk_rename_manual.py`:
+  - Convert all **constant names** under the header `Define parameters` to uppercase following Python naming conventions.
+
+#### **Scripts**
+
+- Convert all **constant names** under the header `Define parameters` to uppercase in the following files:
+  - `copy_compress.py`
+  - `msg2pdf_exec.py`
+  - `eml2pdf_exec.py`
+  - `tweak_pdf.py`
+  - `compress_pdf.py`
+  - `modify_properties.py`
+  - `bulk_rename.py`
+
 ---
 
 ## [v3.8.0] - 2025-04-25
