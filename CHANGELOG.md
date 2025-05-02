@@ -4,11 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.8.1] - 2025-04-27
+## [v3.8.2] - 2025-05-02
 
 ### Changed
 
 #### **General**
+
+- Replace the deprecated `find_time_key` function with the new `find_dt_key` function in the following modules:
+  - `xarray_utils/data_manipulation.py`
+  - `xarray_utils/xarray_obj_handler.py`
+
+---
+
+## [v3.8.1] - 2025-04-27
+
+### Changed (v3.8.1)
+
+#### **General** (changing)
 
 - Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
 - Modify the constant `splitdelim` to `SPLIT_DELIM` in all modules having it.

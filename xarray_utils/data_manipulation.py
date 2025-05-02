@@ -22,7 +22,7 @@ from filewise.xarray_utils.patterns import (
 )
 from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
 from pygenutils.strings.text_formatters import format_string, string_underliner
-from pygenutils.time_handling.date_and_time_utils import find_time_key
+from pygenutils.time_handling.date_and_time_utils import find_dt_key
 
 #-------------------------#
 # Define custom functions #
@@ -138,7 +138,7 @@ def extract_time_bounds():
                         report.write(f"FAULTY FILE '{nc_file}': {ncf_err}\n")
                     else:
                         try:
-                            time_var = find_time_key(nc_file)
+                            time_var = find_dt_key(nc_file)
                         except Exception as time_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
@@ -201,7 +201,7 @@ def extract_time_formats():
                         report.write(f"FAULTY FILE '{nc_file}': {ncf_err}\n")
                     else:
                         try:
-                            time_var = find_time_key(nc_file)
+                            time_var = find_dt_key(nc_file)
                         except Exception as time_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
