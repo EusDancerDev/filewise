@@ -4,9 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.8.2] - 2025-05-02
+## [v3.8.3] - 2025-05-05
 
 ### Changed
+
+#### **Xarray Utils**
+
+- Module `file_utils.py`:
+  - Resolved circular import issue by implementing lazy import of `CLIMATE_FILE_EXTENSIONS` from `paramlib.global_parameters`
+
+---
+
+## [v3.8.2] - 2025-05-02
+
+### Changed (v3.8.2)
 
 #### **General**
 
