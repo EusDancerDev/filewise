@@ -22,7 +22,6 @@ import os
 #------------------------#
 
 from filewise.file_operations.path_utils import find_files
-from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
 from pygenutils.strings.string_handler import get_obj_specs
 from pygenutils.strings.text_formatters import (
     format_string,
@@ -92,10 +91,12 @@ def scan_ncfiles(search_path):
     result = scan_netCDF_files("/path/to/scan", return_files=True, return_dirs=True)
     print(result['files'], result['dirs'])
     """
+    # Import here to avoid circular imports
+    from paramlib.global_parameters import CLIMATE_FILE_EXTENSIONS
         
     # Step 1: Search for all netCDF files #
     #######################################
-    all_files = find_files(EXTENSIONS[0], search_path)
+    all_files = find_files(CLIMATE_FILE_EXTENSIONS[0], search_path)
     
     # Step 2: Check each file's integrity and collect faulty files  #
     #################################################################
@@ -191,11 +192,8 @@ def ncfile_integrity_status(ncfile_name):
 # Directory from where this code is being called #
 CODE_CALL_DIR = os.getcwd()
 
-# File extensions #
-EXTENSIONS = CLIMATE_FILE_EXTENSIONS[::3]
-
 # Template strings #
-#----------------------#
+#------------------#
 
 # File scanning progress information strings #
 SCAN_PROGRESS_TEMPLATE =\
