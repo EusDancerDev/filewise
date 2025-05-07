@@ -6,7 +6,9 @@
 #----------------#
 
 import os
-import numpy as np
+import fnmatch
+import re
+from functools import lru_cache
 
 #------------------#
 # Define functions #
@@ -14,6 +16,67 @@ import numpy as np
 
 # Helpers #
 #---------#
+
+def _unique_sorted(items):
+    """
+    Returns a sorted list of unique items.
+    
+    Parameters
+    ----------
+    items : list
+        List of items to deduplicate and sort.
+        
+    Returns
+    -------
+    list
+        Sorted list of unique items.
+    """
+    return sorted(set(items))
+
+@lru_cache(maxsize=128)
+def _compile_pattern(pattern):
+    """
+    Compiles a glob pattern into a regex pattern for faster matching.
+    
+    Parameters
+    ----------
+    pattern : str
+        The glob pattern to compile.
+        
+    Returns
+    -------
+    re.Pattern
+        Compiled regex pattern.
+    """
+    return re.compile(fnmatch.translate(pattern))
+
+def _match_glob(file, patterns, case_sensitive=True):
+    """
+    Matches a file against a list of glob patterns.
+    
+    Parameters
+    ----------
+    file : str
+        The file path to match.
+    patterns : list
+        List of glob patterns to match against.
+    case_sensitive : bool, optional
+        Whether to perform case-sensitive matching. Defaults to True.
+        
+    Returns
+    -------
+    bool
+        True if the file matches any pattern, False otherwise.
+    """
+    if not os.path.isfile(file):
+        return False
+        
+    basename = os.path.basename(file)
+    if not case_sensitive:
+        basename = basename.lower()
+        patterns = [p.lower() for p in patterns]
+    
+    return any(_compile_pattern(pattern).match(basename) for pattern in patterns)
 
 def _fetch_path_items(path, glob_bool=True):
     """
@@ -43,16 +106,20 @@ def _fetch_path_items(path, glob_bool=True):
     
 # Switch-case dictionary to modify patterns based on 'match_type' argument 
 def _add_glob_left(patterns):
-    return [f"*{pattern}" for pattern in patterns]
+    """Add wildcard at the beginning of patterns (to match end of filename)"""
+    return (f"*{pattern}" for pattern in patterns)
 
 def _add_glob_right(patterns):
-    return [f"{pattern}*" for pattern in patterns]
+    """Add wildcard at the end of patterns (to match beginning of filename)"""
+    return (f"{pattern}*" for pattern in patterns)
 
 def _add_glob_both(patterns):
-    return [f"*{pattern}*" for pattern in patterns]
+    """Add wildcards at both ends of patterns (to match anywhere in filename)"""
+    return (f"*{pattern}*" for pattern in patterns)
 
 def _whole_word(patterns):
-    return patterns  # No modification for whole word match
+    """No modification for whole word match"""
+    return patterns
 
 
 # Main functions #
@@ -61,7 +128,7 @@ def _whole_word(patterns):
 # File Operations #
 #~~~~~~~~~~~~~~~~~#
 
-def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None):
+def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None, case_sensitive=True):
     """
     Searches for files based on extensions or glob patterns with various matching types.
 
@@ -85,6 +152,8 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     dirs_to_exclude : str or list, optional
         Directory or list of directories to exclude from the search.
         Defaults to None.
+    case_sensitive : bool, optional
+        Whether to perform case-sensitive matching. Defaults to True.
     
     Returns
     -------
@@ -105,7 +174,7 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     if not modify_pattern_func:
         raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
     
-    patterns = modify_pattern_func(patterns)
+    patterns = list(modify_pattern_func(patterns))  # Convert generator to list for multiple uses
 
     if top_only:
         files = _fetch_path_items(search_path, glob_bool=False)
@@ -119,13 +188,13 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     if not match_func:
         raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
 
-    return list(np.unique([file for file in files if match_func(file, patterns)]))
+    return _unique_sorted([file for file in files if match_func(file, patterns, case_sensitive)])
 
 
 # Directory Operations #
 #~~~~~~~~~~~~~~~~~~~~~~#
 
-def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None):
+def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None, case_sensitive=True):
     """
     Finds directories containing files that match the given patterns with various matching types.
 
@@ -149,6 +218,8 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     dirs_to_exclude : str or list, optional
         Directory or list of directories to exclude from the search.
         Defaults to None.
+    case_sensitive : bool, optional
+        Whether to perform case-sensitive matching. Defaults to True.
     
     Returns
     -------
@@ -169,7 +240,7 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     if not modify_pattern_func:
         raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
     
-    patterns = modify_pattern_func(patterns)
+    patterns = list(modify_pattern_func(patterns))  # Convert generator to list for multiple uses
 
     if top_only:
         files = _fetch_path_items(search_path, glob_bool=False)
@@ -183,8 +254,8 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     if not match_func:
         raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
 
-    dirs = [os.path.dirname(file) for file in files if match_func(file, patterns)]
-    return list(np.unique(dirs))
+    dirs = [os.path.dirname(file) for file in files if match_func(file, patterns, case_sensitive)]
+    return _unique_sorted(dirs)
 
 
 # Extensions and Directories Search #
@@ -233,10 +304,10 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions", di
     if task == "extensions":
         extensions = [os.path.splitext(file)[1] for file in items 
                       if os.path.isfile(file) and os.path.splitext(file)[1] not in skip_ext]
-        return list(np.unique(extensions))
+        return _unique_sorted(extensions)
     elif task == "directories":
         dirs = [item for item in items if os.path.isdir(item)]
-        return list(np.unique(dirs))
+        return _unique_sorted(dirs)
     else:
         raise ValueError("Invalid task. Use 'extensions' or 'directories'.")
         
@@ -249,11 +320,22 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions", di
 
 # Define a switch-case dictionary to handle 'match_type' options
 MATCH_TYPE_DICT = {
-    "ext": lambda file, patterns: any(file.endswith(f".{ext}") for ext in patterns),
-    "glob_left": lambda file, patterns: any(pattern in file for pattern in patterns),
-    "glob_right": lambda file, patterns: any(pattern in file for pattern in patterns),
-    "glob_both": lambda file, patterns: any(pattern in file for pattern in patterns),
-    "ww": lambda file, patterns: any(pattern == file for pattern in patterns)
+    # For extension matching, we check if the file ends with the extension
+    "ext": lambda file, patterns, case_sensitive=True: (
+        os.path.isfile(file) and 
+        any(os.path.splitext(file)[1].lower() == f".{ext.lower()}" for ext in patterns)
+    ),
+    
+    # For glob patterns, we use our optimised matching function
+    "glob_left": _match_glob,
+    "glob_right": _match_glob,
+    "glob_both": _match_glob,
+    
+    # For whole word matching, we check if the pattern exactly matches the basename
+    "ww": lambda file, patterns, case_sensitive=True: (
+        os.path.isfile(file) and 
+        any(pattern == os.path.basename(file) for pattern in patterns)
+    )
 }
 
 MTD_KEYS = list(MATCH_TYPE_DICT.keys())
