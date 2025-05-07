@@ -33,8 +33,30 @@ from pygenutils.strings.text_formatters import (
 # Define custom functions #
 #-------------------------#
 
+# Internal #
+#----------#
+
+def _unique_sorted(items):
+    """
+    Returns a sorted list of unique items.
+    
+    Parameters
+    ----------
+    items : list
+        List of items to deduplicate and sort.
+        
+    Returns
+    -------
+    list
+        Sorted list of unique items.
+    """
+    return sorted(set(items))
+
+# Public #
+#--------#
+
 # netCDF file searching #
-#-----------------------#
+#~~~~~~~~~~~~~~~~~~~~~~~#
 
 # Main function #
 #-#-#-#-#-#-#-#-#
@@ -112,7 +134,7 @@ def scan_ncfiles(search_path):
                 
     # Step 3: Find directories containing faulty files #
     ####################################################
-    dir_list = np.unique([get_obj_specs(err_tuple[0], "parent") for err_tuple in file_vs_err_list])
+    dir_list = _unique_sorted([get_obj_specs(err_tuple[0], "parent") for err_tuple in file_vs_err_list])
     
     # Step 4: Group faulty files by directory
     file_vs_errs_dict = {dirc: [err_tuple for err_tuple in file_vs_err_list 
@@ -136,7 +158,6 @@ def scan_ncfiles(search_path):
             report.write(format_string(string_underliner(DIR_INFO_TEMPLATE, format_args_dir_info), "="))
             for values in file_vs_errs_dict[dirc]:
                 report.write(format_string(FILE_INFO_WRITING_TEMPLATE, values))
-
 
 # Helpers #
 #-#-#-#-#-#
