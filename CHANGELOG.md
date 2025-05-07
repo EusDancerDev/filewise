@@ -4,9 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.8.3] - 2025-05-05
+## [v3.8.4] - 2025-05-07
 
 ### Changed
+
+#### **File Operations**
+
+- Module `path_utils.py`:
+  - Added pattern compilation with LRU cache for faster glob matching
+  - Consolidated glob pattern matching into a single optimised function
+  - Added case sensitivity option to all matching functions
+  - Implement array uniqueness calculation with with Python's built-in set, instead of `np.unique`.
+
+- Module `file_utils.py`:
+  - Implement array uniqueness calculation with with Python's built-in set, instead of `np.unique`.
+
+---
+
+## [v3.8.3] - 2025-05-05
+
+### Changed (v3.8.3)
 
 #### **Xarray Utils**
 
@@ -36,7 +53,7 @@ All notable changes to this project will be documented in this file.
 - Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
 - Modify the constant `splitdelim` to `SPLIT_DELIM` in all modules having it.
 
-#### **File Operations**
+#### **File Operations** (changing)
 
 - Modules `bulk_rename_auto.py` and `bulk_rename_manual.py`:
   - Convert all **constant names** under the header `Define parameters` to uppercase following Python naming conventions.
@@ -60,7 +77,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.8.0)
 
-#### **File Operations** (changing)
+#### **File Operations** (changing; v3.8.0)
 
 - Modules `permission_manager.py`, `bulk_rename_auto.py`, `path_utils.py`, `ops_handler.py`:
   - Convert all configuration constants to uppercase
@@ -90,7 +107,7 @@ All notable changes to this project will be documented in this file.
   - Toggle uppercase all constants imported from `global_parameters.py` in `paramlib`
   - Update all references to these constants throughout the code
 
-#### **Xarray Utils**
+#### **Xarray Utils** (v3.8.0)
 
 - Modules `conversions.py`, `data_manipulation.py`, `file_utils.py`, `patterns.py`, `xarray_obj_handler.py`:
   - Convert all configuration constants to uppercase
