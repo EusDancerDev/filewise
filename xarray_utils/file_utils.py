@@ -159,8 +159,8 @@ def scan_ncfiles(search_path):
             for values in file_vs_errs_dict[dirc]:
                 report.write(format_string(FILE_INFO_WRITING_TEMPLATE, values))
 
-# Helpers #
-#-#-#-#-#-#
+# Auxiliary functions #
+#-#-#-#-#-#-#-#-#-#-#-#
 
 def ncfile_integrity_status(ncfile_name):
     """
