@@ -18,7 +18,14 @@ from pygenutils.strings.text_formatters import format_string, format_table_from_
 # Define functions #
 #------------------#
 
-def tweak_pages(file, cat_str, out_path=None):
+def tweak_pages(
+        file, 
+        cat_str, 
+        out_path=None,
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Modify and select specific pages in a PDF file based on the provided page string.
 
@@ -30,6 +37,14 @@ def tweak_pages(file, cat_str, out_path=None):
         Page selection string for the 'pdftk' command.
     out_path : str, optional
         Destination path for the modified PDF file. If None, generates a default name.
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
     """
     if out_path is None:
         out_path = add_str_to_path(file, f"_{cat_str}")
@@ -38,8 +53,22 @@ def tweak_pages(file, cat_str, out_path=None):
 
     # Define the command based on the given options
     pdftk_template_formatted = f"{ESSENTIAL_COMMAND_LIST[1]} '{file}' cat {cat_str} output '{out_path}'"
-    process_exit_info = run_system_command(pdftk_template_formatted)
-    exit_info(process_exit_info)
+    
+    # Run the command
+    process_exit_info = run_system_command(
+        pdftk_template_formatted,
+        capture_output=capture_output,
+        return_output_name=return_output_name,
+        encoding=encoding,
+        shell=shell
+    )
+    # Call exit_info with parameters based on capture_output
+    exit_info(
+        process_exit_info,
+        check_stdout=capture_output,
+        check_stderr=capture_output,
+        check_return_code=True
+    )
 
 
 def file_tweaker(path, cat_obj):
@@ -88,7 +117,13 @@ def file_tweaker(path, cat_obj):
                                       format_table_from_lists(param_keys, type_combo_list1)))
    
     
-def merge_files(in_path_list, out_path=None):
+def merge_files(
+        in_path_list, 
+        out_path=None,
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Merge multiple PDF files into a single PDF document.
 
@@ -98,16 +133,45 @@ def merge_files(in_path_list, out_path=None):
         List of input PDF file paths to merge.
     out_path : str, optional
         Path for the merged PDF file. Defaults to 'merged_doc.pdf' if None.
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
     """
     all_in_paths = flatten_to_string(in_path_list)
     out_path = out_path or ext_adder("merged_doc", EXTENSIONS[0])
     # Define the command for merging files
     pdfunite_cmd = format_string(PDFUNITE_TEMPLATE, (all_in_paths, out_path))
-    process_exit_info = run_system_command(pdfunite_cmd)
-    exit_info(process_exit_info)
+
+    # Run the command
+    process_exit_info = run_system_command(
+        pdfunite_cmd,
+        capture_output=capture_output,
+        return_output_name=return_output_name,
+        encoding=encoding,
+        shell=shell
+    )
+
+    # Call exit_info with parameters based on capture_output
+    exit_info(
+        process_exit_info,
+        check_stdout=capture_output,
+        check_stderr=capture_output,
+        check_return_code=True
+    )
 
 
-def file_compressor(in_path, out_path=None):
+def file_compressor(
+        in_path, 
+        out_path=None,
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Compress one or multiple PDF files with minimal quality loss.
 
@@ -117,7 +181,14 @@ def file_compressor(in_path, out_path=None):
         Path(s) to the PDF file(s) for compression.
     out_path : str, list of str, or None, optional
         Output path(s) for the compressed file(s). Defaults to 'compressed_doc.pdf' if None.
-
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
     Raises
     ------
     TypeError
@@ -143,14 +214,35 @@ def file_compressor(in_path, out_path=None):
         op = ext_adder(op_aux, EXTENSIONS[0])
         # Define the command for compression
         ps2pdf_template_formatted = f"{ESSENTIAL_COMMAND_LIST[0]} -dPDFSETTINGS=/ebook {ip} {op}"
-        process_exit_info = run_system_command(ps2pdf_template_formatted)
-        exit_info(process_exit_info)
+
+        # Run the command
+        process_exit_info = run_system_command(
+            ps2pdf_template_formatted,
+            capture_output=capture_output,
+            return_output_name=return_output_name,
+            encoding=encoding,
+            shell=shell
+        )
+
+        # Call exit_info with parameters based on capture_output
+        exit_info(
+            process_exit_info,
+            check_stdout=capture_output,
+            check_stderr=capture_output,
+            check_return_code=True
+        )
    
 
 # Conversion Functions #
 #----------------------#
 
-def eml_to_pdf(search_path, delete_eml_files=False):
+def eml_to_pdf(
+        search_path, 
+        delete_eml_files=False,
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Convert .eml files to PDF, with an option to delete .eml files post-conversion.
 
@@ -165,13 +257,34 @@ def eml_to_pdf(search_path, delete_eml_files=False):
     converter_tool_path = find_files(f"*emailconverter*.{EXTENSIONS[-1]}", ALLDOC_DIRPATH, match_type="glob")
     for emlf in eml_files:
         converter_template_formatted = f"java -jar {converter_tool_path} '{emlf}'"
-        process_exit_info = run_system_command(converter_template_formatted)
-        exit_info(process_exit_info)
+
+        # Run the command
+        process_exit_info = run_system_command(
+            converter_template_formatted,
+            capture_output=capture_output,
+            return_output_name=return_output_name,
+            encoding=encoding,
+            shell=shell
+        )
+        # Call exit_info with parameters based on capture_output
+        exit_info(
+            process_exit_info,
+            check_stdout=capture_output,
+            check_stderr=capture_output,
+            check_return_code=True
+        )
     if delete_eml_files:
         remove_files(EXTENSIONS[1], search_path)
 
 
-def msg_to_pdf(search_path, delete_msg_files=False, delete_eml_files=False):
+def msg_to_pdf(
+        search_path, 
+        delete_msg_files=False, 
+        delete_eml_files=False,
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Convert .msg files to .pdf or .eml files to .pdf, with deletion options.
 
@@ -183,12 +296,34 @@ def msg_to_pdf(search_path, delete_msg_files=False, delete_eml_files=False):
         If True, deletes '.msg' files after conversion.
     del_eml : bool, optional
         If True, deletes '.eml' files after conversion.
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
     """
     msg_files = find_files(EXTENSIONS[2], search_path, match_type="ext", top_path_only=True)
     for msgf in msg_files:
         msg_to_pdf_template_formatted = f"{ESSENTIAL_COMMAND_LIST[3]} '{msgf}'"
-        process_exit_info = run_system_command(msg_to_pdf_template_formatted)
-        exit_info(process_exit_info)
+
+        # Run the command
+        process_exit_info = run_system_command(
+            msg_to_pdf_template_formatted,
+            capture_output=capture_output,
+            return_output_name=return_output_name,
+            encoding=encoding,
+            shell=shell
+        )
+        # Call exit_info with parameters based on capture_output
+        exit_info(
+            process_exit_info,
+            check_stdout=capture_output,
+            check_stderr=capture_output,
+            check_return_code=True
+        )
     eml_to_pdf(search_path, delete_eml_files=delete_eml_files)
     if delete_msg_files:
         remove_files(EXTENSIONS[2], search_path)
@@ -196,7 +331,11 @@ def msg_to_pdf(search_path, delete_msg_files=False, delete_eml_files=False):
 # Utility Functions #
 #-------------------#
 
-def _check_essential_progs():
+def _check_essential_progs(
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Verify the installation of essential programs required for PDF and file manipulation.
     
@@ -208,8 +347,22 @@ def _check_essential_progs():
     non_installed_prog_list = []
     for prog in ESSENTIAL_PROGRAM_LIST:
         dpkg_template_formatted = f"dpkg -l | grep -i {prog} | wc -l"
-        process_exit_info = run_system_command(dpkg_template_formatted, capture_output=True)
-        exit_info(process_exit_info)
+
+        # Run the command
+        process_exit_info = run_system_command(
+            dpkg_template_formatted,
+            capture_output=capture_output,
+            return_output_name=return_output_name,
+            encoding=encoding,
+            shell=shell
+        )
+        # Call exit_info with parameters based on capture_output
+        exit_info(
+            process_exit_info,
+            check_stdout=capture_output,
+            check_stderr=capture_output,
+            check_return_code=True
+        )
         if int(process_exit_info.get("stdout")) < 1:
             non_installed_prog_list.append(prog)
     if non_installed_prog_list:

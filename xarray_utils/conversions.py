@@ -28,7 +28,14 @@ from pygenutils.strings.string_handler import (
 # Xarray objects #
 #----------------#
 
-def grib2nc(grib_file_list, on_shell=False, option_str=None):
+def grib2nc(
+        grib_file_list, 
+        on_shell=False, 
+        option_str=None,
+        capture_output=False,
+        return_output_name=False,
+        encoding="utf-8",
+        shell=True):
     """
     Converts a GRIB file or list of GRIB files to netCDF format. The conversion
     can be executed either via shell commands or programmatically using xarray.
@@ -44,6 +51,14 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
     option_str : str, optional
         Additional options to pass to the shell command for 'grib_to_netcdf'. 
         This parameter is only used if 'on_shell' is set to True.
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
         
     Returns
     -------
@@ -103,10 +118,20 @@ def grib2nc(grib_file_list, on_shell=False, option_str=None):
         grib2nc_template += f"-o {nc_file_new} {grib_allfile_info_str}"
         
         # Execute the shell command
-        process_exit_info = run_system_command(grib2nc_template,
-                                               capture_output=True,
-                                               encoding="utf-8")
-        exit_info(process_exit_info)
+        process_exit_info = run_system_command(
+            grib2nc_template,
+            capture_output=capture_output,
+            return_output_name=return_output_name,
+            encoding=encoding,
+            shell=shell
+        )
+        # Call exit_info with parameters based on capture_output
+        exit_info(
+            process_exit_info,
+            check_stdout=True,
+            check_stderr=True,
+            check_return_code=True
+        )
 
     # Programmatic conversion #
     #-#-#-#-#-#-#-#-#-#-#-#-#-#

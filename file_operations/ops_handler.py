@@ -236,7 +236,11 @@ def rsync(source_paths,
           destination_paths, 
           mode="avh", 
           delete_at_destination=True,
-          source_allfiles_only=False):
+          source_allfiles_only=False,
+          capture_output=False,
+          return_output_name=False,
+          encoding="utf-8",
+          shell=True):
     """
     Synchronises directories using the rsync command with various options.
     
@@ -252,6 +256,14 @@ def rsync(source_paths,
         If True, deletes extraneous files from the destination. Defaults to True.
     source_allfiles_only : bool, optional
         If True, syncs only files present in the source directories. Defaults to False.
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
     
     Raises
     ------
@@ -285,8 +297,20 @@ def rsync(source_paths,
         rsync_template.append(dp)
 
         # Run the rsync command
-        process_exit_info = run_system_command(" ".join(rsync_template))
-        exit_info(process_exit_info)
+        process_exit_info = run_system_command(
+            " ".join(rsync_template),
+            capture_output=capture_output,
+            return_output_name=return_output_name,
+            encoding=encoding,
+            shell=shell
+        )
+        # Call exit_info with parameters based on capture_output
+        exit_info(
+            process_exit_info,
+            check_stdout=capture_output,
+            check_stderr=capture_output,
+            check_return_code=True
+        )
             
 
 def rename_objects(relative_paths, renaming_relative_paths):
