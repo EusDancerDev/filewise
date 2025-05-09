@@ -4,11 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.8.4] - 2025-05-07
+## [v3.9.0] - 2025-05-09
 
 ### Changed
 
 #### **File Operations**
+
+- Modules `ops_handler.py`, `pdf_tools.py` and `conversions.py` (sub-package `xarray_utils`):
+  - Improved system command execution to properly handle cases where command output isn't captured.
+
+---
+
+## [v3.8.4] - 2025-05-07
+
+### Changed (v3.8.4)
+
+#### **File Operations** (v3.8.4)
 
 - Module `path_utils.py`:
   - Added pattern compilation with LRU cache for faster glob matching
