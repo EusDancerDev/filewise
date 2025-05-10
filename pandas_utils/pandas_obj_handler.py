@@ -940,14 +940,14 @@ def merge_csv_files(input_file_list,
             else:  
                 # Merge now all DataFrames into a single one #
                 if merge_anyway_stdin == "y":
-                    all_file_data_df = concat_dfs_aux(input_file_list,
-                                                      separator_in,
-                                                      engine,
-                                                      encoding,
-                                                      header,
-                                                      parse_dates,
-                                                      index_col,
-                                                      decimal)
+                    all_file_data_df = _concat_dfs_aux(input_file_list,
+                                                       separator_in,
+                                                       engine,
+                                                       encoding,
+                                                       header,
+                                                       parse_dates,
+                                                       index_col,
+                                                       decimal)
                 else:
                     pass
                 
@@ -957,14 +957,14 @@ def merge_csv_files(input_file_list,
         #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
         
         else:
-            all_file_data_df = concat_dfs_aux(input_file_list,
-                                              separator_in,
-                                              engine,
-                                              encoding,
-                                              header,
-                                              parse_dates,
-                                              index_col,
-                                              decimal)
+            all_file_data_df = _concat_dfs_aux(input_file_list,
+                                               separator_in,
+                                               engine,
+                                               encoding,
+                                               header,
+                                               parse_dates,
+                                               index_col,
+                                               decimal)
             
         # Prompt to save the merged object #
         #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
@@ -987,7 +987,8 @@ def merge_csv_files(input_file_list,
         
     elif not out_single_DataFrame and keep_data_in_sections:
         all_file_data_dict = \
-            {get_obj_specs(file,"name_noext") : csv2df(separator=separator_in,
+            {get_obj_specs(file,"name_noext") : csv2df(file,
+                                                       separator=separator_in,
                                                        engine=engine,
                                                        encoding=encoding,
                                                        header=header,
@@ -1014,18 +1015,19 @@ def merge_csv_files(input_file_list,
         
         
     
-def concat_dfs_aux(input_file_list,
-                   separator_in,
-                   engine,
-                   encoding, 
-                   header, 
-                   parse_dates, 
-                   index_col, 
-                   decimal):
+def _concat_dfs_aux(input_file_list,
+                    separator_in,
+                    engine,
+                    encoding, 
+                    header, 
+                    parse_dates, 
+                    index_col, 
+                    decimal):
     
     all_file_data_df = pd.DataFrame()
     for file in input_file_list:
-        file_df = csv2df(separator=separator_in,
+        file_df = csv2df(file,
+                         separator=separator_in,
                          engine=engine,
                          encoding=encoding,
                          header=header,
