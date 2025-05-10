@@ -108,7 +108,7 @@ All notable changes to this project will be documented in this file.
   - Sort standard library imports according to PEP 8 guidelines
   - For `bulk_rename_auto.py`, toggle uppercase all constants imported from `global_parameters.py` in `paramlib`
 
-#### **Pandas Utils**
+#### **Pandas Utils** (changing; v3.8.0)
 
 - Module `pandas_obj_handler.py`:
   - Convert all configuration constants to uppercase
