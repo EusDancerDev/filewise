@@ -7,6 +7,7 @@
 
 from numpy import unique
 import pandas as pd
+from typing import List, Tuple
 
 #------------------------#
 # Import project modules #
@@ -228,6 +229,96 @@ def polish_df_column_names(df, sep_to_polish="\n"):
     
     df_fixed = df.rename(columns=lambda x: x.split(sep_to_polish)[-1])
     return df_fixed
+
+# DataFrame time series handling #
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
+
+def standardise_time_series(
+    dfs: List[pd.DataFrame],
+    date_value_pairs: List[Tuple[str, str]],
+    handle_duplicates: bool = True
+) -> pd.DataFrame:
+    """
+    Standardise multiple time series DataFrames into a single DataFrame with a common date index.
+    
+    Parameters
+    ----------
+    dfs : List[pd.DataFrame]
+        List of input DataFrames to standardise.
+    date_value_pairs : List[Tuple[str, str]]
+        List of (date_column, value_column) pairs for each DataFrame.
+    handle_duplicates : bool, default True
+        If True, adds numerical suffixes to duplicate column names.
+        
+    Returns
+    -------
+    standardised_df : pd.DataFrame
+        Standardised DataFrame with all values aligned to a common date index.
+        
+    Raises
+    ------
+    ValueError
+        If the lengths of dfs and date_value_pairs do not match.
+        
+    Examples
+    --------
+    >>> df1 = pd.DataFrame({'Date1': ['2025-01-01', '2025-01-02'], 'Value1': [1.2, 3.4]})
+    >>> df2 = pd.DataFrame({'Date2': ['2025-01-02', '2025-01-03'], 'Value2': [5.6, 7.8]})
+    >>> result = standardise_time_series([df1, df2], 
+    ...                                 [('Date1', 'Value1'), ('Date2', 'Value2')])
+    """
+    from pygenutils.time_handling.time_formatters import parse_dt_string
+    
+    # Check if the number of DataFrames matches the number of date-value pairs #
+    if len(dfs) != len(date_value_pairs):
+        raise ValueError("Number of DataFrames must match number of date-value pairs")
+    
+    # Extract and process each time series
+    processed_series = []
+    for df, (date_col, value_col) in zip(dfs, date_value_pairs):
+        # Make a copy to avoid modifying the original
+        df_copy = df.copy()
+        
+        # Convert date column to datetime
+        df_copy[date_col] = parse_dt_string(df_copy[date_col], module="pandas")
+        
+        # Extract series and set date as index
+        series = df_copy[[date_col, value_col]].dropna(subset=[date_col]).set_index(date_col)
+        processed_series.append((series, value_col))
+    
+    # Find union of all dates
+    all_dates = pd.Index([])
+    for series, _ in processed_series:
+        all_dates = all_dates.union(series.index)
+    all_dates = all_dates.sort_values()
+    
+    # Reindex all series to the full date range
+    result_dict = {}
+    column_counts = {}
+    
+    for series, value_col in processed_series:
+        reindexed = series.reindex(all_dates)
+        
+        # Handle duplicate column names if needed
+        if handle_duplicates and value_col in result_dict:
+            if value_col not in column_counts:
+                # First duplicate: rename the existing column
+                column_counts[value_col] = 1
+                old_key = value_col
+                new_key = f"{value_col}_{column_counts[value_col]}"
+                result_dict[new_key] = result_dict.pop(old_key)
+                column_counts[value_col] += 1
+            
+            # Add the new column with a suffix
+            new_col_name = f"{value_col}_{column_counts[value_col]}"
+            result_dict[new_col_name] = reindexed[value_col]
+            column_counts[value_col] += 1
+        else:
+            result_dict[value_col] = reindexed[value_col]
+    
+    # Combine into a single DataFrame
+    standardised_df = pd.DataFrame(result_dict, index=all_dates)
+    return standardised_df
 
 def save2excel(file_path,
                frame_obj,
