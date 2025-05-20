@@ -6,9 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.9.1] - 2025-05-10
 
+### Added
+
+#### **Pandas Utils** (v3.9.1)
+
+- Module `pandas_obj_handler.py`:
+  - Add new `standardise_time_series` function to combine multiple time series DataFrames with different date columns into a single DataFrame with a common date index
+  - Function automatically handles duplicate column names by adding numerical suffixes
+  - Includes comprehensive type hints and documentation
+
 ### Changed
 
-#### **Pandas Utils**
+#### **Pandas Utils** (changing; v3.9.1)
 
 - Module `pandas_obj_handler.py`:
   - Give accessibility to undefined parameters and change visibility to the auxiliary function `_concat_dfs_aux`.
@@ -45,7 +54,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.8.3] - 2025-05-05
 
-### Changed (v3.8.3)
+### Fixed (v3.8.3)
 
 #### **Xarray Utils**
 
@@ -157,6 +166,8 @@ All notable changes to this project will be documented in this file.
     - `filewise/xarray_utils/__init__.py`
   - Improved control over exported symbols when using 'from package import *'
   - Maintained consistent public API while following Python best practices
+
+### Fixed (v3.7.0)
 
 #### **Pandas utils**
 
@@ -272,7 +283,7 @@ All notable changes to this project will be documented in this file.
 
 #### **JSON utils** (v3.5.0)
 
-- Module `json_obj_handler`: enhanced JSON serialization functions to support dictionaries and lists of dictionaries; improved naming and documentation for clarity.
+- Module `json_obj_handler`: enhanced JSON serialisation functions to support dictionaries and lists of dictionaries; improved naming and documentation for clarity.
 
 - The following method renamings have been made:
 
@@ -286,7 +297,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.4.2] - 2024-11-12
 
-### Changed (v3.4.2)
+### Fixed (v3.4.2)
 
 #### **File Operations** (v3.4.2)
 
