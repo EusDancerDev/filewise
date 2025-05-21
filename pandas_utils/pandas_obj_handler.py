@@ -36,7 +36,9 @@ def read_table(file_path,
                dtype=None,
                engine=None,
                encoding=None,
-               header="infer"):
+               header="infer",
+               names=None,
+               parse_dates=False):
  
     """
     Function that uses pandas module to read a text file
@@ -99,6 +101,19 @@ def read_table(file_path,
         skip_blank_lines=True (not included in the arguments for simplicity),
         so header=0 denotes the first line of data
         rather than the first line of the file.
+    names : array-like, optional
+        List of column names to use. If the file contains a header row,
+        then you should explicitly pass header=0 to override the column names.
+        Duplicates in this list are not allowed.
+    parse_dates : bool or list of int or names or list of lists or dict, default False
+        The behaviour is as follows:
+            * boolean. If True -> try parsing the index.
+            * list of int or names. e.g. If [1, 2, 3] -> try parsing columns 1, 2, 3
+              each as a separate date column.
+            * list of lists. e.g.  If [[1, 3]] -> combine columns 1 and 3 and parse as
+              a single date column.
+            * dict, e.g. {'foo' : [1, 3]} -> parse columns 1, 3 as date and call
+              result 'foo'
           
     Returns
     -------
@@ -111,7 +126,9 @@ def read_table(file_path,
                        encoding=encoding,
                        header=header,
                        sep=separator,
-                       dtype=dtype)
+                       dtype=dtype,
+                       names=names,
+                       parse_dates=parse_dates)
     return df
 
 
