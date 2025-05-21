@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.9.2] - 2025-05-15
+
+### Changed
+
+#### **Pandas Utils** (v3.9.2)
+
+- Module `pandas_obj_handler.py`:
+  - Enhanced `read_table` function with two additional parameters:
+    - Added `names` parameter to allow specifying custom column names
+    - Added `parse_dates` parameter to enable automatic date parsing
+  - Updated function documentation with detailed parameter descriptions
+  - Updated function implementation to pass new parameters to pandas
+
+---
+
 ## [v3.9.1] - 2025-05-10
 
 ### Added
@@ -15,7 +30,7 @@ All notable changes to this project will be documented in this file.
   - Function automatically handles duplicate column names by adding numerical suffixes
   - Includes comprehensive type hints and documentation
 
-### Changed
+### Changed (v3.9.1)
 
 #### **Pandas Utils** (changing; v3.9.1)
 
