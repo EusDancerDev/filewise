@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.9.3] - 2025-05-20
+
+### Added
+
+#### **Pandas Utils** (v3.9.3)
+
+- Module `pandas_obj_handler.py`:
+  - Enhance `standardise_time_series` function with option to return separate DataFrames instead of a merged DataFrame
+  - Add index handling options for separate DataFrames:
+    - `reset_index` parameter to convert datetime index to column
+    - `drop` parameter to remove index column completely
+    - `names` parameter to customise index column names (single name or list of different names)
+  - Add validation for parameter combinations with clear error messages
+  - Refactor internal logic into `_standardise_time_series_core` helper function
+
+---
+
 ## [v3.9.2] - 2025-05-15
 
 ### Changed
