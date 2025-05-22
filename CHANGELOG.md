@@ -38,7 +38,7 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.9.1] - 2025-05-10
 
-### Added
+### Added (v3.9.1)
 
 #### **Pandas Utils** (v3.9.1)
 
