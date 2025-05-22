@@ -7,7 +7,7 @@
 
 from numpy import unique
 import pandas as pd
-from typing import List, Tuple
+from typing import List, Tuple, Union, Dict
 
 #------------------------#
 # Import project modules #
@@ -132,6 +132,237 @@ def read_table(file_path,
     return df
 
 
+
+# DataFrame column name handling #
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+def polish_df_column_names(df, sep_to_polish="\n"):
+    """
+    Function to polish a Pandas DataFrames' column names, by eliminating
+    the specified separator that might appear when reading files such as
+    Microsoft Excel or LibreOffice Calc document.
+    
+    It uses the 'rename' method to rename the columns by using a 'lambda';
+    it simply takes the final entry of the list obtained by splitting 
+    each column name any time there is a new line.
+    If there is no new line, the column name is unchanged.
+    
+    Parameters
+    ----------
+    df : pandas.Dataframe
+        Dataframe containing data
+    sep_to_polish : str
+        Separator to detect and eliminate from the string formed
+        by all column names.
+        
+    Returns
+    -------
+    df_fixed : pandas.Dataframe
+        Dataframe containing exactly the same data as the input one,
+        with column names polished accordingly.    
+    """
+    
+    df_fixed = df.rename(columns=lambda x: x.split(sep_to_polish)[-1])
+    return df_fixed
+
+# DataFrame time series handling #
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
+
+def _standardise_time_series_core(
+    dfs: List[pd.DataFrame],
+    date_value_pairs: List[Tuple[str, str]]
+) -> Tuple[List[Tuple], pd.Index]:
+    """
+    Core functionality for time series standardisation.
+    
+    Parameters
+    ----------
+    dfs : List[pd.DataFrame]
+        List of input DataFrames to standardise.
+    date_value_pairs : List[Tuple[str, str]]
+        List of (date_column, value_column) pairs for each DataFrame.
+        
+    Returns
+    -------
+    Tuple[List[Tuple], pd.Index]
+        A tuple containing:
+        - List of processed series with their value column names
+        - Common date index for all series
+    """
+    from pygenutils.time_handling.time_formatters import parse_dt_string
+    
+    # Check if the number of DataFrames matches the number of date-value pairs
+    if len(dfs) != len(date_value_pairs):
+        raise ValueError("Number of DataFrames must match number of date-value pairs")
+    
+    # Extract and process each time series
+    processed_series = []
+    for df, (date_col, value_col) in zip(dfs, date_value_pairs):
+        # Make a copy to avoid modifying the original
+        df_copy = df.copy()
+        
+        # Convert date column to datetime
+        df_copy[date_col] = parse_dt_string(df_copy[date_col], module="pandas")
+        
+        # Extract series and set date as index
+        series = df_copy[[date_col, value_col]].dropna(subset=[date_col]).set_index(date_col)
+        processed_series.append((series, value_col))
+    
+    # Find union of all dates
+    all_dates = pd.Index([])
+    for series, _ in processed_series:
+        all_dates = all_dates.union(series.index)
+    all_dates = all_dates.sort_values()
+    
+    return processed_series, all_dates
+
+def standardise_time_series(
+    dfs: List[pd.DataFrame],
+    date_value_pairs: List[Tuple[str, str]],
+    handle_duplicates: bool = True,
+    separate: bool = False,
+    return_format: str = 'dict',
+    reset_index: bool = False,
+    drop: bool = False,
+    names: Union[str, List[str], None] = None
+) -> Union[pd.DataFrame, Dict[str, pd.DataFrame], List[pd.DataFrame]]:
+    """
+    Standardise multiple time series DataFrames into a single DataFrame with a common date index,
+    or as separate DataFrames sharing the same date index.
+    
+    Parameters
+    ----------
+    dfs : List[pd.DataFrame]
+        List of input DataFrames to standardise.
+    date_value_pairs : List[Tuple[str, str]]
+        List of (date_column, value_column) pairs for each DataFrame.
+    handle_duplicates : bool, default True
+        If True, adds numerical suffixes to duplicate column names.
+        Only used when separate=False.
+    separate : bool, default False
+        If True, returns separate DataFrames instead of merging them.
+        If False, returns a single merged DataFrame.
+    return_format : str, default 'dict'
+        Format to return the standardised DataFrames when separate=True. Options:
+        - 'dict': Dictionary with value column names as keys
+        - 'list': List of DataFrames in the same order as input
+    reset_index : bool, default False
+        Whether to reset the index for separate DataFrames (only applies when separate=True).
+        If True, the datetime index becomes a regular column.
+    drop : bool, default False
+        Whether to drop the index column when resetting the index (only applies when reset_index=True).
+    names : str, list of str, or None, default None
+        Name(s) to use for the former index levels when resetting the index.
+        Only applies when reset_index=True and drop=False.
+        If a string, the same name is used for all DataFrames.
+        If a list of strings, each string is applied to the corresponding DataFrame.
+        The list length should match the number of DataFrames.
+        
+    Returns
+    -------
+    pd.DataFrame or dict or list
+        If separate=False: A single DataFrame with all values aligned to a common date index.
+        If separate=True and return_format='dict': Dictionary of DataFrames with value column names as keys.
+        If separate=True and return_format='list': List of DataFrames in the original order.
+        
+    Raises
+    ------
+    ValueError
+        If the lengths of dfs and date_value_pairs do not match,
+        or if return_format is not one of the supported options,
+        or if names is a list with length not matching the number of DataFrames,
+        or if names is a list when separate=False (merged DataFrame output).
+        
+    Examples
+    --------
+    >>> df1 = pd.DataFrame({'Date1': ['2025-01-01', '2025-01-02'], 'Value1': [1.2, 3.4]})
+    >>> df2 = pd.DataFrame({'Date2': ['2025-01-02', '2025-01-03'], 'Value2': [5.6, 7.8]})
+    >>> # Merged result (default)
+    >>> merged = standardise_time_series([df1, df2], [('Date1', 'Value1'), ('Date2', 'Value2')])
+    >>> # Separate DataFrames as dict
+    >>> separate_dict = standardise_time_series([df1, df2], [('Date1', 'Value1'), ('Date2', 'Value2')], separate=True)
+    >>> # Separate DataFrames with same index name
+    >>> separate_reset = standardise_time_series([df1, df2], [('Date1', 'Value1'), ('Date2', 'Value2')], 
+    ...                                          separate=True, reset_index=True, names='timestamp')
+    >>> # Separate DataFrames with different index names
+    >>> separate_reset = standardise_time_series([df1, df2], [('Date1', 'Value1'), ('Date2', 'Value2')], 
+    ...                                          separate=True, reset_index=True, names=['timestamp1', 'timestamp2'])
+    """
+    # Get common processed series and date index
+    processed_series, all_dates = _standardise_time_series_core(dfs, date_value_pairs)
+    
+    # Check if names is a list but we're in merged mode
+    if not separate and isinstance(names, list):
+        raise ValueError("When separate=False (merged DataFrame output), names cannot be a list. "
+                         "Use a single string for names or set separate=True.")
+    
+    # Return separate DataFrames if requested
+    if separate:
+        # Validate return format
+        valid_return_formats = ['dict', 'list']
+        if return_format not in valid_return_formats:
+            raise ValueError(f"return_format must be one of {valid_return_formats}")
+        
+        # Validate names if it's a list
+        if reset_index and isinstance(names, list):
+            if len(names) != len(dfs):
+                raise ValueError(f"If names is a list, its length ({len(names)}) must match "
+                                f"the number of DataFrames ({len(dfs)})")
+        
+        # Create separate DataFrames
+        result = {}
+        for i, (series, value_col) in enumerate(processed_series):
+            # Create a new DataFrame with the standardised index
+            reindexed = series.reindex(all_dates)
+            
+            # Reset index if requested
+            if reset_index:
+                # Apply the appropriate name based on the type of names
+                if isinstance(names, list):
+                    index_name = names[i]
+                else:
+                    index_name = names
+                
+                reindexed = reindexed.reset_index(drop=drop, names=index_name)
+                
+            result[value_col] = reindexed
+        
+        # Return in the requested format
+        if return_format == 'list':
+            return [result[value_col] for _, value_col in date_value_pairs]
+        else:  # return_format == 'dict'
+            return result
+    
+    # Else return a single merged DataFrame (original behavior)
+    else:
+        result_dict = {}
+        column_counts = {}
+        
+        for series, value_col in processed_series:
+            reindexed = series.reindex(all_dates)
+            
+            # Handle duplicate column names if needed
+            if handle_duplicates and value_col in result_dict:
+                if value_col not in column_counts:
+                    # First duplicate: rename the existing column
+                    column_counts[value_col] = 1
+                    old_key = value_col
+                    new_key = f"{value_col}_{column_counts[value_col]}"
+                    result_dict[new_key] = result_dict.pop(old_key)
+                    column_counts[value_col] += 1
+                
+                # Add the new column with a suffix
+                new_col_name = f"{value_col}_{column_counts[value_col]}"
+                result_dict[new_col_name] = reindexed[value_col]
+                column_counts[value_col] += 1
+            else:
+                result_dict[value_col] = reindexed[value_col]
+        
+        # Combine into a single DataFrame
+        standardised_df = pd.DataFrame(result_dict, index=all_dates)
+        return standardised_df
+
+
 # Microsoft Excel spreadsheets #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
@@ -214,128 +445,6 @@ def excel_handler(file_path,
             all_value_df.reset_index(inplace=True, drop=True)
             all_value_df = all_value_df.drop(columns=['sheet'])
             return all_value_df
-
-# DataFrame column name handling #
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
-def polish_df_column_names(df, sep_to_polish="\n"):
-    """
-    Function to polish a Pandas DataFrames' column names, by eliminating
-    the specified separator that might appear when reading files such as
-    Microsoft Excel or LibreOffice Calc document.
-    
-    It uses the 'rename' method to rename the columns by using a 'lambda';
-    it simply takes the final entry of the list obtained by splitting 
-    each column name any time there is a new line.
-    If there is no new line, the column name is unchanged.
-    
-    Parameters
-    ----------
-    df : pandas.Dataframe
-        Dataframe containing data
-    sep_to_polish : str
-        Separator to detect and eliminate from the string formed
-        by all column names.
-        
-    Returns
-    -------
-    df_fixed : pandas.Dataframe
-        Dataframe containing exactly the same data as the input one,
-        with column names polished accordingly.    
-    """
-    
-    df_fixed = df.rename(columns=lambda x: x.split(sep_to_polish)[-1])
-    return df_fixed
-
-# DataFrame time series handling #
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-
-def standardise_time_series(
-    dfs: List[pd.DataFrame],
-    date_value_pairs: List[Tuple[str, str]],
-    handle_duplicates: bool = True
-) -> pd.DataFrame:
-    """
-    Standardise multiple time series DataFrames into a single DataFrame with a common date index.
-    
-    Parameters
-    ----------
-    dfs : List[pd.DataFrame]
-        List of input DataFrames to standardise.
-    date_value_pairs : List[Tuple[str, str]]
-        List of (date_column, value_column) pairs for each DataFrame.
-    handle_duplicates : bool, default True
-        If True, adds numerical suffixes to duplicate column names.
-        
-    Returns
-    -------
-    standardised_df : pd.DataFrame
-        Standardised DataFrame with all values aligned to a common date index.
-        
-    Raises
-    ------
-    ValueError
-        If the lengths of dfs and date_value_pairs do not match.
-        
-    Examples
-    --------
-    >>> df1 = pd.DataFrame({'Date1': ['2025-01-01', '2025-01-02'], 'Value1': [1.2, 3.4]})
-    >>> df2 = pd.DataFrame({'Date2': ['2025-01-02', '2025-01-03'], 'Value2': [5.6, 7.8]})
-    >>> result = standardise_time_series([df1, df2], 
-    ...                                 [('Date1', 'Value1'), ('Date2', 'Value2')])
-    """
-    from pygenutils.time_handling.time_formatters import parse_dt_string
-    
-    # Check if the number of DataFrames matches the number of date-value pairs #
-    if len(dfs) != len(date_value_pairs):
-        raise ValueError("Number of DataFrames must match number of date-value pairs")
-    
-    # Extract and process each time series
-    processed_series = []
-    for df, (date_col, value_col) in zip(dfs, date_value_pairs):
-        # Make a copy to avoid modifying the original
-        df_copy = df.copy()
-        
-        # Convert date column to datetime
-        df_copy[date_col] = parse_dt_string(df_copy[date_col], module="pandas")
-        
-        # Extract series and set date as index
-        series = df_copy[[date_col, value_col]].dropna(subset=[date_col]).set_index(date_col)
-        processed_series.append((series, value_col))
-    
-    # Find union of all dates
-    all_dates = pd.Index([])
-    for series, _ in processed_series:
-        all_dates = all_dates.union(series.index)
-    all_dates = all_dates.sort_values()
-    
-    # Reindex all series to the full date range
-    result_dict = {}
-    column_counts = {}
-    
-    for series, value_col in processed_series:
-        reindexed = series.reindex(all_dates)
-        
-        # Handle duplicate column names if needed
-        if handle_duplicates and value_col in result_dict:
-            if value_col not in column_counts:
-                # First duplicate: rename the existing column
-                column_counts[value_col] = 1
-                old_key = value_col
-                new_key = f"{value_col}_{column_counts[value_col]}"
-                result_dict[new_key] = result_dict.pop(old_key)
-                column_counts[value_col] += 1
-            
-            # Add the new column with a suffix
-            new_col_name = f"{value_col}_{column_counts[value_col]}"
-            result_dict[new_col_name] = reindexed[value_col]
-            column_counts[value_col] += 1
-        else:
-            result_dict[value_col] = reindexed[value_col]
-    
-    # Combine into a single DataFrame
-    standardised_df = pd.DataFrame(result_dict, index=all_dates)
-    return standardised_df
 
 def save2excel(file_path,
                frame_obj,
