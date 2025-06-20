@@ -12,6 +12,7 @@ import shutil
 # Import project modules #
 #------------------------#
 
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 
 #------------------#
@@ -32,7 +33,7 @@ def _get_files_in_directory(directory):
     
     Returns
     -------
-    list
+    list[str]
         A list of full file paths for files in the directory.
     """
     return [os.path.join(directory, file) for file in os.listdir(directory)]
@@ -51,11 +52,11 @@ def move_files(patterns, input_directories, destination_directories, match_type=
 
     Parameters
     ----------
-    patterns : str or list
+    patterns : str | list[str]
         File extensions or glob patterns to search for.
-    input_directories : str or list
+    input_directories : str | list[str]
         Directory or list of directories to search.
-    destination_directories : str or list
+    destination_directories : str | list[str]
         Directory or list of directories where files will be moved.
     match_type : str, optional
         Either "ext" for extensions or "glob" for glob patterns. Defaults to "ext".
@@ -87,11 +88,11 @@ def copy_files(patterns, input_directories, destination_directories, match_type=
 
     Parameters
     ----------
-    patterns : str or list
+    patterns : str | list[str]
         File extensions or glob patterns to search for.
-    input_directories : str or list
+    input_directories : str | list[str]
         Directory or list of directories to search.
-    destination_directories : str or list
+    destination_directories : str | list[str]
         Directory or list of directories where files will be copied.
     match_type : str, optional
         Either "ext" for extensions or "glob" for glob patterns. Defaults to "ext".
@@ -122,9 +123,9 @@ def remove_files(patterns, input_directories, match_type="ext"):
 
     Parameters
     ----------
-    patterns : str or list
+    patterns : str | list[str]
         File extensions or glob patterns to search for.
-    input_directories : str or list
+    input_directories : str | list[str]
         Directory or list of directories to search.
     match_type : str, optional
         Either "ext" for extensions or "glob" for glob patterns. Defaults to "ext".
@@ -155,12 +156,15 @@ def make_directories(directory_list):
     
     Parameters
     ----------
-    directory_list : str or list
-        A string or list of directory paths to create.
+    directory_list : str | list[str]
+        A string or list of directory paths to create. Supports nested lists.
     """
     if isinstance(directory_list, str):
         directory_list = [directory_list]
-
+    
+    # Flatten any nested structure
+    directory_list = list(flatten_list(directory_list))
+    
     for directory in directory_list:
         os.makedirs(directory, exist_ok=True)
 
@@ -171,7 +175,7 @@ def remove_directories(directory_list):
     
     Parameters
     ----------
-    directory_list : str or list
+    directory_list : str | list[str]
         A string or list of directory paths to remove.
     """
     if isinstance(directory_list, str):
@@ -187,9 +191,9 @@ def move_directories(directories, destination_directories):
     
     Parameters
     ----------
-    directories : str or list
+    directories : str | list[str]
         A string or list of directories to move.
-    destination_directories : str or list
+    destination_directories : str | list[str]
         A string or list of destination directories.
     """
     if isinstance(directories, str):
@@ -209,9 +213,9 @@ def copy_directories(directories, destination_directories, recursive_in_depth=Tr
     
     Parameters
     ----------
-    directories : str or list
+    directories : str | list[str]
         A string or list of directories to copy.
-    destination_directories : str or list
+    destination_directories : str | list[str]
         A string or list of destination directories.
     recursive_in_depth : bool, optional
         If True, copies directories recursively. Defaults to True.
@@ -246,9 +250,9 @@ def rsync(source_paths,
     
     Parameters
     ----------
-    source_paths : str or list
+    source_paths : str | list[str]
         A string or list of paths to source directories.
-    destination_paths : str or list
+    destination_paths : str | list[str]
         A string or list of paths to destination directories.
     mode : str, optional
         The rsync command mode. Defaults to "avh".
@@ -319,9 +323,9 @@ def rename_objects(relative_paths, renaming_relative_paths):
     
     Parameters
     ----------
-    relative_paths : str or list
+    relative_paths : str | list[str]
         A string or list of paths of the files or directories to rename.
-    renaming_relative_paths : str or list
+    renaming_relative_paths : str | list[str]
         A string or list of the new names for the files or directories.
     
     Raises
