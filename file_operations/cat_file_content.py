@@ -6,12 +6,13 @@
 #----------------#
 
 import os
+from pathlib import Path
 
 #-------------------------#
 # Define custom functions #
 #-------------------------#
 
-def cat(path, mode="r"):
+def cat(path: str | Path, mode: str = "r") -> None:
     
     """
     Prints the content of a file specified in an absolute or relative path
@@ -19,7 +20,7 @@ def cat(path, mode="r"):
     
     Parameters
     ----------
-    path : str or PosixPath
+    path : str | Path
         Absolute or relative path.
     mode : str, optional
         Specify the IO mode for output when supplying a path.
@@ -27,9 +28,10 @@ def cat(path, mode="r"):
           
     Returns
     -------
-    The path is always case-sensitive.
-    If the path exists, it returns the string of the whole content
-    of the specified path, else throws a FileNotFoundError.
+    None
+        The path is always case-sensitive.
+        If the path exists, it prints the content of the specified path,
+        else throws a FileNotFoundError.
     """
     
     path_exists = os.path.exists(path)

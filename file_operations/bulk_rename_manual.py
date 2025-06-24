@@ -22,7 +22,7 @@ from pathlib import Path
 # Define functions #
 #------------------#
 
-def change_to_path_and_store(path_str):
+def change_to_path_and_store(path_str: str) -> None:
     """
     Change the current working directory to the specified path.
 
@@ -39,20 +39,22 @@ def change_to_path_and_store(path_str):
     os.chdir(main_posix_path)
     
     
-def get_current_path():
+def get_current_path() -> Path:
     """
     Get the current working directory.
 
     Returns
     -------
-    cwd_path : PosixPath
+    Path
         The current working directory as a Path object.
     """
     cwd_path = Path.cwd()
     return cwd_path
 
 
-def get_obj_list(main_posix_path, obj_type, path_to_str=False):
+def get_obj_list(main_posix_path: Path, 
+                 obj_type: str, 
+                 path_to_str: bool = False) -> list[Path] | list[str]:
     """
     Get a sorted list of files or directories in the specified path.
 
@@ -67,7 +69,7 @@ def get_obj_list(main_posix_path, obj_type, path_to_str=False):
 
     Returns
     -------
-    list
+    list[Path] | list[str]
         A sorted list of file or directory names (as Path objects or strings).
 
     Raises
@@ -78,25 +80,25 @@ def get_obj_list(main_posix_path, obj_type, path_to_str=False):
         If any other error occurs during listing.
     """
     try:
-        obj_list = object_listing_dict[obj_type](main_posix_path)
+        obj_list = OBJECT_LISTING_DICT[obj_type](main_posix_path)
         obj_list.sort()
         if path_to_str:
             obj_list = [obj.name for obj in obj_list]
         return obj_list
     except KeyError:
         raise ValueError(f"Unsupported object type '{obj_type}'. "
-                         f"Choose one from {obj_type_list}.")
+                         f"Choose one from {OBJ_TYPE_LIST}.")
     except Exception as e:
         raise RuntimeError(f"An error occurred while listing {obj_type}s: "
                            f"{str(e)}")
      
     
-def print_format_string(string2format, format_args_list):
+def print_format_string(string2format: str, format_args_list: list) -> None:
     """
     Print a formatted string using the provided arguments.
 
-    Args
-    ----
+    Parameters
+    ----------
     string2format : str
         The string to format.
     format_args_list : list

@@ -47,7 +47,7 @@ from pygenutils.time_handling.datetime_operators import (
 # Define functions #
 #------------------#
 
-def shorten_conflicting_obj_list():
+def shorten_conflicting_obj_list() -> bool:
     if not ((not isinstance(LCOS_UPPER_LIMIT, int) \
              and (isinstance(LCOS_UPPER_LIMIT, str) and LCOS_UPPER_LIMIT == 'inf'))\
             or (isinstance(LCOS_UPPER_LIMIT, int) and LCOS_UPPER_LIMIT >= 1)):
@@ -62,12 +62,12 @@ def shorten_conflicting_obj_list():
             return True
 
 
-def loop_renamer(obj_list,
-                 obj_type="file",
-                 starting_number="default",  
-                 zero_padding=1,
-                 dry_run=False,
-                 SPLIT_DELIM=None):
+def loop_renamer(obj_list: list,
+                 obj_type: str = "file",
+                 starting_number: str | int = "default",  
+                 zero_padding: int = 1,
+                 dry_run: bool = False,
+                 SPLIT_DELIM: str | None = None) -> list | None:
     
     param_keys = list(get_all_caller_args().values())
     obj_type_arg_pos = find_substring_index(param_keys, "obj_type")
@@ -116,26 +116,26 @@ def loop_renamer(obj_list,
         return num_formatted_objs
             
 
-def loop_direct_renamer(obj_list, fixed_new_obj_list):  
+def loop_direct_renamer(obj_list: list, fixed_new_obj_list: list) -> None:  
     for obj, new_obj in zip(obj_list, fixed_new_obj_list):
         rename_objects(obj, new_obj)
         
 
-def return_report_file_fixed_path(file_path_noname, 
-                                  file_name,
-                                  extension):
+def return_report_file_fixed_path(file_path_noname: str, 
+                                  file_name: str,
+                                  extension: str) -> str:
     
     report_file_path = f"{file_path_noname}/{file_name}.{extension}"
     return report_file_path
 
 
-def reorder_objs(path,
-                 obj_type,
-                 extensions2skip="",
-                 index_range="all",
-                 starting_number="default",
-                 zero_padding="default",
-                 SPLIT_DELIM=None):
+def reorder_objs(path: str,
+                 obj_type: str,
+                 extensions2skip: str = "",
+                 index_range: str | range = "all",
+                 starting_number: str | int = "default",
+                 zero_padding: str | int = "default",
+                 SPLIT_DELIM: str | None = None) -> None:
     
     # Input parameter validation #
     all_arg_dict = get_all_caller_args()    
