@@ -16,6 +16,7 @@ import grp
 
 from filewise.file_operations.path_utils import find_files, find_items
 from filewise.general.introspection_utils import get_caller_args
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import print_format_string
 
@@ -23,16 +24,18 @@ from pygenutils.strings.text_formatters import print_format_string
 # Define custom functions #
 #-------------------------#
 
-def modify_obj_permissions(path, extensions2skip="", attr_id=-1):
+def modify_obj_permissions(path: str, 
+                          extensions2skip: str | list = "", 
+                          attr_id: int = -1) -> None:
     """
     Modifies permissions for files or directories at the given path. 
     Automatically detects if the object is a file or directory.
     
     Parameters
     ----------
-    path : str or Path
+    path : str
         The path to the file or directory whose permissions will be modified.
-    extensions2skip : str or list, optional
+    extensions2skip : str | list, optional
         File extensions to skip during permission changes (only applies to files).
     attr_id : int, optional, default=-1
         Permission ID in Python format (octal or decimal).
@@ -67,15 +70,21 @@ def modify_obj_permissions(path, extensions2skip="", attr_id=-1):
                         f"(position {attr_id_arg_pos}) must be an integer, "
                         f"got '{type(attr_id)}' instead.")
     
+    # Handle nested lists with defensive programming for extensions2skip
+    if isinstance(extensions2skip, str):
+        extensions2skip = [extensions2skip] if extensions2skip else []
+    elif isinstance(extensions2skip, list):
+        extensions2skip = list(flatten_list(extensions2skip))
+    
     # Handle file-specific logic (skip certain extensions)
     if os.path.isfile(path):
         if extensions2skip:
-            print_format_string("Skipping the following extensions:", extensions2skip)
+            print_format_string("Skipping the following extensions: {}", [extensions2skip])
             file_extension_list = find_items(search_path=path, skip_ext=extensions2skip, top_only=True, task="extensions")
             obj_path_list = find_files(file_extension_list, search_path=path, top_only=True)
         else:
             obj_path_list = [path]
-    elif os.path.isdir():
+    elif os.path.isdir(path):
         obj_path_list = find_items(path, task="directories")
     else:
         raise ValueError(f"The specified path is neither a file nor a directory: '{path}'")
@@ -89,22 +98,26 @@ def modify_obj_permissions(path, extensions2skip="", attr_id=-1):
             raise RuntimeError(f"Could not modify permissions for {obj_path}: {perr}")
 
                 
-def modify_obj_owner(path, module="shutil", extensions2skip="", new_owner=-1, new_group=-1):    
+def modify_obj_owner(path: str, 
+                    module: str = "shutil", 
+                    extensions2skip: str | list = "", 
+                    new_owner: int | str = -1, 
+                    new_group: int | str = -1) -> None:    
     """
     Modifies the owner and/or group of files or directories at the given path.
     Automatically detects if the object is a file or directory.
     
     Parameters
     ----------
-    path : str or Path
+    path : str
         The path to the file or directory whose owner/group will be modified.
     module : str, optional, default='shutil'
         The module used to modify ownership. Must be either 'os' or 'shutil'.
-    extensions2skip : str or list, optional
+    extensions2skip : str | list, optional
         File extensions to skip during ownership changes (for files only).
-    new_owner : int or str, optional, default=-1
+    new_owner : int | str, optional, default=-1
         The new owner's username or user ID (int). If -1, no change is made to the owner.
-    new_group : int or str, optional, default=-1
+    new_group : int | str, optional, default=-1
         The new group's name or group ID (int). If -1, no change is made to the group.
     
     Raises
@@ -168,13 +181,19 @@ def modify_obj_owner(path, module="shutil", extensions2skip="", new_owner=-1, ne
     if module not in MODULES:
         raise ValueError(f"Unsupported module '{module}'. Choose one from {MODULES}")
 
+    # Handle nested lists with defensive programming for extensions2skip
+    if isinstance(extensions2skip, str):
+        extensions2skip = [extensions2skip] if extensions2skip else []
+    elif isinstance(extensions2skip, list):
+        extensions2skip = list(flatten_list(extensions2skip))
+
     # Operations #
     ##############
 
     # Handle file-specific logic (skip certain extensions)
     if os.path.isfile(path):
         if extensions2skip:
-            print_format_string("Skipping the following extensions:", extensions2skip)
+            print_format_string("Skipping the following extensions: {}", [extensions2skip])
             file_extension_list = find_items(search_path=path, skip_ext=extensions2skip, top_only=True, task="extensions")
             obj_path_list = find_files(file_extension_list, search_path=path, top_only=True)
         else:

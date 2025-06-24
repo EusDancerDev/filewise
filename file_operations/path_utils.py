@@ -5,10 +5,16 @@
 # Import modules #
 #----------------#
 
-import os
 import fnmatch
+import os
 import re
 from functools import lru_cache
+
+#------------------------#
+# Import project modules #
+#------------------------#
+
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 
 #------------------#
 # Define functions #
@@ -17,7 +23,7 @@ from functools import lru_cache
 # Helpers #
 #---------#
 
-def _unique_sorted(items):
+def _unique_sorted(items: list) -> list:
     """
     Returns a sorted list of unique items.
     
@@ -34,7 +40,7 @@ def _unique_sorted(items):
     return sorted(set(items))
 
 @lru_cache(maxsize=128)
-def _compile_pattern(pattern):
+def _compile_pattern(pattern: str) -> re.Pattern:
     """
     Compiles a glob pattern into a regex pattern for faster matching.
     
@@ -50,7 +56,7 @@ def _compile_pattern(pattern):
     """
     return re.compile(fnmatch.translate(pattern))
 
-def _match_glob(file, patterns, case_sensitive=True):
+def _match_glob(file: str, patterns: list, case_sensitive: bool = True) -> bool:
     """
     Matches a file against a list of glob patterns.
     
@@ -78,7 +84,7 @@ def _match_glob(file, patterns, case_sensitive=True):
     
     return any(_compile_pattern(pattern).match(basename) for pattern in patterns)
 
-def _fetch_path_items(path, glob_bool=True):
+def _fetch_path_items(path: str, glob_bool: bool = True) -> list[str]:
     """
     Converts a path into an os-based path and handles globbing.
 
@@ -91,7 +97,7 @@ def _fetch_path_items(path, glob_bool=True):
         
     Returns
     -------
-    list
+    list[str]
         A list of all files and directories found in the specified path.
     """
     if glob_bool:
@@ -105,19 +111,19 @@ def _fetch_path_items(path, glob_bool=True):
     
     
 # Switch-case dictionary to modify patterns based on 'match_type' argument 
-def _add_glob_left(patterns):
+def _add_glob_left(patterns: list) -> list:
     """Add wildcard at the beginning of patterns (to match end of filename)"""
-    return (f"*{pattern}" for pattern in patterns)
+    return [f"*{pattern}" for pattern in patterns]
 
-def _add_glob_right(patterns):
+def _add_glob_right(patterns: list) -> list:
     """Add wildcard at the end of patterns (to match beginning of filename)"""
-    return (f"{pattern}*" for pattern in patterns)
+    return [f"{pattern}*" for pattern in patterns]
 
-def _add_glob_both(patterns):
+def _add_glob_both(patterns: list) -> list:
     """Add wildcards at both ends of patterns (to match anywhere in filename)"""
-    return (f"*{pattern}*" for pattern in patterns)
+    return [f"*{pattern}*" for pattern in patterns]
 
-def _whole_word(patterns):
+def _whole_word(patterns: list) -> list:
     """No modification for whole word match"""
     return patterns
 
@@ -128,13 +134,18 @@ def _whole_word(patterns):
 # File Operations #
 #~~~~~~~~~~~~~~~~~#
 
-def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None, case_sensitive=True):
+def find_files(patterns: str | list, 
+               search_path: str, 
+               match_type: str = "ext", 
+               top_only: bool = False, 
+               dirs_to_exclude: str | list | None = None, 
+               case_sensitive: bool = True) -> list[str]:
     """
     Searches for files based on extensions or glob patterns with various matching types.
 
     Parameters
     ----------
-    patterns : str or list
+    patterns : str | list
         File extensions or glob patterns to search for.
     search_path : str
         The directory path to search within.
@@ -149,7 +160,7 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     top_only : bool, optional
         If True, only searches in the top directory without subdirectories. 
         Defaults to False.
-    dirs_to_exclude : str or list, optional
+    dirs_to_exclude : str | list | None, optional
         Directory or list of directories to exclude from the search.
         Defaults to None.
     case_sensitive : bool, optional
@@ -157,7 +168,7 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     
     Returns
     -------
-    list of str
+    list[str]
         A list of files matching the specified patterns.
 
     Raises
@@ -165,16 +176,24 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
     ValueError
         If an invalid `match_type` is provided.
     """
+    # Handle nested lists with defensive programming
     if isinstance(patterns, str):
         patterns = [patterns]
-    if isinstance(dirs_to_exclude, str):
+    elif isinstance(patterns, list):
+        patterns = list(flatten_list(patterns))
+    
+    if dirs_to_exclude is None:
+        dirs_to_exclude = []
+    elif isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
+    elif isinstance(dirs_to_exclude, list):
+        dirs_to_exclude = list(flatten_list(dirs_to_exclude))
 
     modify_pattern_func = MATCH_PATTERN_MODIFIER.get(match_type)
     if not modify_pattern_func:
         raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
     
-    patterns = list(modify_pattern_func(patterns))  # Convert generator to list for multiple uses
+    patterns = modify_pattern_func(patterns)
 
     if top_only:
         files = _fetch_path_items(search_path, glob_bool=False)
@@ -194,13 +213,18 @@ def find_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_
 # Directory Operations #
 #~~~~~~~~~~~~~~~~~~~~~~#
 
-def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False, dirs_to_exclude=None, case_sensitive=True):
+def find_dirs_with_files(patterns: str | list, 
+                         search_path: str, 
+                         match_type: str = "ext", 
+                         top_only: bool = False, 
+                         dirs_to_exclude: str | list | None = None, 
+                         case_sensitive: bool = True) -> list[str]:
     """
     Finds directories containing files that match the given patterns with various matching types.
 
     Parameters
     ----------
-    patterns : str or list
+    patterns : str | list
         File extensions or glob patterns to search for.
     search_path : str
         The directory path to search within.
@@ -215,7 +239,7 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     top_only : bool, optional
         If True, only searches in the top directory without subdirectories.
         Defaults to False.
-    dirs_to_exclude : str or list, optional
+    dirs_to_exclude : str | list | None, optional
         Directory or list of directories to exclude from the search.
         Defaults to None.
     case_sensitive : bool, optional
@@ -223,7 +247,7 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     
     Returns
     -------
-    list of str
+    list[str]
         A list of directories containing files matching the specified patterns.
 
     Raises
@@ -231,16 +255,24 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
     ValueError
         If an invalid `match_type` is provided.
     """
+    # Handle nested lists with defensive programming
     if isinstance(patterns, str):
         patterns = [patterns]
-    if isinstance(dirs_to_exclude, str):
+    elif isinstance(patterns, list):
+        patterns = list(flatten_list(patterns))
+    
+    if dirs_to_exclude is None:
+        dirs_to_exclude = []
+    elif isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
+    elif isinstance(dirs_to_exclude, list):
+        dirs_to_exclude = list(flatten_list(dirs_to_exclude))
 
     modify_pattern_func = MATCH_PATTERN_MODIFIER.get(match_type)
     if not modify_pattern_func:
         raise ValueError(f"Invalid match_type '{match_type}'. Choose one from {MTD_KEYS}")
     
-    patterns = list(modify_pattern_func(patterns))  # Convert generator to list for multiple uses
+    patterns = modify_pattern_func(patterns)
 
     if top_only:
         files = _fetch_path_items(search_path, glob_bool=False)
@@ -261,7 +293,11 @@ def find_dirs_with_files(patterns, search_path, match_type="ext", top_only=False
 # Extensions and Directories Search #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-def find_items(search_path, skip_ext=None, top_only=False, task="extensions", dirs_to_exclude=None):
+def find_items(search_path: str, 
+               skip_ext: str | list | None = None, 
+               top_only: bool = False, 
+               task: str = "extensions", 
+               dirs_to_exclude: str | list | None = None) -> list[str]:
     """
     Finds all unique file extensions or directories in the specified path.
 
@@ -269,29 +305,37 @@ def find_items(search_path, skip_ext=None, top_only=False, task="extensions", di
     ----------
     search_path : str
         The directory path to search within.
-    skip_ext : str or list, optional
+    skip_ext : str | list | None, optional
         Extensions to skip while searching. Defaults to None.
     top_only : bool, optional
         If True, only searches in the top directory without subdirectories.
         Defaults to False.
-    task : {"extensions", "directories"}, default "extensions"
+    task : str, default "extensions"
         - "extensions": to find file extensions
         - "directories" to find directories
-    dirs_to_exclude : str or list, optional
+    dirs_to_exclude : str | list | None, optional
         Directory or list of directories to exclude from the search.
         Defaults to None.
     
     Returns
     -------
-    list of str
+    list[str]
         A list of unique file extensions or directories.
     """
+    # Handle nested lists with defensive programming
     if skip_ext is None:
         skip_ext = []
-    if isinstance(skip_ext, str):
+    elif isinstance(skip_ext, str):
         skip_ext = [skip_ext]
-    if isinstance(dirs_to_exclude, str):
+    elif isinstance(skip_ext, list):
+        skip_ext = list(flatten_list(skip_ext))
+    
+    if dirs_to_exclude is None:
+        dirs_to_exclude = []
+    elif isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
+    elif isinstance(dirs_to_exclude, list):
+        dirs_to_exclude = list(flatten_list(dirs_to_exclude))
 
     if top_only:
         items = _fetch_path_items(search_path, glob_bool=False)
