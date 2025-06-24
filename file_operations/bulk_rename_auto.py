@@ -26,7 +26,7 @@ from filewise.general.introspection_utils import get_all_caller_args
 from paramlib.global_parameters import (
     BASIC_OBJECT_TYPES,
     BASIC_TIME_FORMAT_STRS,
-    NON_STD_TIME_FORMAT_STRS
+    NON_STANDARD_TIME_FORMAT_STRS
 )
 from pygenutils.arrays_and_lists.patterns import select_elements
 from pygenutils.strings.string_handler import (
@@ -440,7 +440,7 @@ def reorder_objs(path,
 
 # Time formatting strings #
 TIME_FORMAT_STR = BASIC_TIME_FORMAT_STRS["H"]
-CTIME_FORMAT_STR = NON_STD_TIME_FORMAT_STRS["CFT_H"]
+CTIME_FORMAT_STR = NON_STANDARD_TIME_FORMAT_STRS["CTIME_H"]
 
 # Fixed extension to reuse at different parts of the objname_unevennctions #
 FIXED_EXT = "txt"
