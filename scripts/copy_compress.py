@@ -151,18 +151,18 @@ def _execute_copy_compress_workflow() -> None:
 # Config Parameters #
 #-------------------#
 
-HIGH_LEVEL_PATH: str = "/home/username/Documents"  # High-level directory to search
-EXTENSIONS: list[str] = ["jpg", "pdf", "zip"]  # Extensions to work with
+HIGH_LEVEL_PATH = "/home/username/Documents"  # High-level directory to search
+EXTENSIONS = ["jpg", "pdf", "zip"]  # Extensions to work with
 
-DIRS_TO_EXCLUDE: list[str] | None = None  # Optionally exclude directories
+DIRS_TO_EXCLUDE = None  # Optionally exclude directories
 
-COMPRESS: bool = True  # Option to compress the files
-OUTPUT_ZIP_FILE: str = f"compressed_file.{EXTENSIONS[-1]}"  # Default output zipped file
+COMPRESS = True  # Option to compress the files
+OUTPUT_ZIP_FILE = f"compressed_file.{EXTENSIONS[-1]}"  # Default output zipped file
 
 # List of file names to search #
 #------------------------------#
 
-file_list_orig: list[str] = [
+file_list_orig = [
     f"2023_garbiago.{EXTENSIONS[0]}",
     f"Jon_Ander_Gabantxo_betea.{EXTENSIONS[1]}",
     f"NAN_aurrealdea.{EXTENSIONS[0]}",
@@ -181,7 +181,7 @@ file_list_orig: list[str] = [
 # Corresponding names for renaming #
 #----------------------------------#
 
-file_list_rename: list[str] = [
+file_list_rename = [
     f"argazkia.{EXTENSIONS[0]}",
     f"CV_betea.{EXTENSIONS[1]}",
     f"NAN_aurrealdea.{EXTENSIONS[0]}",
@@ -200,7 +200,7 @@ file_list_rename: list[str] = [
 # Files to exclude from compression #
 #-----------------------------------#
 
-files_excluded_from_zipping: list[list[str]] = [file_list_rename[1:3]]  
+files_excluded_from_zipping = [file_list_rename[1:3]]  
 
 
 # Execute the workflow
