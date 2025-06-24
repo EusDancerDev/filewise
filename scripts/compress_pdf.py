@@ -38,15 +38,19 @@ file_compressor(IN_PATH_STR, OUT_PATH_STR)
 # 2nd case usage #
 #----------------#
 
-IN_PATH_LIST = ["/home/jonander/Documents/sample_1.pdf",
-                "/home/jonander/Documents/sample_2.pdf",
-                "/home/jonander/Documents/sample_3.pdf",
-                "/home/jonander/Documents/sample_4.pdf"]
+IN_PATH_LIST = [
+    "/home/jonander/Documents/sample_1.pdf",
+    "/home/jonander/Documents/sample_2.pdf",
+    "/home/jonander/Documents/sample_3.pdf",
+    "/home/jonander/Documents/sample_4.pdf"
+]
 
-OUT_PATH_LIST = ["/home/jonander/Documents/compressed_sample1.pdf",
-                 "/home/jonander/Documents/compressed_sample2.pdf",
-                 "/home/jonander/Documents/compressed_sample3.pdf",
-                 "/home/jonander/Documents/compressed_sample4.pdf",]
+OUT_PATH_LIST = [
+    "/home/jonander/Documents/compressed_sample1.pdf",
+    "/home/jonander/Documents/compressed_sample2.pdf",
+    "/home/jonander/Documents/compressed_sample3.pdf",
+    "/home/jonander/Documents/compressed_sample4.pdf"
+]
 
 # For readability purposes, place the function here,
 # alongside with the case usage parameters 
