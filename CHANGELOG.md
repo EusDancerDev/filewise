@@ -4,6 +4,161 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.10.0] - 2025-06-24
+
+### Added (3.10.0)
+
+#### **File Operations** (adding; 3.10.0)
+
+- Goal:
+  - Implement defensive programming to handle arbitrarily nested list structures in parameters that accept both strings and lists
+  - Functions now safely process inputs like `["ext1", ["ext2", "ext3"], "ext4"]` by flattening them automatically
+  - Prevent runtime crashes when nested lists are passed as input parameters
+
+- Module `path_utils.py`:
+  - Enhanced functions with nested list support:
+    - `find_files()`: `patterns` and `dirs_to_exclude` parameters
+    - `find_dirs_with_files()`: `patterns` and `dirs_to_exclude` parameters  
+    - `find_items()`: `skip_ext` and `dirs_to_exclude` parameters
+
+  - Module `permission_manager.py`:
+    - Enhanced functions with nested list support:
+    - `modify_obj_permissions()`: `extensions2skip` parameter
+    - `modify_obj_owner()`: `extensions2skip` parameter
+
+#### **Format Converters** (adding; 3.10.0)
+
+- Module `pdf_tools.py`:
+  - Add nested list support by importing and using `flatten_list` from `pygenutils.arrays_and_lists.data_manipulation`
+  - Implement defensive programming for `file_tweaker()`, `merge_files()`, and `file_compressor()` functions
+  - Functions now safely process nested list inputs like `[["file1.pdf", ["file2.pdf", "file3.pdf"]], "file4.pdf"]`
+  - Prevent runtime crashes when complex nested structures are passed as input parameters
+
+#### **Pandas Utils** (adding; 3.12.0)
+
+- Modules `pandas_obj_handler.py` and `data_manipulation.py`:
+  - Add nested list support for functions accepting list parameters
+  - Implement defensive programming for `merge_excel_files()`, `merge_csv_files()`, `sort_df_values()`, and `create_pivot_table()`
+  - Enhanced parameter validation with automatic flattening of arbitrarily nested list structures
+  - Improved robustness for data processing workflows with complex input structures
+
+#### **Scripts** (adding; 3.10.0)
+
+- Module `copy_compress.py`:
+  - Add comprehensive defensive programming with parameter validation and structured workflow management
+  - Implement nested list support and enhanced error handling for file operations
+  - Add PEP-604 type annotations and improved robustness for complex file management workflows
+
+#### **Xarray Utils** (adding; 3.10.0)
+
+- All modules (`conversions.py`, `file_utils.py`, `patterns.py`, `xarray_obj_handler.py`, `data_manipulation.py`):
+  - Add comprehensive defensive programming with parameter validation and nested list support
+  - Implement enhanced error handling and Path object compatibility throughout
+  - Add PEP-604 type annotations (`str | list[str]`) replacing legacy union syntax
+  - Enhanced file existence checks, extension validation, and integrity verification
+  - Improved robustness for handling complex input structures and edge cases
+
+### Changed (3.10.0)
+
+#### **General** (changing; 3.10.0)
+
+##### **Update variable names and key names** (changing; 3.10.0)
+
+- Changes have been made in the original file `global_parameters.py` in the `paramlib` package.
+- These include abbreviation addressing and variable/key name standardisation.
+
+| Module | Old variable name | New variable name | Old key name | New key name |
+|:------:|:-----------------:|:-----------------:|:------------:|:------------:|
+| `file_operations/bulk_rename_auto.py` | `NON_STD_TIME_FORMAT_STRS` | `NON_STANDARD_TIME_FORMAT_STRS` | `CFT_H` | `CTIME_H` |
+| `format_converters/pdf_tools.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` | `(N/A)` | `(N/A)` |
+| `xarray_utils/patterns.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` | `(N/A)` | `(N/A)` |
+
+##### **Type Annotation Modernisation** (changing; 3.10.0)
+
+- **Format Converters (`pdf_tools.py`)**:
+  - Replace missing type annotations with comprehensive PEP-604 syntax
+  - Update `tweak_pages()`, `eml_to_pdf()`, `msg_to_pdf()`, `_check_essential_progs()` with modern union operators (`|`)
+  - Enhanced parameter and return type specifications
+
+- **General (`introspection_utils.py`)**:
+  - Complete modernisation of all function signatures with PEP-604 type annotations
+  - Replace legacy type hints with modern union syntax (`str | None` instead of `Optional[str]`)
+  - Enhanced return type precision: `list[str]`, `dict[str, any]`, `inspect.Signature`
+  - Improved IDE support and static analysis compatibility
+
+- **JSON Utils (`json_encoding_operations.py`, `json_obj_handler.py`)**:
+  - Update all function signatures with comprehensive type annotations
+  - Modern parameter types: `dict | list | any`, `str | None`, `callable | None`
+  - Enhanced return type specifications: `dict | list`, `str | None`, `bytes | any`
+
+- **Pandas Utils**:
+  - **`pandas_obj_handler.py`**: Replace old `Union[]` syntax with modern PEP-604 alternatives
+    - `Union[str, List[str], None]` → `str | list[str] | None`
+    - `Union[pd.DataFrame, Dict[str, pd.DataFrame], List[pd.DataFrame]]` → `pd.DataFrame | dict[str, pd.DataFrame] | list[pd.DataFrame]`
+    - Update all function signatures with comprehensive type annotations
+  - **`data_manipulation.py`**: Complete type annotation coverage for all functions
+    - Enhanced parameter types: `pd.DataFrame`, `str | list`, `callable | None`
+    - Precise return types: `pd.DataFrame`, `None` for in-place operations
+  - **`conversions.py`**: Add missing type annotations with PEP-604 syntax
+
+#### **File Operations** (changing; 3.10.0)
+
+- Modules `path_utils.py`, `permission_manager.py`, `bulk_rename_auto.py`, `bulk_rename_manual.py`, and `cat_file_content.py`:
+  - Modernise all function signatures to use PEP-604 union syntax (`|`) instead of legacy "or" notation
+  - Replace docstring type annotations from `"str or list"` to `"str | list"` format
+  - Update return type annotations from generic `"list"` to specific `"list[str]"`, `"list[Path]"`, etc.
+  - Enhanced type precision for better IDE support, static analysis, and code clarity
+
+- Module `path_utils.py`:
+  - Updated all helper functions with comprehensive type annotations:
+    - `_unique_sorted()`, `_compile_pattern()`, `_match_glob()`, `_fetch_path_items()`
+    - `_add_glob_left()`, `_add_glob_right()`, `_add_glob_both()`, `_whole_word()`
+  - Improved pattern modifier functions to return lists instead of generators for better consistency
+  - Enhanced main functions: `find_files()`, `find_dirs_with_files()`, `find_items()`
+
+- Module `permission_manager.py`:
+  - Updated functions with comprehensive type annotations: `modify_obj_permissions()`, `modify_obj_owner()`
+  - Enhanced parameter validation and error handling with proper type specifications
+
+- Module `bulk_rename_auto.py`:
+  - Updated all functions with modern type annotations:
+    - `shorten_conflicting_obj_list()`, `loop_renamer()`, `loop_direct_renamer()`
+    - `return_report_file_fixed_path()`, `reorder_objs()`
+  - Added comprehensive parameter and return type specifications
+
+- Module `bulk_rename_manual.py`:
+  - Updated all functions with modern type annotations:
+    - `change_to_path_and_store()`, `get_current_path()`, `get_obj_list()`, `print_format_string()`
+  - Enhanced return type precision with union types where applicable
+  - Fixed variable name references to match constants
+
+- Module `cat_file_content.py`:
+  - Updated `cat()` function with modern type annotations supporting both `str` and `Path` inputs
+  - Added `Path` import for proper type support
+  - Improved documentation with accurate return type description
+
+### Fixed (3.10.0)
+
+#### **Documentation and Consistency** (fixing; 3.10.0)
+
+- **Format Converters**: Corrected parameter name mismatches in docstrings (`src_path` → `search_path`)
+- **General**: Enhanced docstring formatting and parameter descriptions across all modules
+- **Pandas Utils**: Improved parameter documentation for complex type signatures
+- **JSON Utils**: Standardised return type documentation and error handling descriptions
+
+#### **File Operations** (fixing; 3.10.0)
+
+- Module `permission_manager.py`:
+  - Fixed `os.path.isdir()` call that was missing the required path parameter
+  - Corrected `print_format_string()` usage to use proper string formatting with placeholders
+  - Improved error handling and validation in permission modification functions
+
+- Module `bulk_rename_manual.py`:
+  - Fixed variable name references to use proper constant names (`OBJECT_LISTING_DICT`, `OBJ_TYPE_LIST`)
+  - Corrected docstring formatting to use consistent parameter section headers
+
+---
+
 ## [3.9.3] - 2025-05-20
 
 ### Added (3.9.3)
@@ -320,10 +475,10 @@ All notable changes to this project will be documented in this file.
 - The following method renamings have been made:
 
 | Old function name | New function name |
-|------------------|-------------------|
-| serialise_dict_to_json | serialise_to_json |
-| serialise_json_to_dict | deserialise_json |
-| serialise_json_to_df | deserialise_json_to_df |
+|:-----------------:|:-----------------:|
+| `serialise_dict_to_json` | `serialise_to_json` |
+| `serialise_json_to_dict` | `deserialise_json` |
+| `serialise_json_to_df` | `deserialise_json_to_df` |
 
 ---
 
