@@ -9,7 +9,7 @@ from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 from paramlib.global_parameters import COMMON_DELIMITER_LIST
-from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list, flatten_to_string
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 from pygenutils.strings.string_handler import ext_adder, add_str_to_path
 from pygenutils.strings.text_formatters import format_string, format_table_from_lists
@@ -19,13 +19,13 @@ from pygenutils.strings.text_formatters import format_string, format_table_from_
 #------------------#
 
 def tweak_pages(
-        file, 
-        cat_str, 
-        out_path=None,
-        capture_output=False,
-        return_output_name=False,
-        encoding="utf-8",
-        shell=True):
+        file: str, 
+        cat_str: str, 
+        out_path: str | None = None,
+        capture_output: bool = False,
+        return_output_name: bool = False,
+        encoding: str = "utf-8",
+        shell: bool = True) -> None:
     """
     Modify and select specific pages in a PDF file based on the provided page string.
 
@@ -71,16 +71,16 @@ def tweak_pages(
     )
 
 
-def file_tweaker(path, cat_obj):
+def file_tweaker(path: str | list, cat_obj: str | dict | list) -> None:
     """
     Configure and modify pages in one or multiple PDF files based on specified configurations.
 
     Parameters
     ----------
-    path : str or list of str
-        Path(s) to the PDF file(s) for page manipulation.
-    cat_obj : str, dict, or list of dict
-        Object defining output filenames and page configurations.
+    path : str | list
+        Path(s) to the PDF file(s) for page manipulation. Supports nested lists.
+    cat_obj : str | dict | list
+        Object defining output filenames and page configurations. Supports nested structures.
 
     Raises
     ------
@@ -92,6 +92,10 @@ def file_tweaker(path, cat_obj):
         - str and dict
         - list and list
     """
+    # Apply defensive programming for nested lists
+    path = flatten_list(path) if isinstance(path, list) else path
+    cat_obj = flatten_list(cat_obj) if isinstance(cat_obj, list) else cat_obj
+    
     split_delim = COMMON_DELIMITER_LIST[2]
     if isinstance(path, str) and isinstance(cat_obj, str):
         if split_delim not in cat_obj:
@@ -118,19 +122,19 @@ def file_tweaker(path, cat_obj):
    
     
 def merge_files(
-        in_path_list, 
-        out_path=None,
-        capture_output=False,
-        return_output_name=False,
-        encoding="utf-8",
-        shell=True):
+        in_path_list: list, 
+        out_path: str | None = None,
+        capture_output: bool = False,
+        return_output_name: bool = False,
+        encoding: str = "utf-8",
+        shell: bool = True) -> None:
     """
     Merge multiple PDF files into a single PDF document.
 
     Parameters
     ----------
-    in_paths : list of str
-        List of input PDF file paths to merge.
+    in_path_list : list
+        List of input PDF file paths to merge. Supports nested lists.
     out_path : str, optional
         Path for the merged PDF file. Defaults to 'merged_doc.pdf' if None.
     capture_output : bool, optional
@@ -142,6 +146,9 @@ def merge_files(
     shell : bool, optional
         Whether to execute the command through the shell. Default is True.
     """
+    # Apply defensive programming for nested lists
+    in_path_list = flatten_list(in_path_list)
+    
     all_in_paths = flatten_to_string(in_path_list)
     out_path = out_path or ext_adder("merged_doc", EXTENSIONS[0])
     # Define the command for merging files
@@ -166,21 +173,22 @@ def merge_files(
 
 
 def file_compressor(
-        in_path, 
-        out_path=None,
-        capture_output=False,
-        return_output_name=False,
-        encoding="utf-8",
-        shell=True):
+        in_path: str | list, 
+        out_path: str | list | None = None,
+        capture_output: bool = False,
+        return_output_name: bool = False,
+        encoding: str = "utf-8",
+        shell: bool = True) -> None:
     """
     Compress one or multiple PDF files with minimal quality loss.
 
     Parameters
     ----------
-    in_path : str or list of str
-        Path(s) to the PDF file(s) for compression.
-    out_path : str, list of str, or None, optional
+    in_path : str | list
+        Path(s) to the PDF file(s) for compression. Supports nested lists.
+    out_path : str | list | None, optional
         Output path(s) for the compressed file(s). Defaults to 'compressed_doc.pdf' if None.
+        Supports nested lists when in_path is also a list.
     capture_output : bool, optional
         Whether to capture the command output. Default is False.
     return_output_name : bool, optional
@@ -189,6 +197,7 @@ def file_compressor(
         Encoding to use when decoding command output. Default is "utf-8".
     shell : bool, optional
         Whether to execute the command through the shell. Default is True.
+        
     Raises
     ------
     TypeError
@@ -197,6 +206,12 @@ def file_compressor(
         - str and None
         - list and list
     """
+    # Apply defensive programming for nested lists
+    if isinstance(in_path, list):
+        in_path = flatten_list(in_path)
+    if isinstance(out_path, list):
+        out_path = flatten_list(out_path)
+    
     if isinstance(in_path, str) and (isinstance(out_path, str) or out_path is None):
         in_path = [in_path]
         out_path = [out_path or "compressed_doc"]
@@ -237,12 +252,12 @@ def file_compressor(
 #----------------------#
 
 def eml_to_pdf(
-        search_path, 
-        delete_eml_files=False,
-        capture_output=False,
-        return_output_name=False,
-        encoding="utf-8",
-        shell=True):
+        search_path: str, 
+        delete_eml_files: bool = False,
+        capture_output: bool = False,
+        return_output_name: bool = False,
+        encoding: str = "utf-8",
+        shell: bool = True) -> None:
     """
     Convert .eml files to PDF, with an option to delete .eml files post-conversion.
 
@@ -278,23 +293,23 @@ def eml_to_pdf(
 
 
 def msg_to_pdf(
-        search_path, 
-        delete_msg_files=False, 
-        delete_eml_files=False,
-        capture_output=False,
-        return_output_name=False,
-        encoding="utf-8",
-        shell=True):
+        search_path: str, 
+        delete_msg_files: bool = False, 
+        delete_eml_files: bool = False,
+        capture_output: bool = False,
+        return_output_name: bool = False,
+        encoding: str = "utf-8",
+        shell: bool = True) -> None:
     """
     Convert .msg files to .pdf or .eml files to .pdf, with deletion options.
 
     Parameters
     ----------
-    src_path : str
+    search_path : str
         Path to search for '.msg' files.
-    del_msg : bool, optional
+    delete_msg_files : bool, optional
         If True, deletes '.msg' files after conversion.
-    del_eml : bool, optional
+    delete_eml_files : bool, optional
         If True, deletes '.eml' files after conversion.
     capture_output : bool, optional
         Whether to capture the command output. Default is False.
@@ -332,12 +347,23 @@ def msg_to_pdf(
 #-------------------#
 
 def _check_essential_progs(
-        capture_output=False,
-        return_output_name=False,
-        encoding="utf-8",
-        shell=True):
+        capture_output: bool = False,
+        return_output_name: bool = False,
+        encoding: str = "utf-8",
+        shell: bool = True) -> None:
     """
     Verify the installation of essential programs required for PDF and file manipulation.
+    
+    Parameters
+    ----------
+    capture_output : bool, optional
+        Whether to capture the command output. Default is False.
+    return_output_name : bool, optional
+        Whether to return file descriptor names. Default is False.
+    encoding : str, optional
+        Encoding to use when decoding command output. Default is "utf-8".
+    shell : bool, optional
+        Whether to execute the command through the shell. Default is True.
     
     Raises
     ------

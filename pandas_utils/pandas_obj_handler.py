@@ -7,7 +7,7 @@
 
 from numpy import unique
 import pandas as pd
-from typing import List, Tuple, Union, Dict
+# Modern type annotations - no longer need typing imports for basic types
 
 #------------------------#
 # Import project modules #
@@ -17,6 +17,7 @@ from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 from pygenutils.arrays_and_lists.patterns import find_duplicated_elements
 from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
 from pygenutils.strings.text_formatters import format_string
@@ -31,14 +32,14 @@ from pygenutils.strings.text_formatters import format_string
 # TXT files #
 #-#-#-#-#-#-#
 
-def read_table(file_path,
-               separator="\s+",
-               dtype=None,
-               engine=None,
-               encoding=None,
-               header="infer",
-               names=None,
-               parse_dates=False):
+def read_table(file_path: str,
+               separator: str = "\s+",
+               dtype: dict | None = None,
+               engine: str | None = None,
+               encoding: str | None = None,
+               header: int | list[int] | str | None = "infer",
+               names: list | None = None,
+               parse_dates: bool | list[int] | list[str] | list[list] | dict = False) -> pd.DataFrame:
  
     """
     Function that uses pandas module to read a text file
@@ -136,7 +137,7 @@ def read_table(file_path,
 # DataFrame column name handling #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-def polish_df_column_names(df, sep_to_polish="\n"):
+def polish_df_column_names(df: pd.DataFrame, sep_to_polish: str = "\n") -> pd.DataFrame:
     """
     Function to polish a Pandas DataFrames' column names, by eliminating
     the specified separator that might appear when reading files such as
@@ -169,22 +170,22 @@ def polish_df_column_names(df, sep_to_polish="\n"):
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 def _standardise_time_series_core(
-    dfs: List[pd.DataFrame],
-    date_value_pairs: List[Tuple[str, str]]
-) -> Tuple[List[Tuple], pd.Index]:
+    dfs: list[pd.DataFrame],
+    date_value_pairs: list[tuple[str, str]]
+) -> tuple[list[tuple], pd.Index]:
     """
     Core functionality for time series standardisation.
     
     Parameters
     ----------
-    dfs : List[pd.DataFrame]
+    dfs : list[pd.DataFrame]
         List of input DataFrames to standardise.
-    date_value_pairs : List[Tuple[str, str]]
+    date_value_pairs : list[tuple[str, str]]
         List of (date_column, value_column) pairs for each DataFrame.
         
     Returns
     -------
-    Tuple[List[Tuple], pd.Index]
+    tuple[list[tuple], pd.Index]
         A tuple containing:
         - List of processed series with their value column names
         - Common date index for all series
@@ -217,15 +218,15 @@ def _standardise_time_series_core(
     return processed_series, all_dates
 
 def standardise_time_series(
-    dfs: List[pd.DataFrame],
-    date_value_pairs: List[Tuple[str, str]],
+    dfs: list[pd.DataFrame],
+    date_value_pairs: list[tuple[str, str]],
     handle_duplicates: bool = True,
     separate: bool = False,
     return_format: str = 'dict',
     reset_index: bool = False,
     drop: bool = False,
-    names: Union[str, List[str], None] = None
-) -> Union[pd.DataFrame, Dict[str, pd.DataFrame], List[pd.DataFrame]]:
+    names: str | list[str] | None = None
+) -> pd.DataFrame | dict[str, pd.DataFrame] | list[pd.DataFrame]:
     """
     Standardise multiple time series DataFrames into a single DataFrame with a common date index,
     or as separate DataFrames sharing the same date index.
@@ -585,14 +586,14 @@ def save2excel(file_path,
                         "It must either be of type 'dict' or 'pandas.DataFrame'.")
         
 
-def merge_excel_files(input_file_list,
-                      output_file_path,
-                      header=None,
-                      engine=None,
-                      decimal=".",
-                      save_index=False,
-                      save_header=False,
-                      save_merged_file=False):
+def merge_excel_files(input_file_list: str | list,
+                      output_file_path: str,
+                      header: int | list[int] | None = None,
+                      engine: str | None = None,
+                      decimal: str = ".",
+                      save_index: bool = False,
+                      save_header: bool = False,
+                      save_merged_file: bool = False) -> int | dict:
     """
     Merge data from multiple Excel files into a single Excel file or dictionary.
 
@@ -640,6 +641,8 @@ def merge_excel_files(input_file_list,
     # Quality control section #
     if isinstance(input_file_list, str):
         input_file_list = [input_file_list]
+    elif isinstance(input_file_list, list):
+        input_file_list = flatten_list(input_file_list)
         
     input_file_count = len(input_file_list)    
     if input_file_count == 1:
@@ -962,21 +965,21 @@ def csv2df(file_path,
     return df
 
 
-def merge_csv_files(input_file_list, 
-                    output_file_path,
-                    separator_in=None,
-                    separator_out=";",
-                    engine="python",
-                    encoding=None,
-                    header='infer',
-                    parse_dates=False,
-                    index_col=None,
-                    decimal=",",                                 
-                    save_index=False,
-                    save_header=False,
-                    out_single_DataFrame=True,
-                    keep_data_in_sections=False,
-                    save_merged_file=False):
+def merge_csv_files(input_file_list: str | list, 
+                    output_file_path: str,
+                    separator_in: str | None = None,
+                    separator_out: str = ";",
+                    engine: str = "python",
+                    encoding: str | None = None,
+                    header: int | list[int] | str | None = 'infer',
+                    parse_dates: bool | list[int] | list[str] | list[list] | dict = False,
+                    index_col: int | str | list | None = None,
+                    decimal: str = ",",                                 
+                    save_index: bool = False,
+                    save_header: bool = False,
+                    out_single_DataFrame: bool = True,
+                    keep_data_in_sections: bool = False,
+                    save_merged_file: bool = False) -> int | pd.DataFrame | dict:
 
     """
     Merges several CSV files' data into a single one.
@@ -1111,6 +1114,8 @@ def merge_csv_files(input_file_list,
     # Correct number of input files #
     if isinstance(input_file_list, str):
         input_file_list = [input_file_list]
+    elif isinstance(input_file_list, list):
+        input_file_list = flatten_list(input_file_list)
         
     input_file_count = len(input_file_list)
     

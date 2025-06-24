@@ -12,6 +12,7 @@ import pandas as pd
 #------------------------#
 
 from filewise.pandas_utils.pandas_obj_handler import csv2df
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 
 #------------------#
 # Define functions #
@@ -20,13 +21,13 @@ from filewise.pandas_utils.pandas_obj_handler import csv2df
 # Data frame value handling #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-def sort_df_values(df,
-                   by,
-                   ignore_index_bool=False,
-                   axis=0,
-                   ascending_bool=True,
-                   na_position="last",
-                   key=None):
+def sort_df_values(df: pd.DataFrame,
+                   by: str | list,
+                   ignore_index_bool: bool = False,
+                   axis: int = 0,
+                   ascending_bool: bool = True,
+                   na_position: str = "last",
+                   key: callable | None = None) -> pd.DataFrame:
     
     """
     Sort by the values along either axis
@@ -34,8 +35,8 @@ def sort_df_values(df,
     Parameters
     ----------
     df : pandas.DataFrame or pandas.Series.
-    by : str or list of str
-        Name or list of names to sort by.
+    by : str | list
+        Name or list of names to sort by. Supports nested lists.
     ignore_index : bool
         Boolean to determine whether to relabel indices
         at ascending order: 0, 1, ..., n-1 or remain them unchanged.
@@ -55,6 +56,10 @@ def sort_df_values(df,
         this 'key' function should be *vectorised*.
     """
     
+    # Apply defensive programming for nested lists
+    if isinstance(by, list):
+        by = flatten_list(by)
+    
     df = df.sort_values(by=by,
                         axis=axis, 
                         ascending=ascending_bool,
@@ -65,7 +70,10 @@ def sort_df_values(df,
     return df
 
     
-def insert_column_in_df(df, index_col, column_name, values):
+def insert_column_in_df(df: pd.DataFrame, 
+                        index_col: int, 
+                        column_name: str, 
+                        values: list | pd.Series) -> None:
     
     """
     Function that inserts a column on a simple, non multi-index
@@ -94,7 +102,9 @@ def insert_column_in_df(df, index_col, column_name, values):
     df.insert(index_col, column_name, values)
     
     
-def insert_row_in_df(df, row_data, index=None):
+def insert_row_in_df(df: pd.DataFrame, 
+                     row_data: dict | list, 
+                     index: int | None = None) -> pd.DataFrame:
     """
     Insert a row into a pandas DataFrame at a specified index.
     
@@ -130,14 +140,14 @@ def insert_row_in_df(df, row_data, index=None):
 # Data frame index handling #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-def sort_df_indices(df,
-                    axis=0,
-                    ignore_index_bool=False,
-                    level=None,
-                    ascending_bool=True,
-                    na_position="last",
-                    sort_remaining_bool=True,
-                    key=None):
+def sort_df_indices(df: pd.DataFrame,
+                    axis: int = 0,
+                    ignore_index_bool: bool = False,
+                    level: int | str | list | None = None,
+                    ascending_bool: bool = True,
+                    na_position: str = "last",
+                    sort_remaining_bool: bool = True,
+                    key: callable | None = None) -> pd.DataFrame:
     
     """
     Returns a new data frame sorted 
@@ -181,7 +191,9 @@ def sort_df_indices(df,
     return df
 
 
-def reindex_df(df, col_to_replace=None, vals_to_replace=None):
+def reindex_df(df: pd.DataFrame, 
+               col_to_replace: str | int | None = None, 
+               vals_to_replace: list | pd.Series | None = None) -> pd.DataFrame:
     
     """
     Further function than df.reset_index attribute,
@@ -238,20 +250,20 @@ def reindex_df(df, col_to_replace=None, vals_to_replace=None):
     return df_reidx_drop_col
 
 
-def count_data_by_concept(df, df_cols):
+def count_data_by_concept(df: pd.DataFrame, df_cols: str | list) -> pd.DataFrame:
     data_count = df.groupby(df_cols).count()
     return data_count    
 
 
 
-def concat_dfs_aux(input_file_list,
-                   separator_in,
-                   engine,
-                   encoding, 
-                   header, 
-                   parse_dates, 
-                   index_col, 
-                   decimal):
+def concat_dfs_aux(input_file_list: list,
+                   separator_in: str | None,
+                   engine: str,
+                   encoding: str | None, 
+                   header: int | list[int] | str | None, 
+                   parse_dates: bool | list[int] | list[str] | list[list] | dict, 
+                   index_col: int | str | list | None, 
+                   decimal: str) -> pd.DataFrame:
     
     all_file_data_df = pd.DataFrame()
     for file in input_file_list:
@@ -267,7 +279,10 @@ def concat_dfs_aux(input_file_list,
     return all_file_data_df
 
 
-def create_pivot_table(df, df_values, df_index, func_apply_on_values):    
+def create_pivot_table(df: pd.DataFrame, 
+                       df_values: str | list, 
+                       df_index: str | list, 
+                       func_apply_on_values: str | callable) -> pd.DataFrame:    
     """
     Create a pivot table from the given DataFrame.
 
@@ -275,11 +290,11 @@ def create_pivot_table(df, df_values, df_index, func_apply_on_values):
     ----------
     df : pandas.DataFrame
         The input DataFrame from which to create the pivot table.
-    df_values : str or list
-        Column(s) in the DataFrame to aggregate.
-    df_index : str or list
-        Column(s) to set as index for the pivot table.
-    func_apply_on_values : str or callable
+    df_values : str | list
+        Column(s) in the DataFrame to aggregate. Supports nested lists.
+    df_index : str | list
+        Column(s) to set as index for the pivot table. Supports nested lists.
+    func_apply_on_values : str | callable
         The aggregation function to apply on the values.
 
     Returns
@@ -300,11 +315,23 @@ def create_pivot_table(df, df_values, df_index, func_apply_on_values):
     if df.empty:
         raise ValueError("Input DataFrame is empty.")
     
-    if df_values not in df.columns:
-        raise ValueError(f"Column '{df_values}' not found in DataFrame.")
+    # Apply defensive programming for nested lists
+    if isinstance(df_values, list):
+        df_values = flatten_list(df_values)
+    if isinstance(df_index, list):
+        df_index = flatten_list(df_index)
     
-    if df_index not in df.columns:
-        raise ValueError(f"Column '{df_index}' not found in DataFrame.")
+    # Validate columns exist (handle both single values and lists)
+    values_to_check = df_values if isinstance(df_values, list) else [df_values]
+    index_to_check = df_index if isinstance(df_index, list) else [df_index]
+    
+    for val in values_to_check:
+        if val not in df.columns:
+            raise ValueError(f"Column '{val}' not found in DataFrame.")
+    
+    for idx in index_to_check:
+        if idx not in df.columns:
+            raise ValueError(f"Column '{idx}' not found in DataFrame.")
     
     pivot_table = pd.pivot_table(df, 
                                  values=df_values, 
