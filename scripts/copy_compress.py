@@ -22,6 +22,7 @@ Workflow Overview:
 #----------------#
 
 import time
+from pathlib import Path
 
 #------------------------#
 # Import project modules #
@@ -34,24 +35,134 @@ from filewise.file_operations.ops_handler import (
 )
 from filewise.file_operations.path_utils import find_dirs_with_files
 from pygenutils.arrays_and_lists.conversions import flatten_to_string
+from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 from pygenutils.operative_systems.os_operations import run_system_command
 
+#-------------------------#
+# Define custom functions #
+#-------------------------#
+
+def _validate_parameters() -> None:
+    """
+    Validate the input parameters for the copy and compress workflow.
+    
+    Raises
+    ------
+    ValueError
+        If any parameter validation fails.
+    FileNotFoundError
+        If the high-level path doesn't exist.
+    """
+    # Validate high-level path
+    if not HIGH_LEVEL_PATH or not isinstance(HIGH_LEVEL_PATH, str):
+        raise ValueError("HIGH_LEVEL_PATH must be a non-empty string")
+    
+    if not Path(HIGH_LEVEL_PATH).exists():
+        raise FileNotFoundError(f"High-level path does not exist: {HIGH_LEVEL_PATH}")
+    
+    # Validate extensions
+    if not EXTENSIONS or not isinstance(EXTENSIONS, list):
+        raise ValueError("EXTENSIONS must be a non-empty list")
+    
+    if not all(isinstance(ext, str) and ext.strip() for ext in EXTENSIONS):
+        raise ValueError("All extensions must be non-empty strings")
+    
+    # Validate file lists
+    if len(file_list_orig) != len(file_list_rename):
+        raise ValueError("Original and rename file lists must have the same length")
+    
+    if not all(isinstance(f, str) and f.strip() for f in file_list_orig + file_list_rename):
+        raise ValueError("All file names must be non-empty strings")
+
+
+def _execute_copy_compress_workflow() -> None:
+    """
+    Execute the complete copy and compress workflow with error handling.
+    
+    This function orchestrates the entire process including validation,
+    file removal, searching, copying, renaming, and optional compression.
+    """
+    try:
+        # Step 0: Validate parameters #
+        #-----------------------------#
+        
+        _validate_parameters()
+        
+        # Step 1: Delete already present files #
+        #--------------------------------------#
+        
+        print("Removing existing files...")
+        remove_files(patterns=file_list_rename,
+                     input_directories=".",
+                     match_type="glob_both")
+
+        # Step 2: Search mechanism to find directories with files #
+        #---------------------------------------------------------#
+        
+        print("Searching for files in directories...")
+        found_dirs = find_dirs_with_files(file_list_orig,
+                                          search_path=HIGH_LEVEL_PATH,
+                                          match_type="glob_both", 
+                                          dirs_to_exclude=DIRS_TO_EXCLUDE)
+
+        # Step 3: Copy files #
+        #--------------------#
+        
+        print("Copying files...")
+        copy_files(file_list_orig, found_dirs, dirs_to_exclude=DIRS_TO_EXCLUDE)
+
+        # Step 4: Rename the copied files (optional) #
+        #--------------------------------------------#
+        
+        if file_list_rename:
+            print("Renaming files...")
+            rename_objects(file_list_orig, file_list_rename)
+
+        # Step 5: Compress files if 'compress' is True #
+        #----------------------------------------------#
+        
+        if COMPRESS:
+            print("Berrizendatutako programak karpeta konprimatu batean gordetzen...")
+            time.sleep(0.5)
+            
+            # Prepare command for zipping with flattened lists #
+            file_list_rename_flat = flatten_list(file_list_rename)
+            file_list_rename_str = flatten_to_string(file_list_rename_flat)
+            
+            if files_excluded_from_zipping:
+                files_excluded_flat = flatten_list(files_excluded_from_zipping)
+                files_excluded_str = f"-x {flatten_to_string(files_excluded_flat)}"        
+                zip_command = f"zip {OUTPUT_ZIP_FILE} {file_list_rename_str} {files_excluded_str}"
+            else:
+                zip_command = f"zip {OUTPUT_ZIP_FILE} {file_list_rename_str}"
+            
+            # Execute the zip command #
+            run_system_command(zip_command, shell=True)
+            print("Compression completed successfully!")
+
+    except Exception as e:
+        print(f"Error during copy-compress workflow: {e}")
+        raise
+
+#--------------------------#
+# Parameters and constants #
+#--------------------------#
+
+# Config Parameters #
 #-------------------#
-# Define parameters #
-#-------------------#
 
-HIGH_LEVEL_PATH = "/home/username/Documents"  # High-level directory to search
-EXTENSIONS = ["jpg", "pdf", "zip"]  # Extensions to work with
+HIGH_LEVEL_PATH: str = "/home/username/Documents"  # High-level directory to search
+EXTENSIONS: list[str] = ["jpg", "pdf", "zip"]  # Extensions to work with
 
-DIRS_TO_EXCLUDE = None  # Optionally exclude directories
+DIRS_TO_EXCLUDE: list[str] | None = None  # Optionally exclude directories
 
-COMPRESS = True  # Option to compress the files
-OUTPUT_ZIP_FILE = f"compressed_file.{EXTENSIONS[-1]}"  # Default output zipped file
+COMPRESS: bool = True  # Option to compress the files
+OUTPUT_ZIP_FILE: str = f"compressed_file.{EXTENSIONS[-1]}"  # Default output zipped file
 
 # List of file names to search #
 #------------------------------#
 
-file_list_orig = [
+file_list_orig: list[str] = [
     f"2023_garbiago.{EXTENSIONS[0]}",
     f"Jon_Ander_Gabantxo_betea.{EXTENSIONS[1]}",
     f"NAN_aurrealdea.{EXTENSIONS[0]}",
@@ -70,7 +181,7 @@ file_list_orig = [
 # Corresponding names for renaming #
 #----------------------------------#
 
-file_list_rename = [
+file_list_rename: list[str] = [
     f"argazkia.{EXTENSIONS[0]}",
     f"CV_betea.{EXTENSIONS[1]}",
     f"NAN_aurrealdea.{EXTENSIONS[0]}",
@@ -89,53 +200,9 @@ file_list_rename = [
 # Files to exclude from compression #
 #-----------------------------------#
 
-files_excluded_from_zipping = [file_list_rename[1:3]]  
+files_excluded_from_zipping: list[list[str]] = [file_list_rename[1:3]]  
 
-#--------------------------------------#
-# Step 1: Delete already present files #
-#--------------------------------------#
 
-remove_files(patterns=file_list_rename,
-             input_directories=".",
-             match_type="glob_both")
-
-#---------------------------------------------------------#
-# Step 2: Search mechanism to find directories with files #
-#---------------------------------------------------------#
-
-found_dirs = find_dirs_with_files(file_list_orig,
-                                  search_path=HIGH_LEVEL_PATH,
-                                  match_type="glob_both", 
-                                  dirs_to_exclude=DIRS_TO_EXCLUDE)
-
-#--------------------#
-# Step 3: Copy files #
-#--------------------#
-
-copy_files(file_list_orig, found_dirs, dirs_to_exclude=DIRS_TO_EXCLUDE)
-
-#--------------------------------------------#
-# Step 4: Rename the copied files (optional) #
-#--------------------------------------------#
-
-if file_list_rename:
-    rename_objects(file_list_orig, file_list_rename)
-
-#----------------------------------------------#
-# Step 5: Compress files if 'compress' is True #
-#----------------------------------------------#
-
-if COMPRESS:
-    print("Berrizendatutako programak karpeta konprimatu batean gordetzen...")
-    time.sleep(0.5)
-    
-    # Prepare command for zipping
-    file_list_rename_str = flatten_to_string(file_list_rename)
-    if files_excluded_from_zipping:
-        files_excluded_str = f"-x {flatten_to_string(files_excluded_from_zipping)}"        
-        zip_command = f"zip {OUTPUT_ZIP_FILE} {file_list_rename_str} {files_excluded_str}"
-    else:
-        zip_command = f"zip {OUTPUT_ZIP_FILE} {file_list_rename_str}"
-    
-    # Execute the zip command
-    run_system_command(zip_command, shell=True)
+# Execute the workflow
+if __name__ == "__main__":
+    _execute_copy_compress_workflow()

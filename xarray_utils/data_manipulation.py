@@ -6,6 +6,7 @@
 #----------------#
 
 import os
+from pathlib import Path
 
 #------------------------#
 # Import project modules #
@@ -31,7 +32,7 @@ from pygenutils.time_handling.date_and_time_utils import find_dt_key
 # Data extractors #
 #-----------------#
 
-def extract_latlon_bounds(delta_roundoff, value_roundoff):
+def extract_latlon_bounds(delta_roundoff: int, value_roundoff: int) -> None:
     """
     Extract latitude and longitude bounds from netCDF files.
 
@@ -46,6 +47,13 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
     -------
     None
 
+    Raises
+    ------
+    TypeError
+        If roundoff parameters are not integers.
+    ValueError
+        If roundoff parameters are negative.
+
     Notes
     -----
     - The extracted latitude and longitude arrays, their dimensions,
@@ -53,6 +61,19 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
     - If any files are faulty or cannot be processed, relevant error information 
       is recorded in the report.
     """
+    # Parameter validation
+    if not isinstance(delta_roundoff, int):
+        raise TypeError("delta_roundoff must be an integer")
+    
+    if not isinstance(value_roundoff, int):
+        raise TypeError("value_roundoff must be an integer")
+    
+    if delta_roundoff < 0:
+        raise ValueError("delta_roundoff must be non-negative")
+    
+    if value_roundoff < 0:
+        raise ValueError("value_roundoff must be non-negative")
+    
     nc_dirs = find_dirs_with_files(EXTENSIONS[0], search_path=CODE_CALL_DIR)
     
     for dir_num, dir_name in enumerate(nc_dirs, start=1):
@@ -75,24 +96,28 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                         except Exception as coord_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {coord_err}\n")
                         else:
-                            lats, lons = get_latlon_bounds(nc_file, coord_vars[0], coord_vars[1], value_roundoff)
-                            lat_delta, lon_delta = get_latlon_deltas(lats, lons, delta_roundoff)
+                            try:
+                                lats, lons = get_latlon_bounds(nc_file, coord_vars[0], coord_vars[1], value_roundoff)
+                                lat_delta, lon_delta = get_latlon_deltas(lats, lons, delta_roundoff)
+                                
+                                format_args_latlon_bounds = (
+                                    nc_file, 
+                                    lats,
+                                    lons, 
+                                    len(lats), 
+                                    len(lons), 
+                                    lat_delta, 
+                                    lon_delta
+                                    )
+                                
+                                report.write(format_string(LATLON_INFO_TEMPLATE, format_args_latlon_bounds))
+                            except Exception as e:
+                                report.write(f"ERROR PROCESSING COORDINATES IN FILE '{nc_file}': {e}\n")
                             
-                            format_args_latlon_bounds = (
-                                nc_file, 
-                                lats,
-                                lons, 
-                                len(lats), 
-                                len(lons), 
-                                lat_delta, 
-                                lon_delta
-                                )
-                            
-                            report.write(format_string(LATLON_INFO_TEMPLATE, format_args_latlon_bounds))
-                            move_files(COORD_INFO_FNAME,
-                                       input_directories=".", 
-                                       destination_directories=dir_name, 
-                                       match_type="glob")
+                move_files(COORD_INFO_FNAME,
+                           input_directories=".", 
+                           destination_directories=dir_name, 
+                           match_type="glob")
             else:
                 report.write(f"No netCDF files in directory {dir_name}\n")
                 move_files(COORD_INFO_FNAME,
@@ -101,7 +126,7 @@ def extract_latlon_bounds(delta_roundoff, value_roundoff):
                            match_type="glob")
 
 
-def extract_time_bounds():
+def extract_time_bounds() -> None:
     """
     Extract the time bounds (start and end times) from netCDF files.
 
@@ -142,19 +167,23 @@ def extract_time_bounds():
                         except Exception as time_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
-                            times = get_times(nc_file, time_var)                            
-                            format_args_time_periods = (
-                                nc_file, 
-                                times[0].values,
-                                times[-1].values, 
-                                len(times)
-                                )
+                            try:
+                                times = get_times(nc_file, time_var)                            
+                                format_args_time_periods = (
+                                    nc_file, 
+                                    times[0].values,
+                                    times[-1].values, 
+                                    len(times)
+                                    )
+                                
+                                report.write(format_string(PERIOD_INFO_TEMPLATE, format_args_time_periods))
+                            except Exception as e:
+                                report.write(f"ERROR PROCESSING TIME DATA IN FILE '{nc_file}': {e}\n")
                             
-                            report.write(format_string(PERIOD_INFO_TEMPLATE, format_args_time_periods))
-                            move_files(DATE_RANGE_INFO_FNAME,
-                                       input_directories=".", 
-                                       destination_directories=dir_name, 
-                                       match_type="glob")
+                move_files(DATE_RANGE_INFO_FNAME,
+                           input_directories=".", 
+                           destination_directories=dir_name, 
+                           match_type="glob")
             else:
                 report.write(f"No netCDF files in directory {dir_name}\n")
                 move_files(DATE_RANGE_INFO_FNAME,
@@ -163,7 +192,7 @@ def extract_time_bounds():
                            match_type="glob")
 
 
-def extract_time_formats():
+def extract_time_formats() -> None:
     """
     Extract the time formats from netCDF files.
 
@@ -205,17 +234,21 @@ def extract_time_formats():
                         except Exception as time_err:
                             report.write(f"ERROR IN FILE '{nc_file}': {time_err}\n")
                         else:
-                            times = get_times(nc_file, time_var)
-                            format_args_time_formats = (
-                                nc_file, 
-                                times.values, 
-                                len(times)
-                                )
-                            report.write(format_string(TIME_FORMAT_INFO_TEMPLATE, format_args_time_formats))
-                            move_files(TIME_FORMATS_FILE_NAME,
-                                       input_directories=".", 
-                                       destination_directories=dir_name, 
-                                       match_type="glob")
+                            try:
+                                times = get_times(nc_file, time_var)
+                                format_args_time_formats = (
+                                    nc_file, 
+                                    times.values, 
+                                    len(times)
+                                    )
+                                report.write(format_string(TIME_FORMAT_INFO_TEMPLATE, format_args_time_formats))
+                            except Exception as e:
+                                report.write(f"ERROR PROCESSING TIME FORMATS IN FILE '{nc_file}': {e}\n")
+                                
+                move_files(TIME_FORMATS_FILE_NAME,
+                           input_directories=".", 
+                           destination_directories=dir_name, 
+                           match_type="glob")
             else:
                 report.write(f"No netCDF files in directory {dir_name}\n")
                 move_files(TIME_FORMATS_FILE_NAME,
@@ -226,8 +259,7 @@ def extract_time_formats():
 # File regridding #
 #-----------------#
 
-def netcdf_regridder(ds_in, ds_image, regrid_method="bilinear"):    
-    
+def netcdf_regridder(ds_in: 'xr.Dataset', ds_image: 'xr.Dataset', regrid_method: str = "bilinear") -> 'xr.Dataset':    
     """
     Function that regrids a xarray Dataset to that of the desired Dataset. 
     It is similar to CDO but more intuitive and
@@ -246,15 +278,47 @@ def netcdf_regridder(ds_in, ds_image, regrid_method="bilinear"):
     -------
     ds_out : xarray.Dataset
         Output data set regridded according to the grid specs of ds_in.
+        
+    Raises
+    ------
+    TypeError
+        If input datasets are not xarray.Dataset objects.
+    ValueError
+        If regrid_method is not valid.
+    ImportError
+        If xesmf package is not available.
+    RuntimeError
+        If regridding operation fails.
     """
-    import xesmf as xe
-    if regrid_method not in regrid_method_list:
+    # Parameter validation
+    try:
+        import xarray as xr
+        if not isinstance(ds_in, xr.Dataset):
+            raise TypeError("ds_in must be an xarray.Dataset")
+        
+        if not isinstance(ds_image, xr.Dataset):
+            raise TypeError("ds_image must be an xarray.Dataset")
+    except ImportError:
+        raise ImportError("xarray package is required but not available")
+    
+    if not isinstance(regrid_method, str):
+        raise TypeError("regrid_method must be a string")
+    
+    if regrid_method not in REGRID_METHOD_LIST:
         raise ValueError("Invalid regridding method.\n"
-                         f"Choose one from {regrid_method_list}.")        
-    else:
+                         f"Choose one from {REGRID_METHOD_LIST}.")        
+    
+    try:
+        import xesmf as xe
+    except ImportError:
+        raise ImportError("xesmf package is required for regridding but not available")
+    
+    try:
         regridder = xe.Regridder(ds_in, ds_image, regrid_method)
         ds_out = regridder(ds_in)
         return ds_out    
+    except Exception as e:
+        raise RuntimeError(f"Regridding operation failed: {e}")
 
 #--------------------------#
 # Parameters and constants #
@@ -272,7 +336,7 @@ DATE_RANGE_INFO_FNAME = "period_bounds.txt"
 TIME_FORMATS_FILE_NAME = "time_formats.txt"
 
 # Regridding method options #
-regrid_method_list = [
+REGRID_METHOD_LIST = [
     "bilinear",
     "conservative",
     "conservative_normed",
