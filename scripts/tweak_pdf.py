@@ -106,15 +106,19 @@ file_tweaker(path_str, cat_out_str)
 
 path_str = "/home/jonander/Documents/sample_1.pdf"
 
-output_path_list = ["output_path_1",
-                    "output_path_2",
-                    "output_path_3",
-                    "output_path_4"]
+output_path_list = [
+    "output_path_1",
+    "output_path_2",
+    "output_path_3",
+    "output_path_4"
+]
 
-cat_str_list = ["1-25 34-end",
-                "27-30 78 79 84 76-77west",
-                "36 38 31 32 56up",
-                "2-endnorth"]
+cat_str_list = [
+    "1-25 34-end",
+    "27-30 78 79 84 76-77west",
+    "36 38 31 32 56up",
+    "2-endnorth"
+]
 
 cat_out_dict = {out_path : cat_str 
                 for out_path, cat_str in zip(output_path_list, cat_str_list)}
@@ -124,11 +128,14 @@ cat_out_dict = {out_path : cat_str
 file_tweaker(path_str, cat_out_dict)
 
 #%%
+
 # 3rd case usage #
 #----------------#
 
-path_list = ["/home/jonander/Documents/sample_1.pdf",
-             "Hizkuntzak/sample_2.pdf"]
+path_list = [
+    "/home/jonander/Documents/sample_1.pdf",
+    "Hizkuntzak/sample_2.pdf"
+]
 
 output_path_lists = [
     ["output_path_1",
@@ -143,22 +150,28 @@ output_path_lists = [
     ]
 
 cat_str_lists = [
-    ["1-25 34-end",
-     "27-30 78 79 84 76-77west",
-     "36 38 31 32 56up",
-     "2-endnorth"],
-    
-    ["4-end",
-     "24east 45",
-     "83 34north 48up",
-     "4east-7",
-     "1-2 8"],
-    ]
+    [
+        "1-25 34-end",
+        "27-30 78 79 84 76-77west",
+        "36 38 31 32 56up",
+        "2-endnorth"
+    ],
+    [
+        "4-end",
+        "24east 45",
+        "83 34north 48up",
+        "4east-7",
+        "1-2 8"
+    ],
+]
 
-cat_out_dict_list\
-= [{out_path : cat_str 
-    for out_path, cat_str in zip(output_path_list, cat_str_list)
-    for output_path_list, cat_str_list in zip(output_path_lists, cat_str_list)}]
+cat_out_dict_list = [
+    {
+        out_path : cat_str 
+        for out_path, cat_str in zip(output_path_list, cat_str_list)
+        for output_path_list, cat_str_list in zip(output_path_lists, cat_str_lists)
+    }
+]
 
 # For readability purposes, place the function here,
 # alongside with the case usage parameters 
