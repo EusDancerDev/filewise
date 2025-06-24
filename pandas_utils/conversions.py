@@ -6,6 +6,7 @@
 #----------------#
 
 from numpy import array
+import pandas as pd
 
 #------------------#
 # Define functions #
@@ -17,7 +18,7 @@ from numpy import array
 # Structured array conversion #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-def df_to_structured_array(df):
+def df_to_structured_array(df: pd.DataFrame) -> array:
     """
     Converts a pandas DataFrame into a structured NumPy array, 
     where each row is represented as a tuple, and each column 

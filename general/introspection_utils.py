@@ -17,7 +17,7 @@ import sys
 #-----------#
 
 # Function names #
-def get_func_name(lib="inspect"):
+def get_func_name(lib: str = "inspect") -> str:
     """
     Retrieves the name of the caller function using the specified library.
 
@@ -50,7 +50,7 @@ def get_func_name(lib="inspect"):
 # General frame #
 #-#-#-#-#-#-#-#-#
 
-def get_func_args(func):
+def get_func_args(func: callable) -> list[str]:
     """
     Retrieves the required argument names of the provided function.
 
@@ -61,7 +61,7 @@ def get_func_args(func):
 
     Returns
     -------
-    list of str
+    list[str]
         List of required argument names.
 
     Example
@@ -76,7 +76,7 @@ def get_func_args(func):
                            inspect.Parameter.KEYWORD_ONLY)]
 
 
-def get_all_func_args(func):
+def get_all_func_args(func: callable) -> list[str]:
     """
     Retrieves all argument names of the provided function.
 
@@ -87,7 +87,7 @@ def get_all_func_args(func):
 
     Returns
     -------
-    list of str
+    list[str]
         List of all argument names, including those with default values.
 
     Example
@@ -99,7 +99,7 @@ def get_all_func_args(func):
     return [p.name for p in inspect.signature(func).parameters.values()]
 
 
-def get_func_signature(func):
+def get_func_signature(func: callable) -> inspect.Signature:
     """
     Retrieves the full signature of the provided function.
 
@@ -125,13 +125,13 @@ def get_func_signature(func):
 # Caller's frame #
 #-#-#-#-#-#-#-#-#-
 
-def get_caller_args():
+def get_caller_args() -> list[str]:
     """
     Retrieves the required argument names of the caller function.
 
     Returns
     -------
-    list of str
+    list[str]
         List of argument names used in the caller function.
 
     Example
@@ -144,13 +144,13 @@ def get_caller_args():
     return list(caller_args)
     
 
-def get_all_caller_args():
+def get_all_caller_args() -> dict[str, any]:
     """
     Retrieves all argument names and their values in the caller function.
 
     Returns
     -------
-    dict
+    dict[str, any]
         Dictionary of argument names and values used in the caller function.
 
     Example
@@ -163,7 +163,7 @@ def get_all_caller_args():
     return {arg: caller_values[arg] for arg in caller_args}
 
 
-def get_caller_signature():
+def get_caller_signature() -> inspect.Signature:
     """
     Retrieves the full signature of the caller function.
 
@@ -185,7 +185,7 @@ def get_caller_signature():
 # Attributes #
 #------------#
 
-def get_attr_names(obj):
+def get_attr_names(obj: any) -> list[str]:
     """
     Retrieves all non-callable attribute names of the given object.
 
@@ -196,7 +196,7 @@ def get_attr_names(obj):
 
     Returns
     -------
-    list of str
+    list[str]
         List of all non-callable attribute names.
     """
     return [attr for attr in dir(obj) if not callable(getattr(obj, attr))]
@@ -205,7 +205,7 @@ def get_attr_names(obj):
 # Object types #
 #--------------#
 
-def get_type_str(obj, lowercase=False):
+def get_type_str(obj: any, lowercase: bool = False) -> str:
     """
     Returns the type of an object as a string.
 
@@ -227,7 +227,7 @@ def get_type_str(obj, lowercase=False):
 # More functions related to introspection or utility as needed #
 #--------------------------------------------------------------#
 
-def inspect_memory_usage(obj, seen=None):
+def inspect_memory_usage(obj: any, seen: set | None = None) -> int:
     """
     Recursively calculates the memory usage of an object and its contents.
 

@@ -26,13 +26,13 @@ from pygenutils.strings.string_handler import append_ext, get_obj_specs
 # Basic JSON Data Serialisation #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-def serialise_to_json(data, 
-                      out_file_path=None,
-                      indent=4,
-                      ensure_ascii=False,
-                      sort_keys=False,
-                      allow_nan=False,
-                      default=None):
+def serialise_to_json(data: dict | list | any, 
+                      out_file_path: str | None = None,
+                      indent: int = 4,
+                      ensure_ascii: bool = False,
+                      sort_keys: bool = False,
+                      allow_nan: bool = False,
+                      default: callable | None = None) -> str | None:
     """
     Convert data to a JSON string and optionally write it to a file.
 
@@ -117,7 +117,7 @@ def serialise_to_json(data,
         return json_str
 
 
-def deserialise_json(in_data):
+def deserialise_json(in_data: str) -> dict | list:
     """
     Convert a JSON file or a JSON-formatted string to a dictionary or list.
 
