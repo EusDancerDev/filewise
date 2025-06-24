@@ -13,7 +13,7 @@ import xarray as xr
 #------------------------#
 
 from filewise.xarray_utils.file_utils import ncfile_integrity_status
-from paramlib.global_parameters import COMMON_DELIM_LIST
+from paramlib.global_parameters import COMMON_DELIMITER_LIST
 
 #-------------------------#
 # Define custom functions #
@@ -348,4 +348,4 @@ def find_nearest_coordinates(nc_file, lats_obs, lons_obs, roundoff=3):
 #--------------------------#
 
 # String splitting character #
-SPLIT_DELIM = COMMON_DELIM_LIST[0]
+SPLIT_DELIM = COMMON_DELIMITER_LIST[0]

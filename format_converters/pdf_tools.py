@@ -8,7 +8,7 @@
 from filewise.file_operations.ops_handler import remove_files
 from filewise.file_operations.path_utils import find_files
 from filewise.general.introspection_utils import get_caller_args, get_type_str
-from paramlib.global_parameters import COMMON_DELIM_LIST
+from paramlib.global_parameters import COMMON_DELIMITER_LIST
 from pygenutils.arrays_and_lists.data_manipulation import flatten_to_string
 from pygenutils.operative_systems.os_operations import exit_info, run_system_command
 from pygenutils.strings.string_handler import ext_adder, add_str_to_path
@@ -92,7 +92,7 @@ def file_tweaker(path, cat_obj):
         - str and dict
         - list and list
     """
-    split_delim = COMMON_DELIM_LIST[2]
+    split_delim = COMMON_DELIMITER_LIST[2]
     if isinstance(path, str) and isinstance(cat_obj, str):
         if split_delim not in cat_obj:
             raise SyntaxError(SYNTAX_ERROR_STR)
