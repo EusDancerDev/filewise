@@ -180,14 +180,14 @@ def find_files(patterns: str | list,
     if isinstance(patterns, str):
         patterns = [patterns]
     elif isinstance(patterns, list):
-        patterns = list(flatten_list(patterns))
+        patterns = flatten_list(patterns)
     
     if dirs_to_exclude is None:
         dirs_to_exclude = []
     elif isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
     elif isinstance(dirs_to_exclude, list):
-        dirs_to_exclude = list(flatten_list(dirs_to_exclude))
+        dirs_to_exclude = flatten_list(dirs_to_exclude))
 
     modify_pattern_func = MATCH_PATTERN_MODIFIER.get(match_type)
     if not modify_pattern_func:
@@ -259,14 +259,14 @@ def find_dirs_with_files(patterns: str | list,
     if isinstance(patterns, str):
         patterns = [patterns]
     elif isinstance(patterns, list):
-        patterns = list(flatten_list(patterns))
+        patterns = flatten_list(patterns)
     
     if dirs_to_exclude is None:
         dirs_to_exclude = []
     elif isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
     elif isinstance(dirs_to_exclude, list):
-        dirs_to_exclude = list(flatten_list(dirs_to_exclude))
+        dirs_to_exclude = flatten_list(dirs_to_exclude))
 
     modify_pattern_func = MATCH_PATTERN_MODIFIER.get(match_type)
     if not modify_pattern_func:
@@ -328,14 +328,14 @@ def find_items(search_path: str,
     elif isinstance(skip_ext, str):
         skip_ext = [skip_ext]
     elif isinstance(skip_ext, list):
-        skip_ext = list(flatten_list(skip_ext))
+        skip_ext = flatten_list(skip_ext))
     
     if dirs_to_exclude is None:
         dirs_to_exclude = []
     elif isinstance(dirs_to_exclude, str):
         dirs_to_exclude = [dirs_to_exclude]
     elif isinstance(dirs_to_exclude, list):
-        dirs_to_exclude = list(flatten_list(dirs_to_exclude))
+        dirs_to_exclude = flatten_list(dirs_to_exclude))
 
     if top_only:
         items = _fetch_path_items(search_path, glob_bool=False)

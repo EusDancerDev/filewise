@@ -163,7 +163,7 @@ def make_directories(directory_list):
         directory_list = [directory_list]
     
     # Flatten any nested structure
-    directory_list = list(flatten_list(directory_list))
+    directory_list = flatten_list(directory_list)
     
     for directory in directory_list:
         os.makedirs(directory, exist_ok=True)

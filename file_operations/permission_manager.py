@@ -25,8 +25,8 @@ from pygenutils.strings.text_formatters import print_format_string
 #-------------------------#
 
 def modify_obj_permissions(path: str, 
-                          extensions2skip: str | list = "", 
-                          attr_id: int = -1) -> None:
+                           extensions2skip: str | list = "", 
+                           attr_id: int = -1) -> None:
     """
     Modifies permissions for files or directories at the given path. 
     Automatically detects if the object is a file or directory.
@@ -74,7 +74,7 @@ def modify_obj_permissions(path: str,
     if isinstance(extensions2skip, str):
         extensions2skip = [extensions2skip] if extensions2skip else []
     elif isinstance(extensions2skip, list):
-        extensions2skip = list(flatten_list(extensions2skip))
+        extensions2skip = flatten_list(extensions2skip)
     
     # Handle file-specific logic (skip certain extensions)
     if os.path.isfile(path):
@@ -99,10 +99,10 @@ def modify_obj_permissions(path: str,
 
                 
 def modify_obj_owner(path: str, 
-                    module: str = "shutil", 
-                    extensions2skip: str | list = "", 
-                    new_owner: int | str = -1, 
-                    new_group: int | str = -1) -> None:    
+                     module: str = "shutil", 
+                     extensions2skip: str | list = "", 
+                     new_owner: int | str = -1, 
+                     new_group: int | str = -1) -> None:    
     """
     Modifies the owner and/or group of files or directories at the given path.
     Automatically detects if the object is a file or directory.
@@ -185,7 +185,7 @@ def modify_obj_owner(path: str,
     if isinstance(extensions2skip, str):
         extensions2skip = [extensions2skip] if extensions2skip else []
     elif isinstance(extensions2skip, list):
-        extensions2skip = list(flatten_list(extensions2skip))
+        extensions2skip = flatten_list(extensions2skip)
 
     # Operations #
     ##############
