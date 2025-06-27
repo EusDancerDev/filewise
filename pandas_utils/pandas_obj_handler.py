@@ -84,7 +84,7 @@ def read_table(file_path: str,
         UTF-8 encoding is not able to read.
         In such cases "latin1" is reccommended to use.
    
-    header : int, list of int, None, default 'infer'
+    header : int | list[int] | None, default 'infer'
         Row number(s) to use as the column names, and the start of the data.
         Default behaviour is to infer the column names: if no names are passed
         the behaviour is identical to header=0 and column names are inferred
@@ -106,7 +106,7 @@ def read_table(file_path: str,
         List of column names to use. If the file contains a header row,
         then you should explicitly pass header=0 to override the column names.
         Duplicates in this list are not allowed.
-    parse_dates : bool or list of int or names or list of lists or dict, default False
+    parse_dates : bool | list[int] | list[str] | list[list] | dict, default False
         The behaviour is as follows:
             * boolean. If True -> try parsing the index.
             * list of int or names. e.g. If [1, 2, 3] -> try parsing columns 1, 2, 3
@@ -252,7 +252,7 @@ def standardise_time_series(
         If True, the datetime index becomes a regular column.
     drop : bool, default False
         Whether to drop the index column when resetting the index (only applies when reset_index=True).
-    names : str, list of str, or None, default None
+    names : str | list[str] | None, default None
         Name(s) to use for the former index levels when resetting the index.
         Only applies when reset_index=True and drop=False.
         If a string, the same name is used for all DataFrames.
@@ -382,12 +382,12 @@ def excel_handler(file_path,
     ----------
     file_path : str
         Path to the Excel file.
-    sheet_name : str, int, list, or None, default 0
+    sheet_name : str | int | list[str] | list[int] | None, default 0
         Strings are used for sheet names. Integers are used in zero-indexed
         sheet positions (chart sheets do not count as a sheet position).
         Lists of strings/integers are used to request multiple sheets.
         Specify ``None`` to get all worksheets.
-    header : int, list of int, default None
+    header : int | list[int] | None, default None
         Row (0-indexed) to use for the column labels of the parsed DataFrame.
     engine : {'openpyxl', 'calamine', 'odf', 'pyxlsb', 'xlrd'}, default None
         Engine to use for reading Excel files. If None, defaults to the 
@@ -599,16 +599,16 @@ def merge_excel_files(input_file_list: str | list,
 
     Parameters
     ----------
-    input_file_list : str or list of str
+    input_file_list : str | list[str]
         Path or paths of the input Excel file(s) to be merged.
     output_file_path : str
         Path or name of the output Excel file. If 'save_merged_file' is False,
         this parameter is ignored.
-    header : int, list of int, default None
+    header : int | list[int] | None, default None
         Row (0-indexed) to use for the column labels of the parsed DataFrame.
         If a list of integers is passed, those row positions will be combined
         into a ``MultiIndex``. Use None if there is no header.
-    engine : str or sqlalchemy.engine.base.Engine, optional
+    engine : str | sqlalchemy.engine.base.Engine, optional
         SQLAlchemy engine or connection string for connecting to database files.
     decimal : str, default '.'
         Character recognised as decimal separator.
@@ -919,7 +919,7 @@ def csv2df(file_path,
         When this is 'None', 'errors="replace"' is passed to 'open()'; 
         technically no encoding is used.
         Otherwise, 'errors="strict"' is passed to 'open()'.
-    header : int, list of int, str or NoneType
+    header : int | list[int] | str | None
         Row number(s) to use as the column names, and the start of the
         data. Default behaviour is to infer the column names: if no names
         are passed the behaviour is identical to 'header=0' and column
@@ -927,7 +927,7 @@ def csv2df(file_path,
         names are passed explicitly then the behaviour is identical to
         'header=None'. Explicitly pass 'header=0' to be able to
         replace existing names.
-    parse_dates : bool or list of int or names or list of lists or dict, default False
+    parse_dates : bool | list[int] | list[str] | list[list] | dict, default False
         The behaviour is as follows:
             * boolean. If True -> try parsing the index.
             * list of int or names. e.g. If [1, 2, 3] -> try parsing columns 1, 2, 3
@@ -991,7 +991,7 @@ def merge_csv_files(input_file_list: str | list,
            
     Parameters
     ----------
-    input_file_list : str or list of str
+    input_file_list : str | list[str]
         Path or paths of the files to be examined.   
         Each of them can be names or relative paths.
     output_file_path: str
@@ -1021,7 +1021,7 @@ def merge_csv_files(input_file_list: str | list,
         UTF-8 encoding is not able to read.
         In such cases "latin1" is reccommended to use.
    
-    header : int, list of int, None, default 'infer'
+    header : int | list[int] | None, default 'infer'
         Row number(s) to use as the column names, and the start of the data.
         Default behaviour is to infer the column names: if no names are passed
         the behaviour is identical to header=0 and column names are inferred
@@ -1040,7 +1040,7 @@ def merge_csv_files(input_file_list: str | list,
         so header=0 denotes the first line of data
         rather than the first line of the file.
         
-    parse_dates : bool or list of int or names or list of lists or dict, default False
+    parse_dates : bool | list[int] | list[str] | list[list] | list[dict], default False
         The behaviour is as follows:
             * boolean. If True -> try parsing the index.
             * list of int or names. e.g. If [1, 2, 3] -> try parsing columns 1, 2, 3
@@ -1287,7 +1287,7 @@ def ods_handler(file_path,
         sheet positions (chart sheets do not count as a sheet position).
         Lists of strings/integers are used to request multiple sheets.
         Specify ``None`` to get all worksheets.
-    header : int, list of int, default None
+    header : int | list[int] | None, default None
         Row (0-indexed) to use for the column labels of the parsed DataFrame.
     decimal : str, default '.'
         Character to recognise as decimal point (e.g., ',' in Europe).
