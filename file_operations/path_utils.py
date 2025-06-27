@@ -112,19 +112,87 @@ def _fetch_path_items(path: str, glob_bool: bool = True) -> list[str]:
     
 # Switch-case dictionary to modify patterns based on 'match_type' argument 
 def _add_glob_left(patterns: list) -> list:
-    """Add wildcard at the beginning of patterns (to match end of filename)"""
+    """
+    Add wildcard at the beginning of patterns (to match end of filename).
+
+    Parameters
+    ----------
+    patterns : list
+        List of patterns to modify.
+
+    Returns
+    -------
+    list
+        List of patterns with '*' prepended to each pattern.
+
+    Examples
+    --------
+    >>> _add_glob_left(['txt', 'pdf'])
+    ['*txt', '*pdf']
+    """
     return [f"*{pattern}" for pattern in patterns]
 
 def _add_glob_right(patterns: list) -> list:
-    """Add wildcard at the end of patterns (to match beginning of filename)"""
+    """
+    Add wildcard at the end of patterns (to match beginning of filename).
+
+    Parameters
+    ----------
+    patterns : list
+        List of patterns to modify.
+
+    Returns
+    -------
+    list
+        List of patterns with '*' appended to each pattern.
+
+    Examples
+    --------
+    >>> _add_glob_right(['doc', 'img'])
+    ['doc*', 'img*']
+    """
     return [f"{pattern}*" for pattern in patterns]
 
 def _add_glob_both(patterns: list) -> list:
-    """Add wildcards at both ends of patterns (to match anywhere in filename)"""
+    """
+    Add wildcards at both ends of patterns (to match anywhere in filename).
+
+    Parameters
+    ----------
+    patterns : list
+        List of patterns to modify.
+
+    Returns
+    -------
+    list
+        List of patterns with '*' prepended and appended to each pattern.
+
+    Examples
+    --------
+    >>> _add_glob_both(['test', 'data'])
+    ['*test*', '*data*']
+    """
     return [f"*{pattern}*" for pattern in patterns]
 
 def _whole_word(patterns: list) -> list:
-    """No modification for whole word match"""
+    """
+    Return patterns unchanged for exact whole word matching.
+
+    Parameters
+    ----------
+    patterns : list
+        List of patterns to return unchanged.
+
+    Returns
+    -------
+    list
+        The original list of patterns without modification.
+
+    Examples
+    --------
+    >>> _whole_word(['file.txt', 'document.pdf'])
+    ['file.txt', 'document.pdf']
+    """
     return patterns
 
 

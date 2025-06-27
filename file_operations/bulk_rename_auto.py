@@ -48,6 +48,25 @@ from pygenutils.time_handling.datetime_operators import (
 #------------------#
 
 def shorten_conflicting_obj_list() -> bool:
+    """
+    Check whether the conflicting object list should be shortened based on the limit.
+
+    Returns
+    -------
+    bool
+        True if the list should be shortened (limit is an integer), 
+        False if no limit should be applied (limit is 'inf').
+
+    Raises
+    ------
+    ValueError
+        If LCOS_UPPER_LIMIT is not an integer >= 1 or the string 'inf'.
+
+    Notes
+    -----
+    This function validates the LCOS_UPPER_LIMIT constant and determines
+    whether the conflicting object list should be truncated based on that limit.
+    """
     if not ((not isinstance(LCOS_UPPER_LIMIT, int) \
              and (isinstance(LCOS_UPPER_LIMIT, str) and LCOS_UPPER_LIMIT == 'inf'))\
             or (isinstance(LCOS_UPPER_LIMIT, int) and LCOS_UPPER_LIMIT >= 1)):
@@ -68,6 +87,43 @@ def loop_renamer(obj_list: list,
                  zero_padding: int = 1,
                  dry_run: bool = False,
                  SPLIT_DELIM: str | None = None) -> list | None:
+    """
+    Rename objects (files or directories) in a list with sequential numbering.
+
+    Parameters
+    ----------
+    obj_list : list
+        List of objects (file or directory paths) to rename.
+    obj_type : str, optional
+        Type of objects to rename ("file" or "directory"). Defaults to "file".
+    starting_number : str | int, optional
+        Starting number for sequential renaming. If "default", uses appropriate default.
+        Defaults to "default".
+    zero_padding : int, optional
+        Number of digits for zero-padding the numbers. Defaults to 1.
+    dry_run : bool, optional
+        If True, returns the renamed list without actually renaming. Defaults to False.
+    SPLIT_DELIM : str | None, optional
+        Delimiter for splitting object names. Defaults to None.
+
+    Returns
+    -------
+    list | None
+        If dry_run is True, returns a list of renamed objects.
+        If dry_run is False, performs renaming and returns None.
+
+    Raises
+    ------
+    ValueError
+        If obj_type is not supported or zero_padding is invalid.
+    TypeError
+        If parameters have incorrect types.
+
+    Notes
+    -----
+    This function renames objects sequentially starting from the specified number.
+    In dry run mode, it returns the potential new names without making changes.
+    """
     
     param_keys = list(get_all_caller_args().values())
     obj_type_arg_pos = find_substring_index(param_keys, "obj_type")
@@ -116,7 +172,36 @@ def loop_renamer(obj_list: list,
         return num_formatted_objs
             
 
-def loop_direct_renamer(obj_list: list, fixed_new_obj_list: list) -> None:  
+def loop_direct_renamer(obj_list: list, fixed_new_obj_list: list) -> None:
+    """
+    Rename objects directly using corresponding names from two lists.
+
+    Parameters
+    ----------
+    obj_list : list
+        List of current object names/paths.
+    fixed_new_obj_list : list
+        List of new object names/paths corresponding to obj_list.
+
+    Returns
+    -------
+    None
+        Objects are renamed in place.
+
+    Raises
+    ------
+    ValueError
+        If the lists have different lengths.
+    FileNotFoundError
+        If any object in obj_list doesn't exist.
+    PermissionError
+        If insufficient permissions to rename objects.
+
+    Notes
+    -----
+    This function performs direct one-to-one renaming where each object
+    in obj_list is renamed to the corresponding name in fixed_new_obj_list.
+    """
     for obj, new_obj in zip(obj_list, fixed_new_obj_list):
         rename_objects(obj, new_obj)
         
@@ -124,6 +209,32 @@ def loop_direct_renamer(obj_list: list, fixed_new_obj_list: list) -> None:
 def return_report_file_fixed_path(file_path_noname: str, 
                                   file_name: str,
                                   extension: str) -> str:
+    """
+    Construct a complete file path by combining directory, filename, and extension.
+
+    Parameters
+    ----------
+    file_path_noname : str
+        Directory path without the filename.
+    file_name : str
+        Filename without extension.
+    extension : str
+        File extension without the leading dot.
+
+    Returns
+    -------
+    str
+        Complete file path in the format: file_path_noname/file_name.extension
+
+    Examples
+    --------
+    >>> return_report_file_fixed_path("/home/user", "report", "txt")
+    "/home/user/report.txt"
+
+    Notes
+    -----
+    This is a utility function to construct standardized file paths for reports.
+    """
     
     report_file_path = f"{file_path_noname}/{file_name}.{extension}"
     return report_file_path

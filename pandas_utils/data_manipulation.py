@@ -151,34 +151,43 @@ def sort_df_indices(df: pd.DataFrame,
                     key: Callable | None = None) -> pd.DataFrame:
     
     """
-    Returns a new data frame sorted 
+    Returns a new DataFrame sorted by index.
     
     Parameters
     ----------
-    df : pandas.DataFrame or pandas.Series.
-    level : int or level name or list of ints or list of level names
-        If not None, sort on values in specified index level(s)
-    axis : {0, 'index', 1, 'columns'}
-        Axis to be sorted; default value is 0.
-    ignore_index : bool
-        Boolean to determine whether to relabel indices
-        at ascending order: 0, 1, ..., n-1 or remain them unchanged.
-        Defaults False.
-    ascending : bool or list of bool
-        Sort ascending vs. descending. Specify list for multiple sort
-        orders. Default is True boolean.
-    na_position : {'first', 'last'}.
+    df : pd.DataFrame
+        The input DataFrame to sort by index.
+    axis : int, optional
+        Axis to be sorted. 0 for index, 1 for columns. Defaults to 0.
+    ignore_index_bool : bool, optional
+        Boolean to determine whether to relabel indices in ascending order: 0, 1, ..., n-1 
+        or keep them unchanged. Defaults to False.
+    level : int | str | list | None, optional
+        If not None, sort on values in specified index level(s). Defaults to None.
+    ascending_bool : bool, optional
+        Sort ascending vs. descending. Defaults to True.
+    na_position : str, optional
         Puts NaNs at the beginning if 'first'; 'last' puts NaNs at the end.
         Defaults to "last".
-    sort_remaining : bool
+    sort_remaining_bool : bool, optional
         If True and sorting by level and index is multilevel, sort by other
-        levels too (in order) after sorting by specified level.
-        Default value is True.
-    key : Callable, optional
-        Apply the key function to the values
-        before sorting. This is similar to the 'key' argument in the
-        builtin :meth:'sorted' function, with the notable difference that
-        this 'key' function should be *vectorised*.
+        levels too (in order) after sorting by specified level. Defaults to True.
+    key : Callable | None, optional
+        Apply the key function to the values before sorting. This is similar to the 
+        'key' argument in the builtin sorted function, with the notable difference that
+        this 'key' function should be vectorised. Defaults to None.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new DataFrame with sorted index.
+
+    Raises
+    ------
+    ValueError
+        If axis parameter is invalid.
+    KeyError
+        If specified level doesn't exist in the index.
     """
             
     df.sort_index(axis=axis, 
@@ -197,23 +206,41 @@ def reindex_df(df: pd.DataFrame,
                vals_to_replace: list | pd.Series | None = None) -> pd.DataFrame:
     
     """
-    Further function than df.reset_index attribute,
-    for resetting the index of the given Pandas DataFrame,
+    Advanced function for resetting the index of a pandas DataFrame,
     using any specified column and then resetting the latter.
-    This function applies only for one-leveled objects
-    (i.e, cannot have a MultiIndex) and can contain any tipe of index.
+    This function applies only to single-level objects
+    (i.e., cannot have a MultiIndex) and can contain any type of index.
     It can also be applied for simple reindexing.
     
     Parameters
     ----------
-    df : pandas.DataFrame or pandas.Series.
-    vals_to_replace : list, np.ndarray or pandas.Series
-        New labels / index to conform to.
-    col_to_replace : str or int
-        If further reindexing is required,
-        an it is a string, then it selects the columns to put as index.
-        Otherwise it selects the number column.
-        Defaults to None, that is, to simple reindexing.
+    df : pd.DataFrame
+        The input DataFrame to reindex.
+    col_to_replace : str | int | None, optional
+        If further reindexing is required and it is a string, then it selects 
+        the column to put as index. If it's an integer, it selects the column 
+        by position. Defaults to None for simple reindexing.
+    vals_to_replace : list | pd.Series | None, optional
+        New labels/index to conform to. Defaults to None.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new DataFrame with the specified reindexing applied.
+
+    Raises
+    ------
+    ValueError
+        If no reindexing parameters are provided.
+    KeyError
+        If the specified column doesn't exist in the DataFrame.
+    IndexError
+        If the specified column position is out of bounds.
+
+    Notes
+    -----
+    This function is more advanced than df.reset_index() and allows for
+    more flexible index manipulation options.
     """
     
     if col_to_replace is None and vals_to_replace is None:
@@ -252,6 +279,45 @@ def reindex_df(df: pd.DataFrame,
 
 
 def count_data_by_concept(df: pd.DataFrame, df_cols: str | list) -> pd.DataFrame:
+    """
+    Count occurrences of data grouped by specified column(s).
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The input DataFrame to count data in.
+    df_cols : str | list
+        Column name(s) to group by for counting.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame with counts for each group based on the specified columns.
+
+    Raises
+    ------
+    KeyError
+        If any column specified in df_cols does not exist in the DataFrame.
+    ValueError
+        If the DataFrame is empty.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({'category': ['A', 'B', 'A', 'C'], 'value': [1, 2, 3, 4]})
+    >>> count_data_by_concept(df, 'category')
+    """
+    if df.empty:
+        raise ValueError("Input DataFrame is empty")
+    
+    # Ensure df_cols is a list for consistent handling
+    cols_to_check = df_cols if isinstance(df_cols, list) else [df_cols]
+    
+    # Check if all columns exist
+    missing_cols = [col for col in cols_to_check if col not in df.columns]
+    if missing_cols:
+        raise KeyError(f"Columns not found in DataFrame: {missing_cols}")
+    
     data_count = df.groupby(df_cols).count()
     return data_count    
 
@@ -265,18 +331,68 @@ def concat_dfs_aux(input_file_list: list,
                    parse_dates: bool | list[int] | list[str] | list[list] | dict, 
                    index_col: int | str | list | None, 
                    decimal: str) -> pd.DataFrame:
+    """
+    Auxiliary function to concatenate multiple CSV files into a single DataFrame.
+
+    Parameters
+    ----------
+    input_file_list : list
+        List of file paths to read and concatenate.
+    separator_in : str | None
+        Field delimiter for CSV files. If None, attempts to detect automatically.
+    engine : str
+        Parser engine to use ('c', 'python', etc.).
+    encoding : str | None
+        Encoding to use for UTF when reading. If None, uses default.
+    header : int | list[int] | str | None
+        Row number(s) to use as column names. If None, no header is used.
+    parse_dates : bool | list[int] | list[str] | list[list] | dict
+        Boolean flag or specifications for parsing dates.
+    index_col : int | str | list | None
+        Column(s) to use as the row labels of the DataFrame.
+    decimal : str
+        Character to recognise as decimal point.
+
+    Returns
+    -------
+    pd.DataFrame
+        Concatenated DataFrame containing data from all input files.
+
+    Raises
+    ------
+    FileNotFoundError
+        If any file in input_file_list does not exist.
+    ValueError
+        If files cannot be read or concatenated.
+    PermissionError
+        If files cannot be accessed due to permission restrictions.
+
+    Notes
+    -----
+    This is a helper function that reads multiple CSV files with the same structure
+    and concatenates them column-wise. All files should have compatible schemas.
+    """
+    if not input_file_list:
+        raise ValueError("input_file_list cannot be empty")
     
     all_file_data_df = pd.DataFrame()
     for file in input_file_list:
-        file_df = csv2df(separator=separator_in,
-                         engine=engine,
-                         encoding=encoding,
-                         header=header,
-                         parse_dates=parse_dates,
-                         index_col=index_col,
-                         decimal=decimal)
-        
-        all_file_data_df = pd.concat([all_file_data_df, file_df], axis=1)
+        try:
+            file_df = csv2df(file_path=file,
+                             separator=separator_in,
+                             engine=engine,
+                             encoding=encoding,
+                             header=header,
+                             parse_dates=parse_dates,
+                             index_col=index_col,
+                             decimal=decimal)
+            
+            all_file_data_df = pd.concat([all_file_data_df, file_df], axis=1)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File not found: {file}")
+        except Exception as e:
+            raise ValueError(f"Error processing file {file}: {e}")
+    
     return all_file_data_df
 
 

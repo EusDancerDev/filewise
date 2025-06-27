@@ -60,6 +60,20 @@ def move_files(patterns, input_directories, destination_directories, match_type=
         Directory or list of directories where files will be moved.
     match_type : str, optional
         Either "ext" for extensions or "glob" for glob patterns. Defaults to "ext".
+
+    Returns
+    -------
+    None
+        Files are moved to the destination directories.
+
+    Raises
+    ------
+    ValueError
+        If an invalid match_type is provided.
+    FileNotFoundError
+        If source files or destination directories don't exist.
+    PermissionError
+        If insufficient permissions to move files.
     """
     if isinstance(patterns, str):
         patterns = [patterns]
@@ -96,6 +110,20 @@ def copy_files(patterns, input_directories, destination_directories, match_type=
         Directory or list of directories where files will be copied.
     match_type : str, optional
         Either "ext" for extensions or "glob" for glob patterns. Defaults to "ext".
+
+    Returns
+    -------
+    None
+        Files are copied to the destination directories.
+
+    Raises
+    ------
+    ValueError
+        If an invalid match_type is provided.
+    FileNotFoundError
+        If source files or destination directories don't exist.
+    PermissionError
+        If insufficient permissions to copy files.
     """
     if isinstance(patterns, str):
         patterns = [patterns]
@@ -129,6 +157,20 @@ def remove_files(patterns, input_directories, match_type="ext"):
         Directory or list of directories to search.
     match_type : str, optional
         Either "ext" for extensions or "glob" for glob patterns. Defaults to "ext".
+
+    Returns
+    -------
+    None
+        Matching files are removed from the directories.
+
+    Raises
+    ------
+    ValueError
+        If an invalid match_type is provided.
+    FileNotFoundError
+        If the directories don't exist.
+    PermissionError
+        If insufficient permissions to remove files.
     """
     if isinstance(patterns, str):
         patterns = [patterns]
@@ -158,6 +200,18 @@ def make_directories(directory_list):
     ----------
     directory_list : str | list[str]
         A string or list of directory paths to create. Supports nested lists.
+
+    Returns
+    -------
+    None
+        Directories are created in the filesystem.
+
+    Raises
+    ------
+    PermissionError
+        If insufficient permissions to create directories.
+    OSError
+        If directory creation fails due to system-level errors.
     """
     if isinstance(directory_list, str):
         directory_list = [directory_list]
@@ -177,6 +231,18 @@ def remove_directories(directory_list):
     ----------
     directory_list : str | list[str]
         A string or list of directory paths to remove.
+
+    Returns
+    -------
+    None
+        Directories and their contents are removed from the filesystem.
+
+    Raises
+    ------
+    PermissionError
+        If insufficient permissions to remove directories.
+    OSError
+        If directory removal fails due to system-level errors.
     """
     if isinstance(directory_list, str):
         directory_list = [directory_list]
@@ -195,6 +261,20 @@ def move_directories(directories, destination_directories):
         A string or list of directories to move.
     destination_directories : str | list[str]
         A string or list of destination directories.
+
+    Returns
+    -------
+    None
+        Directories are moved to the destination locations.
+
+    Raises
+    ------
+    FileNotFoundError
+        If source or destination directories don't exist.
+    PermissionError
+        If insufficient permissions to move directories.
+    OSError
+        If directory move operation fails.
     """
     if isinstance(directories, str):
         directories = [directories]
@@ -219,6 +299,20 @@ def copy_directories(directories, destination_directories, recursive_in_depth=Tr
         A string or list of destination directories.
     recursive_in_depth : bool, optional
         If True, copies directories recursively. Defaults to True.
+
+    Returns
+    -------
+    None
+        Directories are copied to the destination locations.
+
+    Raises
+    ------
+    FileNotFoundError
+        If source directories don't exist.
+    PermissionError
+        If insufficient permissions to copy directories.
+    OSError
+        If directory copy operation fails.
     """
     if isinstance(directories, str):
         directories = [directories]
