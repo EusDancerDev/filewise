@@ -4,6 +4,89 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.10.2] - 2025-06-27
+
+### Changed (3.10.2)
+
+#### **General** (changing; 3.10.2)
+
+- **Type Hint Standardisation**
+  - Comprehensive audit and standardisation of type hints across all modules when using the "|" operator
+  - Ensured proper distinction between:
+    - Built-in types (lowercase: `str`, `list`, `dict`, `tuple`)
+    - Typing module imports (capitalised: `Any`, `Callable`)
+  - Adopted Python 3.10+ union syntax (`|`) consistently across all modules
+  - Added missing imports from typing module where needed
+
+- Module `introspection_utils.py`:
+  - **Fixed**: added `from typing import Any, Callable` imports
+  - **Updated**:
+    - Changed all instances of lowercase `any` to `Any` in type hints and docstrings
+    - Changed all instances of lowercase `callable` to `Callable` in type hints and docstrings
+  - Functions affected:
+    - `get_all_caller_args`
+    - `get_attr_names`
+    - `get_type_str`
+    - `inspect_memory_usage`
+    - `get_func_args`
+    - `get_all_func_args`
+    - `get_func_signature`
+
+#### **File Operations** (changing; 3.10.2)
+
+- Module `path_utils.py`:
+  - **Fixed**: Removed extra closing parentheses from `flatten_list` function calls on lines 190, 269, and 338 that were causing syntax errors
+
+#### **JSON Utils** (changing; 3.10.2)
+
+- Module `json_encoding_operations.py`:
+  - **Fixed**: added `Any` import
+  - **Updated**: changed lowercase `any` to `Any` in type hints for `to_json` and `from_json` functions
+
+- Module `json_obj_handler.py`:
+  - **Fixed**: added `Any, Callable` imports
+  - **Updated**: changed lowercase `any` to `Any` and `callable` to `Callable` in type hints
+  - Function affected: `serialise_to_json`
+
+#### **Pandas Utils** (changing; 3.10.2)
+
+- Module `pandas_obj_handler.py`:
+  - **Fixed**: corrected docstring capitalisation inconsistencies to match function signatures:
+
+  | Old | New |
+  |:---:|:---:|
+  | `List[pd.DataFrame]` | `list[pd.DataFrame]` |
+  | `List[Tuple[str, str]]` | `list[tuple[str, str]]` |  
+  
+  - Function affected: `standardise_time_series`
+
+- Module `data_manipulation.py`:
+  - **Fixed**: added `Callable` import
+  - **Updated**: changed all instances of lowercase `callable` to `Callable` in type hints and docstrings
+  - Functions affected:
+    - `sort_df_values`
+    - `sort_df_indices`
+    - `create_pivot_table`
+
+#### **Xarray Utils** (changing; 3.10.2)
+
+- Module `xarray_obj_handler.py`:
+  - **Fixed**: added `Any` import
+  - **Updated**: changed lowercase `any` to `Any` in type hints for `_ensure_list` function
+
+---
+
+## [3.10.1] - 2025-06-26
+
+### Changed (3.10.1)
+
+#### **File Operations** (changing; 3.10.1)
+
+- Modules `path_utils.py`, `permission_manager.py`, and `ops_handler.py`:
+  - Removed `list` call on function `flatten_list`, as by default it returns a list
+
+---
+
 ## [3.10.0] - 2025-06-24
 
 ### Added (3.10.0)
@@ -17,20 +100,20 @@ All notable changes to this project will be documented in this file.
 
 - Module `path_utils.py`:
   - Enhanced functions with nested list support:
-    - `find_files()`: `patterns` and `dirs_to_exclude` parameters
-    - `find_dirs_with_files()`: `patterns` and `dirs_to_exclude` parameters  
-    - `find_items()`: `skip_ext` and `dirs_to_exclude` parameters
+    - `find_files`: `patterns` and `dirs_to_exclude` parameters
+    - `find_dirs_with_files`: `patterns` and `dirs_to_exclude` parameters  
+    - `find_items`: `skip_ext` and `dirs_to_exclude` parameters
 
   - Module `permission_manager.py`:
     - Enhanced functions with nested list support:
-    - `modify_obj_permissions()`: `extensions2skip` parameter
-    - `modify_obj_owner()`: `extensions2skip` parameter
+    - `modify_obj_permissions`: `extensions2skip` parameter
+    - `modify_obj_owner`: `extensions2skip` parameter
 
 #### **Format Converters** (adding; 3.10.0)
 
 - Module `pdf_tools.py`:
   - Add nested list support by importing and using `flatten_list` from `pygenutils.arrays_and_lists.data_manipulation`
-  - Implement defensive programming for `file_tweaker()`, `merge_files()`, and `file_compressor()` functions
+  - Implement defensive programming for `file_tweaker`, `merge_files`, and `file_compressor` functions
   - Functions now safely process nested list inputs like `[["file1.pdf", ["file2.pdf", "file3.pdf"]], "file4.pdf"]`
   - Prevent runtime crashes when complex nested structures are passed as input parameters
 
@@ -38,7 +121,7 @@ All notable changes to this project will be documented in this file.
 
 - Modules `pandas_obj_handler.py` and `data_manipulation.py`:
   - Add nested list support for functions accepting list parameters
-  - Implement defensive programming for `merge_excel_files()`, `merge_csv_files()`, `sort_df_values()`, and `create_pivot_table()`
+  - Implement defensive programming for `merge_excel_files`, `merge_csv_files`, `sort_df_values`, and `create_pivot_table`
   - Enhanced parameter validation with automatic flattening of arbitrarily nested list structures
   - Improved robustness for data processing workflows with complex input structures
 
@@ -77,7 +160,7 @@ All notable changes to this project will be documented in this file.
 
 - **Format Converters (`pdf_tools.py`)**:
   - Replace missing type annotations with comprehensive PEP-604 syntax
-  - Update `tweak_pages()`, `eml_to_pdf()`, `msg_to_pdf()`, `_check_essential_progs()` with modern union operators (`|`)
+  - Update `tweak_pages`, `eml_to_pdf`, `msg_to_pdf`, `_check_essential_progs` with modern union operators (`|`)
   - Enhanced parameter and return type specifications
 
 - **General (`introspection_utils.py`)**:
@@ -111,29 +194,29 @@ All notable changes to this project will be documented in this file.
 
 - Module `path_utils.py`:
   - Updated all helper functions with comprehensive type annotations:
-    - `_unique_sorted()`, `_compile_pattern()`, `_match_glob()`, `_fetch_path_items()`
-    - `_add_glob_left()`, `_add_glob_right()`, `_add_glob_both()`, `_whole_word()`
+    - `_unique_sorted`, `_compile_pattern`, `_match_glob`, `_fetch_path_items`
+    - `_add_glob_left`, `_add_glob_right`, `_add_glob_both`, `_whole_word`
   - Improved pattern modifier functions to return lists instead of generators for better consistency
-  - Enhanced main functions: `find_files()`, `find_dirs_with_files()`, `find_items()`
+  - Enhanced main functions: `find_files`, `find_dirs_with_files`, `find_items`
 
 - Module `permission_manager.py`:
-  - Updated functions with comprehensive type annotations: `modify_obj_permissions()`, `modify_obj_owner()`
+  - Updated functions with comprehensive type annotations: `modify_obj_permissions`, `modify_obj_owner`
   - Enhanced parameter validation and error handling with proper type specifications
 
 - Module `bulk_rename_auto.py`:
   - Updated all functions with modern type annotations:
-    - `shorten_conflicting_obj_list()`, `loop_renamer()`, `loop_direct_renamer()`
-    - `return_report_file_fixed_path()`, `reorder_objs()`
+    - `shorten_conflicting_obj_list`, `loop_renamer`, `loop_direct_renamer`
+    - `return_report_file_fixed_path`, `reorder_objs`
   - Added comprehensive parameter and return type specifications
 
 - Module `bulk_rename_manual.py`:
   - Updated all functions with modern type annotations:
-    - `change_to_path_and_store()`, `get_current_path()`, `get_obj_list()`, `print_format_string()`
+    - `change_to_path_and_store`, `get_current_path`, `get_obj_list`, `print_format_string`
   - Enhanced return type precision with union types where applicable
   - Fixed variable name references to match constants
 
 - Module `cat_file_content.py`:
-  - Updated `cat()` function with modern type annotations supporting both `str` and `Path` inputs
+  - Updated `cat` function with modern type annotations supporting both `str` and `Path` inputs
   - Added `Path` import for proper type support
   - Improved documentation with accurate return type description
 
@@ -149,8 +232,8 @@ All notable changes to this project will be documented in this file.
 #### **File Operations** (fixing; 3.10.0)
 
 - Module `permission_manager.py`:
-  - Fixed `os.path.isdir()` call that was missing the required path parameter
-  - Corrected `print_format_string()` usage to use proper string formatting with placeholders
+  - Fixed `os.path.isdir` call that was missing the required path parameter
+  - Corrected `print_format_string` usage to use proper string formatting with placeholders
   - Improved error handling and validation in permission modification functions
 
 - Module `bulk_rename_manual.py`:
