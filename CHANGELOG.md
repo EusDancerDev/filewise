@@ -6,6 +6,22 @@ All notable changes to this project will be documented in this file.
 
 ## [3.10.2] - 2025-06-27
 
+### Fixed (3.10.2)
+
+#### **General** (fixing; 3.10.2)
+
+- **Documentation and Consistency**
+  - Fix missing/incomplete docstrings across filewise package
+  - Changes:
+    - Modernised functions with complete documentation following Python 3.10+ standards and NumPy conventions.
+    - Resolved parameter mismatches and added comprehensive error handling docs.
+    - Achieves 100% docstring coverage.
+  - Files affected:
+    - `pandas_utils/data_manipulation.py`
+    - `file_operations/ops_handler.py`
+    - `file_operations/path_utils.py`
+    - `file_operations/bulk_rename_auto.py`
+
 ### Changed (3.10.2)
 
 #### **General** (changing; 3.10.2)
