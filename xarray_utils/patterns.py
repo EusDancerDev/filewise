@@ -35,12 +35,12 @@ def get_file_dimensions(nc_file: str | xr.Dataset | Path) -> list[str] | str:
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or Path
+    nc_file : str | Path | xarray.Dataset
         Either the path to the netCDF file or an already opened xarray.Dataset object.
 
     Returns
     -------
-    dimension_names : list of str or str
+    dimension_names : str | list[str]
         A list of dimension names, or a single dimension name if only one is found.
 
     Raises
@@ -89,12 +89,12 @@ def get_file_variables(nc_file: str | xr.Dataset | Path) -> list[str] | str:
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or Path
+    nc_file : str | xarray.Dataset | Path
         Either the path to the netCDF file or an already opened xarray.Dataset object.
 
     Returns
     -------
-    variable_names : list of str or str
+    variable_names : str | list[str]
         A list of variable names, or a single variable name if only one is found.
 
     Raises
@@ -144,7 +144,7 @@ def get_model_list(path_list: list[str], split_pos: int, SPLIT_DELIM: str = "_")
 
     Parameters
     ----------
-    path_list : list of str
+    path_list : list[str]
         List of file paths (absolute or relative) or file names.
     split_pos : int
         Position in the split file name (after splitting by the delimiter) that contains
@@ -154,7 +154,7 @@ def get_model_list(path_list: list[str], split_pos: int, SPLIT_DELIM: str = "_")
 
     Returns
     -------
-    unique_model_list : list of str
+    unique_model_list : list[str]
         A list of unique model names extracted from the file paths.
         
     Raises
@@ -214,7 +214,7 @@ def get_latlon_bounds(nc_file: str | xr.Dataset | Path,
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or Path
+    nc_file : str | xarray.Dataset | Path
         Path to the netCDF file or an already opened xarray.Dataset object.
     lat_dimension_name : str
         Name of the latitude dimension in the dataset.
@@ -341,7 +341,7 @@ def get_times(nc_file: str | xr.Dataset | Path, time_dimension_name: str) -> xr.
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or Path
+    nc_file : str | xarray.Dataset | Path
         Path to the netCDF file or an already opened xarray.Dataset object.
     time_dimension_name : str
         Name of the time dimension in the dataset.
@@ -412,12 +412,12 @@ def find_coordinate_variables(nc_file: str | xr.Dataset | Path) -> list[str]:
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or Path
+    nc_file : str | xarray.Dataset | Path
         String of the data file path, Path object, or the dataset itself.
 
     Returns
     -------
-    list of str
+    list[str]
         A list of strings identifying the coordinate dimensions or variables.
         If duplicates are found, only unique keys are returned.
 
@@ -470,12 +470,12 @@ def find_nearest_coordinates(nc_file: str | xr.Dataset | Path,
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or Path
+    nc_file : str | xarray.Dataset | Path
         Path to the netCDF file, Path object, or an already opened xarray.Dataset object containing 
         latitude and longitude coordinates.
-    lats_obs : list of float or numpy.ndarray
+    lats_obs : list[float] | numpy.ndarray
         List or array of observed latitude values to compare.
-    lons_obs : list of float or numpy.ndarray
+    lons_obs : list[float] | numpy.ndarray
         List or array of observed longitude values to compare.
     roundoff : int, optional
          Number of decimal places to round the latitude and longitude values. 
