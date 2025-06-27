@@ -79,7 +79,7 @@ def scan_ncfiles(search_path: str | list[str] | Path) -> dict[str, int | list[st
 
     Parameters
     ----------
-    search_path : str or list of str or Path
+    search_path : str | list[str] | Path
         The directory or list of directories to scan for .nc files.
     
     Returns
@@ -213,7 +213,7 @@ def ncfile_integrity_status(ncfile_name: str | Path) -> xr.Dataset:
     
     Parameters
     ----------
-    ncfile_name : str or Path
+    ncfile_name : str | Path
         Path to the netCDF file to be checked.
 
     Returns

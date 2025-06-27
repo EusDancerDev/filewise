@@ -43,7 +43,7 @@ def create_ds_component(var_name: str,
         Name of the variable represented by the DataArray.
     data_array : xarray.DataArray or array-like
         The array containing data to be stored in the DataArray.
-    dimlist : list of str
+    dimlist : list[str]
         List of dimension names corresponding to the dimensions of the data.
     dim_dict : dict
         Dictionary mapping dimension names to coordinate arrays.
@@ -120,22 +120,22 @@ def save2nc(file_name: str | Path,
 
     Parameters
     ----------
-    file_name : str or Path
+    file_name : str | Path
         The name of the resulting NetCDF file.
         The '.nc' extension will be added automatically if not present.
     data : xarray.Dataset, optional
         An xarray Dataset, i.e. the pre-existing one, that will be directly saved.
     file_format : {"NETCDF4", "NETCDF4_CLASSIC", "NETCDF3_64BIT", "NETCDF3_CLASSIC"}, default "NETCDF4"
         File format for the resulting netCDF file.
-    vardim_list : str or list of str, optional
+    vardim_list : str | list[str], optional
         List of variable-dimension names for building the dataset.
-    data_arrays : xarray.DataArray or list of xarray.DataArray, optional
+    data_arrays : xarray.DataArray | list[xr.DataArray], optional
         Data arrays for building the dataset if `data` is not provided.
-    dimlists : list of str or list of list of str, optional
+    dimlists : list[str] | list[list[str]], optional
         List of dimension names for each variable in the dataset.
-    dim_dict_list : dict or list of dict, optional
+    dim_dict_list : dict | list[dict], optional
         List of dictionaries containing dimension information for each variable.
-    attrs_dict_list : dict or list of dict, optional
+    attrs_dict_list : dict | list[dict], optional
         List of attribute dictionaries for each variable in the dataset.
     global_attrs_dict : dict, optional
         Dictionary for global attributes to assign to the dataset.
@@ -256,9 +256,9 @@ def save_nc_as_csv(nc_file: str | xr.Dataset | xr.DataArray | Path,
 
     Parameters
     ----------
-    nc_file : str or xarray.Dataset or xarray.DataArray or Path
+    nc_file : str | Path | xarray.Dataset | xarray.DataArray
         String of the xarray data set file path or the already opened dataset or data array.
-    columns_to_drop : str or list of str, optional
+    columns_to_drop : str | list[str], optional
         Names of columns to drop. Use "coords" to drop coordinate variables.
     separator : str, default ','
         Separator used in the CSV file.
@@ -266,7 +266,7 @@ def save_nc_as_csv(nc_file: str | xr.Dataset | xr.DataArray | Path,
         Whether to include an index column in the CSV.
     save_header : bool, default True
         Whether to include a header row in the CSV.
-    csv_file_name : str or Path, optional
+    csv_file_name : str | Path, optional
         Name of the output CSV file. If None, extracts from nc_file name.
     date_format : str, optional
         Date format to apply if the dataset contains time data.
@@ -422,9 +422,9 @@ def save_da_as_csv(data_array: xr.DataArray,
         Whether to include an index column in the CSV.
     save_header : bool, default True
         Whether to include a header row in the CSV.
-    csv_file_name : str or Path, optional
+    csv_file_name : str | Path, optional
         Name for the CSV file.
-    new_columns : str or list of str, optional
+    new_columns : str | list[str], optional
         Names for the new columns in the output CSV. Default uses 'time' and variable name.
     date_format : str, optional
         Date format for time data, if present.
@@ -509,7 +509,7 @@ def _save_ds_as_nc(xarray_ds: xr.Dataset, file_name: str | Path, attrs_dict: dic
     ----------
     xarray_ds : xarray.Dataset
         Dataset to save.
-    file_name : str or Path
+    file_name : str | Path
         Output file name.
     attrs_dict : dict, optional
         Global attributes to add to the dataset.

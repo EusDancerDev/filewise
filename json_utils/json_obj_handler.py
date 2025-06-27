@@ -59,7 +59,7 @@ def serialise_to_json(data: dict | list | Any,
 
     Returns
     -------
-    str or None
+    str | None
         If out_file_path is None, returns the JSON-formatted string.
         Otherwise, writes the JSON to the specified path and returns None.
 
@@ -288,7 +288,7 @@ def deserialise_json_to_df(json_obj_list,
     
     Parameters
     ----------
-    json_obj_list : str or list of str
+    json_obj_list : str | list[str]
         A single JSON string or file path, or a list of JSON strings and/or file paths.
     encoding : str
         The encoding to use for reading JSON files, i.e decode py3 bytes.
@@ -335,7 +335,7 @@ def deserialise_json_to_df(json_obj_list,
         if False, then don't infer dtypes at all, applies only to the data.
         Defaults to None.
                                          
-    convert_dates : bool or list of str, default True
+    convert_dates : bool | list[str], default True
         If True then default datelike columns may be converted (depending on
         keep_default_dates).
         If False, leave dates unconverted.

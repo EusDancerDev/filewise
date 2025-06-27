@@ -44,7 +44,7 @@ def grib2nc(
     
     Parameters
     ----------
-    grib_file_list : str or list of str
+    grib_file_list : str | list[str]
         The file path(s) of the GRIB file(s) to be converted.
     on_shell : bool, optional
         If True, the conversion will be handled through shell commands using 
