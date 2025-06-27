@@ -141,12 +141,12 @@ def polish_df_column_names(df: pd.DataFrame, sep_to_polish: str = "\n") -> pd.Da
     """
     Function to polish a Pandas DataFrames' column names, by eliminating
     the specified separator that might appear when reading files such as
-    Microsoft Excel or LibreOffice Calc document.
+    Microsoft Excel or LibreOffice Calc document, and removing leading/trailing whitespace.
     
     It uses the 'rename' method to rename the columns by using a 'lambda';
     it simply takes the final entry of the list obtained by splitting 
-    each column name any time there is a new line.
-    If there is no new line, the column name is unchanged.
+    each column name any time there is a separator, then strips whitespace.
+    If there is no separator, only whitespace stripping is performed.
     
     Parameters
     ----------
@@ -163,7 +163,7 @@ def polish_df_column_names(df: pd.DataFrame, sep_to_polish: str = "\n") -> pd.Da
         with column names polished accordingly.    
     """
     
-    df_fixed = df.rename(columns=lambda x: x.split(sep_to_polish)[-1])
+    df_fixed = df.rename(columns=lambda x: str(x).split(sep_to_polish)[-1].strip() if isinstance(x, (str, int, float)) else x)
     return df_fixed
 
 # DataFrame time series handling #
@@ -372,7 +372,7 @@ def excel_handler(file_path,
                   header=None,
                   engine=None,
                   decimal='.', 
-                  return_obj_type='dict'):
+                  return_type='dict'):
     
     """
     Reads an Excel file and processes its sheets either into a 
@@ -394,7 +394,7 @@ def excel_handler(file_path,
         appropriate engine for the file type.
     decimal : str, default '.'
         Character to recognise as decimal point (e.g., ',' in Europe).
-    return_obj_type : str, default 'dict'
+    return_type : str, default 'dict'
         Type of output to return. Must be either 'dict' to return a dictionary
         of DataFrames, or 'df' to return a single merged DataFrame.
 
@@ -418,7 +418,7 @@ def excel_handler(file_path,
     """
     
     # Validate the return type argument #
-    if return_obj_type not in EXCEL_HANDLING_RETURN_OPTIONS:
+    if return_type not in EXCEL_HANDLING_RETURN_OPTIONS:
         raise TypeError("Invalid type of the object to return. "
                         f"Choose one from {EXCEL_HANDLING_RETURN_OPTIONS}.")
 
@@ -429,18 +429,18 @@ def excel_handler(file_path,
                                                 engine=engine,
                                                 decimal=decimal)
     
-        if return_obj_type == 'dict':
+        if return_type == 'dict':
             polished_sheetname_and_val_dict = {}
             for sheet_name, sheet_df in sheetname_and_data_dict.items():
-                df_polished_colnames = polish_df_column_names(sheet_name, sheet_df)
+                df_polished_colnames = polish_df_column_names(sheet_df)
                 indiv_polished_dict = {sheet_name: df_polished_colnames}
                 polished_sheetname_and_val_dict.update(indiv_polished_dict)
             return polished_sheetname_and_val_dict
     
-        elif return_obj_type == 'df':
+        elif return_type == 'df':
             all_value_df = pd.DataFrame()
             for sheet_name, sheet_df in sheetname_and_data_dict.items():
-                df_polished_colnames = polish_df_column_names(sheet_name, sheet_df)
+                df_polished_colnames = polish_df_column_names(sheet_df)
                 all_value_df = pd.concat([all_value_df, df_polished_colnames])
                 
             all_value_df.reset_index(inplace=True, drop=True)
