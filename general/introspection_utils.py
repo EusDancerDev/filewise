@@ -8,6 +8,7 @@
 from collections.abc import Iterable
 import inspect
 import sys
+from typing import Any, Callable
 
 #------------------#
 # Define functions #
@@ -50,13 +51,13 @@ def get_func_name(lib: str = "inspect") -> str:
 # General frame #
 #-#-#-#-#-#-#-#-#
 
-def get_func_args(func: callable) -> list[str]:
+def get_func_args(func: Callable) -> list[str]:
     """
     Retrieves the required argument names of the provided function.
 
     Parameters
     ----------
-    func : callable
+    func : Callable
         Function whose required argument names are retrieved.
 
     Returns
@@ -76,13 +77,13 @@ def get_func_args(func: callable) -> list[str]:
                            inspect.Parameter.KEYWORD_ONLY)]
 
 
-def get_all_func_args(func: callable) -> list[str]:
+def get_all_func_args(func: Callable) -> list[str]:
     """
     Retrieves all argument names of the provided function.
 
     Parameters
     ----------
-    func : callable
+    func : Callable
         Function whose argument names are retrieved.
 
     Returns
@@ -99,13 +100,13 @@ def get_all_func_args(func: callable) -> list[str]:
     return [p.name for p in inspect.signature(func).parameters.values()]
 
 
-def get_func_signature(func: callable) -> inspect.Signature:
+def get_func_signature(func: Callable) -> inspect.Signature:
     """
     Retrieves the full signature of the provided function.
 
     Parameters
     ----------
-    func : callable
+    func : Callable
         Function whose signature is retrieved.
 
     Returns
@@ -144,13 +145,13 @@ def get_caller_args() -> list[str]:
     return list(caller_args)
     
 
-def get_all_caller_args() -> dict[str, any]:
+def get_all_caller_args() -> dict[str, Any]:
     """
     Retrieves all argument names and their values in the caller function.
 
     Returns
     -------
-    dict[str, any]
+    dict[str, Any]
         Dictionary of argument names and values used in the caller function.
 
     Example
@@ -185,13 +186,13 @@ def get_caller_signature() -> inspect.Signature:
 # Attributes #
 #------------#
 
-def get_attr_names(obj: any) -> list[str]:
+def get_attr_names(obj: Any) -> list[str]:
     """
     Retrieves all non-callable attribute names of the given object.
 
     Parameters
     ----------
-    obj : any
+    obj : Any
         The object whose attribute names are retrieved.
 
     Returns
@@ -205,13 +206,13 @@ def get_attr_names(obj: any) -> list[str]:
 # Object types #
 #--------------#
 
-def get_type_str(obj: any, lowercase: bool = False) -> str:
+def get_type_str(obj: Any, lowercase: bool = False) -> str:
     """
     Returns the type of an object as a string.
 
     Parameters
     ----------
-    obj : any
+    obj : Any
         Object whose type is returned as a string.
     lowercase : bool, optional
         If True, returns the type string in lowercase. Defaults to False.
@@ -227,13 +228,13 @@ def get_type_str(obj: any, lowercase: bool = False) -> str:
 # More functions related to introspection or utility as needed #
 #--------------------------------------------------------------#
 
-def inspect_memory_usage(obj: any, seen: set | None = None) -> int:
+def inspect_memory_usage(obj: Any, seen: set | None = None) -> int:
     """
     Recursively calculates the memory usage of an object and its contents.
 
     Parameters
     ----------
-    obj : any
+    obj : Any
         The object whose memory usage is to be calculated.
     seen : set, optional
         A set of object IDs already inspected to avoid double-counting 

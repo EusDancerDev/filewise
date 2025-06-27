@@ -5,8 +5,9 @@
 # Import modules #
 #----------------#
 
-import xarray as xr
 from pathlib import Path
+from typing import Any
+import xarray as xr
 
 #------------------------#
 # Import project modules #
@@ -546,13 +547,13 @@ def _save_ds_as_nc(xarray_ds: xr.Dataset, file_name: str | Path, attrs_dict: dic
     except Exception as e:
         raise RuntimeError(f"Failed to save netCDF file: {e}")
 
-def _ensure_list(arg: any) -> list:
+def _ensure_list(arg: Any) -> list:
     """
     Helper function to ensure argument is a list.
     
     Parameters
     ----------
-    arg : any
+    arg : Any
         Argument to convert to list if not already a list.
         
     Returns

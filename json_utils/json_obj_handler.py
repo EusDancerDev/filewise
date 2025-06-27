@@ -7,6 +7,7 @@
 
 import json
 import os
+from typing import Any, Callable
 
 import pandas as pd
 
@@ -26,19 +27,19 @@ from pygenutils.strings.string_handler import append_ext, get_obj_specs
 # Basic JSON Data Serialisation #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-def serialise_to_json(data: dict | list | any, 
+def serialise_to_json(data: dict | list | Any, 
                       out_file_path: str | None = None,
                       indent: int = 4,
                       ensure_ascii: bool = False,
                       sort_keys: bool = False,
                       allow_nan: bool = False,
-                      default: callable | None = None) -> str | None:
+                      default: Callable | None = None) -> str | None:
     """
     Convert data to a JSON string and optionally write it to a file.
 
     Parameters
     ----------
-    data : dict, list, or other JSON-serializable structure
+    data : dict, list, or other JSON-serialisable structure
         The data to be converted to JSON format.
     out_file_path : str, optional
         The output file path. If None, the JSON data will only be returned as a string. 
@@ -52,8 +53,8 @@ def serialise_to_json(data: dict | list | any,
         If True, the output JSON objects will be sorted by key. Default is False.
     allow_nan : bool, optional
         If True, NaN, Infinity, and -Infinity are allowed in the output. Default is False.
-    default : callable, optional
-        If specified, this function is called with an object that is not serializable. 
+    default : Callable, optional
+        If specified, this function is called with an object that is not serialisable. 
         Default is None.
 
     Returns

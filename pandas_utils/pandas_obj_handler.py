@@ -233,9 +233,9 @@ def standardise_time_series(
     
     Parameters
     ----------
-    dfs : List[pd.DataFrame]
+    dfs : list[pd.DataFrame]
         List of input DataFrames to standardise.
-    date_value_pairs : List[Tuple[str, str]]
+    date_value_pairs : list[tuple[str, str]]
         List of (date_column, value_column) pairs for each DataFrame.
     handle_duplicates : bool, default True
         If True, adds numerical suffixes to duplicate column names.

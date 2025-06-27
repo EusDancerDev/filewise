@@ -6,6 +6,7 @@
 #----------------#
 
 import pandas as pd
+from typing import Callable
 
 #------------------------#
 # Import project modules #
@@ -27,7 +28,7 @@ def sort_df_values(df: pd.DataFrame,
                    axis: int = 0,
                    ascending_bool: bool = True,
                    na_position: str = "last",
-                   key: callable | None = None) -> pd.DataFrame:
+                   key: Callable | None = None) -> pd.DataFrame:
     
     """
     Sort by the values along either axis
@@ -49,7 +50,7 @@ def sort_df_values(df: pd.DataFrame,
     na_position : {'first', 'last'}
         Puts NaNs at the beginning if 'first'; 'last' puts NaNs at the end.
         Defaults to "last".
-    key : callable, optional
+    key : Callable, optional
         Apply the key function to the values
         before sorting. This is similar to the 'key' argument in the
         builtin :meth:'sorted' function, with the notable difference that
@@ -147,7 +148,7 @@ def sort_df_indices(df: pd.DataFrame,
                     ascending_bool: bool = True,
                     na_position: str = "last",
                     sort_remaining_bool: bool = True,
-                    key: callable | None = None) -> pd.DataFrame:
+                    key: Callable | None = None) -> pd.DataFrame:
     
     """
     Returns a new data frame sorted 
@@ -173,7 +174,7 @@ def sort_df_indices(df: pd.DataFrame,
         If True and sorting by level and index is multilevel, sort by other
         levels too (in order) after sorting by specified level.
         Default value is True.
-    key : callable, optional
+    key : Callable, optional
         Apply the key function to the values
         before sorting. This is similar to the 'key' argument in the
         builtin :meth:'sorted' function, with the notable difference that
@@ -282,7 +283,7 @@ def concat_dfs_aux(input_file_list: list,
 def create_pivot_table(df: pd.DataFrame, 
                        df_values: str | list, 
                        df_index: str | list, 
-                       func_apply_on_values: str | callable) -> pd.DataFrame:    
+                       func_apply_on_values: str | Callable) -> pd.DataFrame:    
     """
     Create a pivot table from the given DataFrame.
 
@@ -294,7 +295,7 @@ def create_pivot_table(df: pd.DataFrame,
         Column(s) in the DataFrame to aggregate. Supports nested lists.
     df_index : str | list
         Column(s) to set as index for the pivot table. Supports nested lists.
-    func_apply_on_values : str | callable
+    func_apply_on_values : str | Callable
         The aggregation function to apply on the values.
 
     Returns

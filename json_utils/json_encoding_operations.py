@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#----------------#
+# Import modules #
+#----------------#
+
+from typing import Any
+
 #------------------#
 # Define functions #
 #------------------#
@@ -8,13 +14,13 @@
 # Unsupported object types #
 #--------------------------#
 
-def to_json(python_object: any) -> dict:
+def to_json(python_object: Any) -> dict:
     """
     Serialise a Python object to a JSON-compatible dictionary.
 
     Parameters
     ----------
-    python_object : any
+    python_object : Any
         The Python object to serialise. 
         Only bytes are supported; other types will raise a TypeError.
 
@@ -34,7 +40,7 @@ def to_json(python_object: any) -> dict:
     raise TypeError(f"{repr(python_object)} non serialisable")
     
 
-def from_json(json_object: dict) -> bytes | any:
+def from_json(json_object: dict) -> bytes | Any:
     """
     Deserialise a JSON-compatible dictionary back to a Python object.
 
@@ -46,7 +52,7 @@ def from_json(json_object: dict) -> bytes | any:
 
     Returns
     -------
-    bytes | any
+    bytes | Any
         The corresponding Python object. 
         If the input dictionary has a class identifier for bytes,
         it is converted back to a bytes object; 
