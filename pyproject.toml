@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "filewise"
 version = "3.11.2"
-license = MIT
+license = {file = "LICENSE"}
 description = "A Python package for efficient file and directory management, featuring tools for bulk renaming, data handling, and format conversion"
 keywords = ["file management", "directory operations", "bulk renaming", "data handling", "format conversion"]
 readme = {file = "README.md", content-type = "text/markdown"}
