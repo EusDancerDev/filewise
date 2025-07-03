@@ -1,6 +1,6 @@
 # filewise
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![PyPI Version](https://img.shields.io/pypi/v/filewise.svg)](https://pypi.org/project/filewise/)
 
@@ -72,23 +72,101 @@ Before installing, please ensure the following dependencies are available on you
   pip install pygenutils paramlib
   ```
 
-### Installation (from PyPI)
+### Installation Instructions
 
-Install the package using pip:
+**For regular users** who want to use the package in their projects:
 
 ```bash
 pip install filewise
 ```
 
-### Development Installation
+This automatically installs `filewise` and all its dependencies from PyPI and GitHub repositories.
 
-For development purposes, you can install the package in editable mode:
+### Package Updates
+
+To stay up-to-date with the latest version of this package, simply run:
 
 ```bash
-git clone https://github.com/yourusername/filewise.git
+pip install --upgrade filewise
+```
+
+## Development Setup
+
+### For Contributors and Developers
+
+If you're planning to contribute to the project or work with the source code, follow these setup instructions:
+
+#### Quick Setup (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/EusDancerDev/filewise.git
 cd filewise
+
+# Install in editable mode with all dependencies
 pip install -e .
 ```
+
+**Note**: The `-e` flag installs the package in "editable" mode, meaning changes to the source code are immediately reflected without reinstalling.
+
+This will automatically install all dependencies, including the required `pygenutils` and `paramlib` packages directly from their GitHub repositories.
+
+#### Manual Setup (Advanced)
+
+If you prefer to install dependencies manually:
+
+```bash
+# Clone the repository
+git clone https://github.com/EusDancerDev/filewise.git
+cd filewise
+
+# Install interdependent packages first
+pip install git+https://github.com/EusDancerDev/pygenutils.git
+pip install git+https://github.com/EusDancerDev/paramlib.git
+
+# Install filewise in editable mode
+pip install -e .
+```
+
+### Troubleshooting
+
+If you encounter import errors after cloning:
+
+1. **Ensure dependencies are installed**: Run `pip install -e .` in the project directory
+2. **Check for missing packages**: The main interdependent packages are `pygenutils` and `paramlib`
+3. **Verify Python environment**: Make sure you're using a compatible Python version (3.10+)
+
+### Verify Installation
+
+To verify that your installation is working correctly, you can run this quick test:
+
+```python
+# Test script to verify installation
+try:
+    import filewise
+    from pygenutils.arrays_and_lists.data_manipulation import flatten_list
+    from paramlib.global_parameters import BASIC_OBJECT_TYPES
+    
+    print("✅ All imports successful!")
+    print(f"✅ filewise version: {filewise.__version__}")
+    print("✅ Installation is working correctly.")
+    
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print("💡 For regular users: pip install filewise")
+    print("💡 For developers: pip install -e .")
+```
+
+### Implementation Notes
+
+This project implements **Git-based dependencies** to solve the interdependent packages problem:
+
+- **Dependencies**: `pygenutils` and `paramlib` packages are installed directly from GitHub repositories
+- **Automatic Resolution**: Works for both scenarios:
+  - **Regular users**: `pip install filewise` automatically installs all required interdependent packages
+  - **Developers**: `pip install -e .` automatically installs all required interdependent packages
+- **No Import Errors**: Contributors can clone the repository and immediately start working without manual dependency installation
+- **Seamless Setup**: The solution ensures that all imports work correctly after a simple installation command
 
 ## Usage
 
@@ -250,28 +328,33 @@ filewise/
 ## Key Functions
 
 ### File Operations
+
 - `find_files()` - Advanced file searching with pattern matching
 - `reorder_objs()` - Automatic sequential file/directory renaming
 - `rsync()` - Directory synchronisation with advanced options
 - `modify_obj_permissions()` - Batch permission modification
 
 ### Format Conversion
+
 - `merge_files()` - PDF merging with customisable options
 - `file_compressor()` - PDF compression with quality control
 - `eml_to_pdf()`, `msg_to_pdf()` - Email format conversion
 
 ### Data Processing
+
 - `merge_excel_files()` - Multi-file Excel processing
 - `standardise_time_series()` - Time series data normalisation
 - `scan_ncfiles()` - NetCDF file analysis and cataloguing
 - `get_latlon_bounds()` - Climate data coordinate extraction
 
 ### JSON Operations
+
 - `serialise_to_json()` - Advanced JSON serialisation
 - `deserialise_json_to_df()` - JSON to DataFrame conversion
 - Custom encoding for complex Python objects
 
 ### Automation
+
 - Ready-to-use scripts for common file operations
 - Configurable workflows for batch processing
 - Integration with system tools and external programs
@@ -279,16 +362,19 @@ filewise/
 ## Advanced Features
 
 ### Defensive Programming
+
 - Automatic nested list flattening for robust parameter handling
 - Comprehensive error handling and validation
 - Type checking and parameter validation
 
 ### Performance Optimisation
+
 - LRU caching for pattern compilation
 - Efficient file searching algorithms
 - Memory-conscious data processing
 
 ### Scientific Data Support
+
 - Climate data processing with coordinate system handling
 - NetCDF file integrity checking and validation
 - Advanced time series manipulation and standardisation
@@ -329,6 +415,7 @@ For any questions or suggestions, please open an issue on GitHub or contact the 
 ## Dependencies
 
 This package relies on several high-quality external packages:
+
 - `pygenutils` - General utility functions and data manipulation
 - `paramlib` - Parameter and configuration management
 - Standard scientific Python stack (NumPy, Pandas, Xarray)
