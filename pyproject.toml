@@ -8,7 +8,7 @@ version = "3.11.2"
 license = {file = "LICENSE"}
 description = "A Python package for efficient file and directory management, featuring tools for bulk renaming, data handling, and format conversion"
 keywords = ["file management", "directory operations", "bulk renaming", "data handling", "format conversion"]
-readme = {file = "filewise/README.md", content-type = "text/markdown"}
+readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
 authors = [
     {name = "Jon Ander Gabantxo", email = "jagabantxo@gmail.com"}
