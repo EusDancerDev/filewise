@@ -334,7 +334,7 @@ def standardise_time_series(
         else:  # return_format == 'dict'
             return result
     
-    # Else return a single merged DataFrame (original behavior)
+    # Else return a single merged DataFrame (original behaviour)
     else:
         result_dict = {}
         column_counts = {}
