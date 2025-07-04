@@ -77,34 +77,32 @@ Before installing, please ensure the following dependencies are available on you
 #### For regular users (from PyPI)
 
 ```bash
-# Install filewise from PyPI
+# Install filewise from PyPI (includes all dependencies)
 pip install filewise
-
-# Install interdependent packages from GitHub (required for full functionality)
-pip install git+https://github.com/EusDancerDev/pygenutils.git#egg=pygenutils
-pip install git+https://github.com/EusDancerDev/paramlib.git#egg=paramlib
 ```
 
-**Note:** The interdependent packages (`pygenutils` and `paramlib`) are not available on PyPI, so they must be installed separately from GitHub.
+**Note:** The package now includes all dependencies with version constraints, so no additional installation steps are required.
 
-#### For contributors/developers (with interdependent packages)
+#### For contributors/developers (with latest Git versions)
 
 ```bash
 # Clone the repository
 git clone https://github.com/EusDancerDev/filewise.git
 cd filewise
 
-# Install all dependencies including Git packages
-pip install -r requirements.txt
+# Install with development dependencies (includes latest Git versions)
+pip install -e .[dev]
 
-# Install in editable mode
+# Alternative: Use requirements-dev.txt for explicit Git dependencies
+pip install -r requirements-dev.txt
 pip install -e .
 ```
 
-- `requirements.txt` will install the interdependent packages from GitHub.
-- `pip install -e .` will install filewise in editable mode for development.
+**Benefits of the new approach:**
 
-**Note:** If you want to publish to PyPI, keep git dependencies out of pyproject.toml. For development, use requirements.txt as above.
+- **Regular users**: Simple `pip install filewise` with all dependencies included
+- **Developers**: Access to latest Git versions for development and testing
+- **PyPI compatibility**: All packages can be published without Git dependency issues
 
 ### Package Updates
 
@@ -127,40 +125,36 @@ If you're planning to contribute to the project or work with the source code, fo
 git clone https://github.com/EusDancerDev/filewise.git
 cd filewise
 
-# Install all dependencies including Git packages
-pip install -r requirements.txt
-
-# Install in editable mode
-pip install -e .
+# Install with development dependencies (includes latest Git versions)
+pip install -e .[dev]
 ```
 
-**Note**: The `-e` flag installs the package in "editable" mode, meaning changes to the source code are immediately reflected without reinstalling.
+**Note**: The `-e` flag installs the package in "editable" mode, meaning changes to the source code are immediately reflected without reinstalling. The `[dev]` flag includes the latest Git versions of interdependent packages.
 
-This will automatically install all dependencies, including the required `pygenutils` and `paramlib` packages directly from their GitHub repositories.
+#### Alternative Setup (Explicit Git Dependencies)
 
-#### Manual Setup (Advanced)
-
-If you prefer to install dependencies manually:
+If you prefer to use the explicit development requirements file:
 
 ```bash
 # Clone the repository
 git clone https://github.com/EusDancerDev/filewise.git
 cd filewise
 
-# Install interdependent packages first
-pip install git+https://github.com/EusDancerDev/pygenutils.git
-pip install git+https://github.com/EusDancerDev/paramlib.git
+# Install development dependencies from requirements-dev.txt
+pip install -r requirements-dev.txt
 
-# Install filewise in editable mode
+# Install in editable mode
 pip install -e .
 ```
+
+This approach gives you the latest development versions of all interdependent packages for testing and development.
 
 ### Troubleshooting
 
 If you encounter import errors after cloning:
 
-1. **Ensure dependencies are installed**: Run `pip install -e .` in the project directory
-2. **Check for missing packages**: The main interdependent packages are `pygenutils` and `paramlib`
+1. **For regular users**: Run `pip install filewise` (all dependencies included)
+2. **For developers**: Run `pip install -e .[dev]` to include development dependencies
 3. **Verify Python environment**: Make sure you're using a compatible Python version (3.10+)
 
 ### Verify Installation
@@ -180,20 +174,21 @@ try:
     
 except ImportError as e:
     print(f"❌ Import error: {e}")
-    print("💡 For regular users: pip install filewise && pip install git+https://github.com/EusDancerDev/pygenutils.git#egg=pygenutils && pip install git+https://github.com/EusDancerDev/paramlib.git#egg=paramlib")
-    print("💡 For developers: pip install -r requirements.txt && pip install -e .")
+    print("💡 For regular users: pip install filewise")
+    print("💡 For developers: pip install -e .[dev]")
 ```
 
 ### Implementation Notes
 
-This project implements **Git-based dependencies** to solve the interdependent packages problem:
+This project implements a **dual-approach dependency management** system:
 
-- **Dependencies**: `pygenutils` and `paramlib` packages are installed directly from GitHub repositories
+- **Production Dependencies**: Version-constrained dependencies for PyPI compatibility
+- **Development Dependencies**: Git-based dependencies for latest development versions
 - **Installation Methods**:
-  - **Regular users**: Install from PyPI, then install interdependent packages separately from GitHub
-  - **Developers**: Use `requirements.txt` to install all dependencies including Git packages, then install in editable mode
-- **No Import Errors**: Contributors can clone the repository and immediately start working with the proper installation sequence
-- **Seamless Setup**: The solution ensures that all imports work correctly after following the installation instructions
+  - **Regular users**: Simple `pip install filewise` with all dependencies included
+  - **Developers**: `pip install -e .[dev]` for latest Git versions and development tools
+- **PyPI Compatibility**: All packages can be published without Git dependency issues
+- **Development Flexibility**: Contributors get access to latest versions for testing and development
 
 ## Usage
 
