@@ -38,8 +38,6 @@ dev = [
     "pytest-cov>=4.0.0",
     "black>=22.0.0",
     "flake8>=5.0.0",
-    "pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git",
-    "paramlib @ git+https://github.com/EusDancerDev/paramlib.git",
 ]
 
 [project.urls]
