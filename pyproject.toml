@@ -28,8 +28,8 @@ dependencies = [
     "pandas>=1.3.0",
     "xarray>=2024.2.0",
     "numpy>=1.21.0",
-    "pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git",
-    "paramlib @ git+https://github.com/EusDancerDev/paramlib.git",
+    "pygenutils>=16.0.0",
+    "paramlib>=3.4.0",
 ]
 
 [project.optional-dependencies]
@@ -38,6 +38,8 @@ dev = [
     "pytest-cov>=4.0.0",
     "black>=22.0.0",
     "flake8>=5.0.0",
+    "pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git",
+    "paramlib @ git+https://github.com/EusDancerDev/paramlib.git",
 ]
 
 [project.urls]
