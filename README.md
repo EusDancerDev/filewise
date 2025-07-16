@@ -69,7 +69,9 @@ Before installing, please ensure the following dependencies are available on you
 - **Internal Package Dependencies**:
 
   ```bash
-  pip install pygenutils paramlib
+  pip install paramlib
+  pip install pygenutils                    # Core functionality
+  pip install pygenutils[arrow]             # With arrow support (optional)
   ```
 
 ### Installation Instructions
