@@ -28,7 +28,7 @@ dependencies = [
     "pandas>=1.3.0",
     "xarray>=2024.2.0",
     "numpy>=1.21.0",
-    "pygenutils>=16.2.0",
+    "pygenutils>=16.2.3",
     "paramlib>=3.4.10",
 ]
 
