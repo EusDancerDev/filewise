@@ -10,4 +10,4 @@ reportlab>=3.6.0
 
 # Interdependent packages (version constraints for PyPI publishing)
 pygenutils>=16.2.0
-paramlib>=3.4.3 
+paramlib>=3.4.10 

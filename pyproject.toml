@@ -29,7 +29,7 @@ dependencies = [
     "xarray>=2024.2.0",
     "numpy>=1.21.0",
     "pygenutils>=16.2.0",
-    "paramlib>=3.4.3",
+    "paramlib>=3.4.10",
 ]
 
 [project.optional-dependencies]
