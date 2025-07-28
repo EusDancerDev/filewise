@@ -4,20 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [3.11.6] - 2025-06-27
+## [3.11.7] - 2025-06-27
 
-### Breaking Changes (3.11.6)
+### Fixed (3.11.7)
 
-#### **Pandas Utils** (breaking; 3.11.6)
-
-- Module `pandas_obj_handler.py`:
-  - **Parameter Naming Change**: `excel_handler()` function parameter `return_obj_type` renamed to `return_type`
-    - **Migration**: Update existing code from `excel_handler(..., return_obj_type=value)` to `excel_handler(..., return_type=value)`
-    - **Reason**: Standardise parameter naming consistency with `ods_handler()` function
-
-### Fixed (3.11.6)
-
-#### **General** (fixing; 3.11.6)
+#### **General** (fixing; 3.11.7)
 
 - **Documentation and Consistency**
   - Fix missing/incomplete docstrings across filewise package
@@ -31,9 +22,9 @@ All notable changes to this project will be documented in this file.
     - `file_operations/path_utils.py`
     - `file_operations/bulk_rename_auto.py`
 
-### Changed (3.11.6)
+### Changed (3.11.7)
 
-#### **General** (changing; 3.11.6)
+#### **General** (changing; 3.11.7)
 
 - **Type Hint Standardisation**
   - Comprehensive audit and standardisation of type hints across all modules when using the "|" operator
@@ -57,12 +48,12 @@ All notable changes to this project will be documented in this file.
     - `get_all_func_args`
     - `get_func_signature`
 
-#### **File Operations** (changing; 3.11.6)
+#### **File Operations** (changing; 3.11.7)
 
 - Module `path_utils.py`:
-  - **Fixed**: Removed extra closing parentheses from `flatten_list` function calls on lines 190, 269, and 338 that were causing syntax errors
+  - **Fixed**: removed extra closing parentheses from `flatten_list` function calls on lines 190, 269, and 338 that were causing syntax errors
 
-#### **JSON Utils** (changing; 3.11.6)
+#### **JSON Utils** (changing; 3.11.7)
 
 - Module `json_encoding_operations.py`:
   - **Fixed**: added `Any` import
@@ -73,10 +64,13 @@ All notable changes to this project will be documented in this file.
   - **Updated**: changed lowercase `any` to `Any` and `callable` to `Callable` in type hints
   - Function affected: `serialise_to_json`
 
-#### **Pandas Utils** (changing; 3.11.6)
+#### **Pandas Utils** (changing; 3.11.7)
 
 - Module `pandas_obj_handler.py`:
-  - **Fixed**: corrected docstring capitalisation inconsistencies to match function signatures:
+  - **Parameter naming change**: `excel_handler()` function parameter `return_obj_type` renamed to `return_type`
+    - **Migration**: update existing code from `excel_handler(..., return_obj_type=value)` to `excel_handler(..., return_type=value)`
+    - **Reason**: standardise parameter naming consistency with `ods_handler()` function
+  - **Rectified**: corrected docstring capitalisation inconsistencies to match function signatures:
 
   | Old | New |
   |:---:|:---:|
@@ -93,7 +87,7 @@ All notable changes to this project will be documented in this file.
     - `sort_df_indices`
     - `create_pivot_table`
 
-#### **Xarray Utils** (changing; 3.11.6)
+#### **Xarray Utils** (changing; 3.11.7)
 
 - Module `xarray_obj_handler.py`:
   - **Fixed**: added `Any` import
