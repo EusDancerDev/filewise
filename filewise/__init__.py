@@ -3,7 +3,7 @@
 
 # filewise/__init__.py
 
-__version__ = "3.11.7"
+__version__ = "3.11.8"
 
 # Define what should be available when using 'from filewise import *'
 __all__ = [
