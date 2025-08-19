@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [3.11.8] - 2025-08-19
+## [3.11.9] - 2025-08-19
 
-### Changed (3.11.8)
+### Changed (3.11.9)
 
-#### **General** (changing; 3.11.8)
+#### **General** (changing; 3.11.9)
 
 - Changed the header section comment from `Operations` to `Program progression` to better reflect what it contains in the following modules:
   - `file_operations/permission_manager.py`
