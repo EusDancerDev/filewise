@@ -49,9 +49,9 @@ NEW_GROUP = -1
 # Module to use for #
 MODULE = "shutil"
 
-#------------#
-# Operations #
-#------------#
+#---------------------#
+# Program progression #
+#---------------------#
 
 modify_obj_permissions(PATH, EXTENSIONS2SKIP, ATTR_ID)
 modify_obj_owner(PATH, MODULE, EXTENSIONS2SKIP, NEW_OWNER, NEW_GROUP)

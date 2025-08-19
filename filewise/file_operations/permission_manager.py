@@ -187,8 +187,8 @@ def modify_obj_owner(path: str,
     elif isinstance(extensions2skip, list):
         extensions2skip = flatten_list(extensions2skip)
 
-    # Operations #
-    ##############
+    # Program progression #
+    #######################
 
     # Handle file-specific logic (skip certain extensions)
     if os.path.isfile(path):
