@@ -207,7 +207,7 @@ def get_model_list(path_list: list[str], split_pos: int, SPLIT_DELIM: str = "_")
 def get_latlon_bounds(nc_file: str | xr.Dataset | Path, 
                       lat_dimension_name: str, 
                       lon_dimension_name: str, 
-                      value_roundoff: int = 3) -> tuple[np.ndarray, np.ndarray]:
+                      decimal_places: int = 3) -> tuple[np.ndarray, np.ndarray]:
     """
     Retrieves the latitude and longitude values from a netCDF file and rounds them 
     to the specified decimal precision.
@@ -220,7 +220,7 @@ def get_latlon_bounds(nc_file: str | xr.Dataset | Path,
         Name of the latitude dimension in the dataset.
     lon_dimension_name : str
         Name of the longitude dimension in the dataset.
-    value_roundoff : int, optional
+    decimal_places : int, optional
         Number of decimal places to round the latitude and longitude values. Default is 3.
 
     Returns
@@ -233,7 +233,7 @@ def get_latlon_bounds(nc_file: str | xr.Dataset | Path,
     TypeError
         If nc_file is not str, Path, or xarray.Dataset, or if dimension names are not strings.
     ValueError
-        If file path, dimension names are empty, or value_roundoff is negative.
+        If file path, dimension names are empty, or decimal_places is negative.
     FileNotFoundError
         If the file doesn't exist.
     KeyError
@@ -249,8 +249,8 @@ def get_latlon_bounds(nc_file: str | xr.Dataset | Path,
     if not isinstance(lon_dimension_name, str) or not lon_dimension_name.strip():
         raise ValueError("lon_dimension_name must be a non-empty string")
     
-    if not isinstance(value_roundoff, int) or value_roundoff < 0:
-        raise ValueError("value_roundoff must be a non-negative integer")
+    if not isinstance(decimal_places, int) or decimal_places < 0:
+        raise ValueError("decimal_places must be a non-negative integer")
 
     # Open the netCDF file if it's a file path
     if isinstance(nc_file, (str, Path)):
@@ -277,8 +277,8 @@ def get_latlon_bounds(nc_file: str | xr.Dataset | Path,
             raise KeyError(f"Longitude dimension '{lon_dimension_name}' not found in dataset")
         
         # Retrieve and round latitude and longitude values
-        lat_values = ds[lat_dimension_name].values.round(value_roundoff)
-        lon_values = ds[lon_dimension_name].values.round(value_roundoff)
+        lat_values = ds[lat_dimension_name].values.round(decimal_places)
+        lon_values = ds[lon_dimension_name].values.round(decimal_places)
         
         return lat_values, lon_values
     finally:
@@ -288,7 +288,7 @@ def get_latlon_bounds(nc_file: str | xr.Dataset | Path,
 
 def get_latlon_deltas(lat_values: np.ndarray, 
                       lon_values: np.ndarray, 
-                      delta_roundoff: int = 3) -> tuple[str, str]:
+                      decimal_places: int = 3) -> tuple[str, str]:
     """
     Computes the delta (difference) between the first two latitude and longitude values 
     and returns the deltas as rounded strings.
@@ -299,7 +299,7 @@ def get_latlon_deltas(lat_values: np.ndarray,
         Array of latitude values.
     lon_values : numpy.ndarray
         Array of longitude values.
-    delta_roundoff : int, optional
+    decimal_places : int, optional
         Number of decimal places to round the computed deltas. Default is 3.
 
     Returns
@@ -312,7 +312,7 @@ def get_latlon_deltas(lat_values: np.ndarray,
     TypeError
         If lat_values or lon_values are not numpy arrays.
     ValueError
-        If arrays are empty, have less than 2 elements, or delta_roundoff is negative.
+        If arrays are empty, have less than 2 elements, or decimal_places is negative.
     """
     # Parameter validation
     if not isinstance(lat_values, np.ndarray):
@@ -327,11 +327,11 @@ def get_latlon_deltas(lat_values: np.ndarray,
     if lon_values.size < 2:
         raise ValueError("lon_values must contain at least 2 elements")
     
-    if not isinstance(delta_roundoff, int) or delta_roundoff < 0:
-        raise ValueError("delta_roundoff must be a non-negative integer")
+    if not isinstance(decimal_places, int) or decimal_places < 0:
+        raise ValueError("decimal_places must be a non-negative integer")
 
-    lat_delta = f"{abs(lat_values[1] - lat_values[0]):.{delta_roundoff}f}"
-    lon_delta = f"{abs(lon_values[1] - lon_values[0]):.{delta_roundoff}f}"
+    lat_delta = f"{abs(lat_values[1] - lat_values[0]):.{decimal_places}f}"
+    lon_delta = f"{abs(lon_values[1] - lon_values[0]):.{decimal_places}f}"
     return lat_delta, lon_delta
         
     
@@ -462,7 +462,7 @@ def find_coordinate_variables(nc_file: str | xr.Dataset | Path) -> list[str]:
 def find_nearest_coordinates(nc_file: str | xr.Dataset | Path, 
                            lats_obs: list[float] | np.ndarray, 
                            lons_obs: list[float] | np.ndarray, 
-                           roundoff: int = 3) -> tuple[np.ndarray, np.ndarray]:
+                           decimal_places: int = 3) -> tuple[np.ndarray, np.ndarray]:
     """
     Compares a set of observed latitude and longitude values with those from a netCDF file
     or xarray.Dataset object, and finds the nearest coordinates in the dataset that match
@@ -477,7 +477,7 @@ def find_nearest_coordinates(nc_file: str | xr.Dataset | Path,
         List or array of observed latitude values to compare.
     lons_obs : list[float] | numpy.ndarray
         List or array of observed longitude values to compare.
-    roundoff : int, optional
+    decimal_places : int, optional
          Number of decimal places to round the latitude and longitude values. 
          Default is 3.
 
@@ -506,8 +506,8 @@ def find_nearest_coordinates(nc_file: str | xr.Dataset | Path,
     if not isinstance(lons_obs, (list, np.ndarray)):
         raise TypeError("lons_obs must be a list or numpy array")
     
-    if not isinstance(roundoff, int) or roundoff < 0:
-        raise ValueError("roundoff must be a non-negative integer")
+    if not isinstance(decimal_places, int) or decimal_places < 0:
+        raise ValueError("decimal_places must be a non-negative integer")
     
     # Convert to numpy arrays and validate
     lats_obs = np.array(lats_obs, dtype='d')
@@ -560,8 +560,8 @@ def find_nearest_coordinates(nc_file: str | xr.Dataset | Path,
             nearest_lons.append(lons_ds[nearest_lon_idx])
 
         # Return nearest latitudes and longitudes, rounded to specified decimal places
-        nearest_lats = np.round(nearest_lats, roundoff)
-        nearest_lons = np.round(nearest_lons, roundoff)
+        nearest_lats = np.round(nearest_lats, decimal_places)
+        nearest_lons = np.round(nearest_lons, decimal_places)
 
         return nearest_lats, nearest_lons
     
