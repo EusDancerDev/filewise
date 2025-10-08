@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.11.10] - 2025-10-08
+
+### Changed (3.11.10)
+
+#### **Xarray Utils** (changing; 3.11.10)
+
+- Module `patterns.py`:
+  - Improve parameter naming for semantic clarity:
+
+    | Function Name                  | Original Parameter Name | New Parameter Name |
+    |--------------------------------|-------------------------|--------------------|
+    | `get_latlon_bounds()`          | `value_roundoff`        | `decimal_places`   |
+    | `get_latlon_deltas()`          | `delta_roundoff`        | `decimal_places`   |
+    | `find_nearest_coordinates()`   | `roundoff`              | `decimal_places`   |
+
+    - Update all related documentation, validation logic, error messages, and internal usage
+
+- Module `data_manipulation.py`:
+  - Improve parameter naming for semantic clarity:
+
+    | Function Name               | Original Parameter Name | New Parameter Name     |
+    |-----------------------------|-------------------------|------------------------|
+    | `extract_latlon_bounds()`   | `delta_roundoff`        | `delta_decimal_places` |
+    | `extract_latlon_bounds()`   | `value_roundoff`        | `value_decimal_places` |
+
+    - Update all related documentation, validation logic, and function calls to `get_latlon_bounds()` and `get_latlon_deltas()`
+
+---
+
 ## [3.11.9] - 2025-08-19
 
 ### Changed (3.11.9)
