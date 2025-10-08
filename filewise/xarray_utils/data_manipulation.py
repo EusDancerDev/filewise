@@ -32,15 +32,15 @@ from pygenutils.time_handling.date_and_time_utils import find_dt_key
 # Data extractors #
 #-----------------#
 
-def extract_latlon_bounds(delta_roundoff: int, value_roundoff: int) -> None:
+def extract_latlon_bounds(delta_decimal_places: int, value_decimal_places: int) -> None:
     """
     Extract latitude and longitude bounds from netCDF files.
 
     Parameters
     ----------
-    delta_roundoff : int
+    delta_decimal_places : int
         Number of decimal places to round off the delta between latitude and longitude points.
-    value_roundoff : int
+    value_decimal_places : int
         Number of decimal places to round off the latitude and longitude values.
 
     Returns
@@ -50,9 +50,9 @@ def extract_latlon_bounds(delta_roundoff: int, value_roundoff: int) -> None:
     Raises
     ------
     TypeError
-        If roundoff parameters are not integers.
+        If decimal places parameters are not integers.
     ValueError
-        If roundoff parameters are negative.
+        If decimal places parameters are negative.
 
     Notes
     -----
@@ -62,17 +62,17 @@ def extract_latlon_bounds(delta_roundoff: int, value_roundoff: int) -> None:
       is recorded in the report.
     """
     # Parameter validation
-    if not isinstance(delta_roundoff, int):
-        raise TypeError("delta_roundoff must be an integer")
+    if not isinstance(delta_decimal_places, int):
+        raise TypeError("delta_decimal_places must be an integer")
     
-    if not isinstance(value_roundoff, int):
-        raise TypeError("value_roundoff must be an integer")
+    if not isinstance(value_decimal_places, int):
+        raise TypeError("value_decimal_places must be an integer")
     
-    if delta_roundoff < 0:
-        raise ValueError("delta_roundoff must be non-negative")
+    if delta_decimal_places < 0:
+        raise ValueError("delta_decimal_places must be non-negative")
     
-    if value_roundoff < 0:
-        raise ValueError("value_roundoff must be non-negative")
+    if value_decimal_places < 0:
+        raise ValueError("value_decimal_places must be non-negative")
     
     nc_dirs = find_dirs_with_files(EXTENSIONS[0], search_path=CODE_CALL_DIR)
     
@@ -97,8 +97,8 @@ def extract_latlon_bounds(delta_roundoff: int, value_roundoff: int) -> None:
                             report.write(f"ERROR IN FILE '{nc_file}': {coord_err}\n")
                         else:
                             try:
-                                lats, lons = get_latlon_bounds(nc_file, coord_vars[0], coord_vars[1], value_roundoff)
-                                lat_delta, lon_delta = get_latlon_deltas(lats, lons, delta_roundoff)
+                                lats, lons = get_latlon_bounds(nc_file, coord_vars[0], coord_vars[1], value_decimal_places)
+                                lat_delta, lon_delta = get_latlon_deltas(lats, lons, delta_decimal_places)
                                 
                                 format_args_latlon_bounds = (
                                     nc_file, 
