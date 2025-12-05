@@ -205,4 +205,4 @@ def grib2nc(
 EXTENSIONS = CLIMATE_FILE_EXTENSIONS[::3]
   
 # RegEx control for GRIB-to-netCDF single file name #
-REGEX_GRIB2NC = r"^[a-zA-Z0-9\._-]$"
+REGEX_GRIB2NC = r"^[a-zA-Z\d\._-]$"
