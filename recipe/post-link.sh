@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Install pip dependencies that might not be available in conda
-"/bin/pip" install more_itertools>=10.0.0
+"${PREFIX}/bin/pip" install -v more_itertools>=10.0.0
