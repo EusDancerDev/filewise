@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.12.0] - 2026-02-05
+
+### Added (3.12.0)
+
+#### **Pandas Utils** (adding; 3.12.0)
+
+- Module `pandas_obj_handler.py`:
+  - Add fixed-width text readers to support files with character-position-based columns:
+    - `read_fixed_width_table()` (wrapper around `pd.read_fwf`)
+    - `read_fixed_width_table_with_layout()` (declarative schema helper: names+widths or names+colspecs)
+
+### Fixed (3.12.0)
+
+#### **Pandas Utils** (fixing; 3.12.0)
+
+- Module `pandas_obj_handler.py`:
+  - Fix `read_table()` default `separator` to match the documented/pandas default (tab: `\t`), removing a misleading whitespace-regex default.
+
+---
+
 ## [3.11.10] - 2025-10-08
 
 ### Changed (3.11.10)
@@ -116,7 +136,7 @@ All notable changes to this project will be documented in this file.
   | Old | New |
   |:---:|:---:|
   | `List[pd.DataFrame]` | `list[pd.DataFrame]` |
-  | `List[Tuple[str, str]]` | `list[tuple[str, str]]` |  
+  | `List[Tuple[str, str]]` | `list[tuple[str, str]]` |
   
   - Function affected: `standardise_time_series`
 
