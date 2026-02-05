@@ -1,5 +1,5 @@
 {% set name = "filewise" %}
-{% set version = "3.9.3" %}
+{% set version = "3.12.0" %}
 
 package:
   name: {{ name|lower }}
@@ -28,6 +28,8 @@ requirements:
 test:
   imports:
     - filewise
+  commands:
+    - python -c "import filewise; print(filewise.__version__)"
 
 about:
   home: https://github.com/EusDancerDev/filewise
