@@ -133,9 +133,9 @@ All notable changes to this project will be documented in this file.
     - **Reason**: standardise parameter naming consistency with `ods_handler()` function
   - **Rectified**: corrected docstring capitalisation inconsistencies to match function signatures:
 
-  | Old | New |
-  |:---:|:---:|
-  | `List[pd.DataFrame]` | `list[pd.DataFrame]` |
+  | Old                     | New                     |
+  |:-----------------------:|:-----------------------:|
+  | `List[pd.DataFrame]`    | `list[pd.DataFrame]`    |
   | `List[Tuple[str, str]]` | `list[tuple[str, str]]` |
   
   - Function affected: `standardise_time_series`
@@ -231,7 +231,7 @@ All notable changes to this project will be documented in this file.
 - These include abbreviation addressing and variable/key name standardisation.
 
 | Module | Old variable name | New variable name | Old key name | New key name |
-|:------:|:-----------------:|:-----------------:|:------------:|:------------:|
+| :------: | :-----------------: | :-----------------: | :------------: | :------------: |
 | `file_operations/bulk_rename_auto.py` | `NON_STD_TIME_FORMAT_STRS` | `NON_STANDARD_TIME_FORMAT_STRS` | `CFT_H` | `CTIME_H` |
 | `format_converters/pdf_tools.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` | `(N/A)` | `(N/A)` |
 | `xarray_utils/patterns.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` | `(N/A)` | `(N/A)` |
@@ -638,7 +638,7 @@ All notable changes to this project will be documented in this file.
 - The following method renamings have been made:
 
 | Old function name | New function name |
-|:-----------------:|:-----------------:|
+| :-----------------: | :-----------------: |
 | `serialise_dict_to_json` | `serialise_to_json` |
 | `serialise_json_to_dict` | `deserialise_json` |
 | `serialise_json_to_df` | `deserialise_json_to_df` |
