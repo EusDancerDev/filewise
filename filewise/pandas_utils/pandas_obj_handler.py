@@ -32,8 +32,171 @@ from pygenutils.strings.text_formatters import format_string
 # TXT files #
 #-#-#-#-#-#-#
 
+def read_fixed_width_table(
+    file_path: str,
+    colspecs: list[tuple[int, int]] | tuple[tuple[int, int], ...] | None = None,
+    widths: list[int] | tuple[int, ...] | None = None,
+    infer_nrows: int = 100,
+    dtype: dict | None = None,
+    encoding: str | None = None,
+    header: int | list[int] | str | None = "infer",
+    names: list | None = None,
+    parse_dates: bool | list[int] | list[str] | list[list] | dict = False,
+    skiprows: int | list[int] | None = None,
+) -> pd.DataFrame:
+    """
+    Read a fixed-width text file into a pandas DataFrame.
+
+    This is a thin wrapper around `pandas.read_fwf` for files where columns are not
+    separated by a delimiter (comma, tab, etc.), but instead occupy fixed character
+    positions ("fixed-width format").
+
+    Important
+    ---------
+    `pandas.read_fwf` is for fixed-width columns. It is **not** a solution for
+    multi-character delimiters; for that use `read_table`/`pd.read_table` with a regex
+    separator and (when required) `engine="python"`.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the fixed-width text file.
+    colspecs : list[tuple[int, int]] | tuple[tuple[int, int], ...] | None, default None
+        Explicit column specifications given as half-open intervals
+        ``[(start, end), ...]`` (0-based, end-exclusive). If provided, it takes
+        precedence over `widths`.
+    widths : list[int] | tuple[int, ...] | None, default None
+        Field widths for each column. Used only when `colspecs` is None.
+    infer_nrows : int, default 100
+        Number of rows to use for inferring column specifications when both `colspecs`
+        and `widths` are None.
+    dtype : dict | None, default None
+        Data type for data or columns (e.g. ``{'a': 'Int64', 'b': 'float64'}``).
+    encoding : str | None, default None
+        Text encoding to use when reading the file.
+    header : int | list[int] | str | None, default "infer"
+        Row number(s) to use as the column names, and the start of the data.
+        Use None when there is no header row.
+    names : list | None, default None
+        Column names to use. If provided, typically set `header=None`.
+    parse_dates : bool | list[int] | list[str] | list[list] | dict, default False
+        Whether/how to parse dates. See pandas documentation for supported formats.
+    skiprows : int | list[int] | None, default None
+        Lines to skip at the start of the file, or specific line indices to skip.
+
+    Returns
+    -------
+    pd.DataFrame
+        Parsed fixed-width data as a DataFrame.
+    """
+    if colspecs is not None and widths is not None:
+        raise ValueError("Only one of 'colspecs' or 'widths' may be provided.")
+
+    df = pd.read_fwf(
+        file_path,
+        colspecs=colspecs,
+        widths=widths,
+        infer_nrows=infer_nrows,
+        dtype=dtype,
+        encoding=encoding,
+        header=header,
+        names=names,
+        parse_dates=parse_dates,
+        skiprows=skiprows,
+    )
+    return df
+
+
+def read_fixed_width_table_with_layout(
+    file_path: str,
+    layout: dict[str, int] | list[tuple[str, int]] | list[tuple[str, tuple[int, int]]],
+    *,
+    infer_nrows: int = 100,
+    dtype: dict | None = None,
+    encoding: str | None = None,
+    header: int | list[int] | str | None = None,
+    parse_dates: bool | list[int] | list[str] | list[list] | dict = False,
+    skiprows: int | list[int] | None = None,
+) -> pd.DataFrame:
+    """
+    Read a fixed-width text file using a simple column layout definition.
+
+    This helper is useful when you already know the fixed-width schema and want to
+    define it declaratively alongside the call.
+
+    The `layout` argument supports two common styles:
+
+    - **Names + widths** (most common):
+      - a dict mapping ``{column_name: width, ...}`` (in insertion order), or
+      - a list of ``[(column_name, width), ...]`` tuples
+
+    - **Names + colspecs** (explicit character positions):
+      - a list of ``[(column_name, (start, end)), ...]`` tuples
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the fixed-width text file.
+    layout : dict[str, int] | list[tuple[str, int]] | list[tuple[str, tuple[int, int]]]
+        Fixed-width schema definition. See above for the accepted formats.
+    infer_nrows : int, default 100
+        Passed through to `read_fixed_width_table` (used only when inferring specs,
+        which does not happen when `layout` is provided, but kept for API symmetry).
+    dtype : dict | None, default None
+        Data type for data or columns.
+    encoding : str | None, default None
+        Text encoding to use when reading the file.
+    header : int | list[int] | str | None, default None
+        Header behaviour. Defaults to None because `layout` supplies explicit column
+        names. Change it only if your file actually contains a header line and you
+        want pandas to parse it.
+    parse_dates : bool | list[int] | list[str] | list[list] | dict, default False
+        Whether/how to parse dates.
+    skiprows : int | list[int] | None, default None
+        Lines to skip at the start of the file, or specific line indices to skip.
+
+    Returns
+    -------
+    pd.DataFrame
+        Parsed fixed-width data as a DataFrame.
+    """
+    if isinstance(layout, dict):
+        items: list[tuple[str, int]] = list(layout.items())
+        names = [name for name, _ in items]
+        widths = [width for _, width in items]
+        colspecs = None
+    else:
+        if not layout:
+            raise ValueError("'layout' must not be empty.")
+
+        first_val = layout[0][1]
+        names = [name for name, _ in layout]
+
+        if isinstance(first_val, tuple):
+            # list[(name, (start, end))]
+            colspecs = [spec for _, spec in layout]  # type: ignore[misc]
+            widths = None
+        else:
+            # list[(name, width)]
+            widths = [width for _, width in layout]  # type: ignore[misc]
+            colspecs = None
+
+    return read_fixed_width_table(
+        file_path=file_path,
+        colspecs=colspecs,
+        widths=widths,
+        infer_nrows=infer_nrows,
+        dtype=dtype,
+        encoding=encoding,
+        header=header,
+        names=names,
+        parse_dates=parse_dates,
+        skiprows=skiprows,
+    )
+
+
 def read_table(file_path: str,
-               separator: str = "\s+",
+               separator: str = "\t",
                dtype: dict | None = None,
                engine: str | None = None,
                encoding: str | None = None,
