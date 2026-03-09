@@ -33,7 +33,6 @@ ENV/
 *.swp
 *.swo
 .DS_Store
-.spyproject
 
 # Testing
 .coverage
