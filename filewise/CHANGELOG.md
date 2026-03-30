@@ -2,6 +2,55 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- TODO: check that the table formatting is correct,  in terms of the usage of the centering colon symbols and the amount of hyphens used as the horizontal borders of the tables -->
+
+---
+
+## [3.13.0] - 2026-03-30
+
+### Changed (3.13.0)
+
+#### **Pandas Utils** (changing; 3.13.0)
+
+- Module `pandas_obj_handler.py`:
+  - Refactor `save2csv()`, `save2excel()`, and `save2ods()` to use an atomic-first write strategy (temp write + replace), with delete/recreate fallback when replacement fails.
+  - Fix `save2excel()` DataFrame save path to use explicit keyword arguments, preventing incorrect positional `to_excel()` usage.
+  - Rework `merge_excel_files()` to avoid sheet/file misalignment, make duplicate sheet keys deterministic, and add optional single-DataFrame output with axis control.
+  - Update `merge_csv_files()` to support explicit concat-axis controls and safe cancellation handling without undefined return paths.
+  - Route `_concat_dfs_aux()` through the shared helper in `data_manipulation.py` to avoid merge logic divergence.
+  - Extend `merge_ods_files()` to pass ODS engine and parity options through `merge_excel_files()`.
+  - Fix `excel_handler(return_type='df')` by removing a stale drop of a non-existent `sheet` column.
+
+- Module `data_manipulation.py`:
+  - Extend `concat_dfs_aux()` with axis, sort, index handling, and optional row-level deduplication for axis=0 workflows.
+
+#### **Xarray Utils** (changing; 3.13.0)
+
+- Migrate `xarray_utils` from `filewise` into the dedicated package `climarraykit`:
+  - Remove subpackage `filewise/xarray_utils`.
+  - Re-home xarray-focused modules to `climarraykit`:
+    - `file_utils.py`
+    - `patterns.py`
+    - `conversions.py`
+    - `data_manipulation.py`
+    - `xarray_obj_handler.py`
+- Update internal and downstream import paths from:
+  - `filewise.xarray_utils.*`
+  to:
+  - `climarraykit.*`
+- Update package exports by removing `xarray_utils` from `filewise/__init__.py`.
+
+### Added (3.13.0)
+
+#### **Tests** (adding; 3.13.0)
+
+- Add `tests/test_pandas_utils_merge_save.py` covering:
+  - axis=0 concat and dedup behaviour,
+  - atomic-save fallback path for CSV,
+  - duplicate-sheet key handling in Excel merges,
+  - single-DataFrame Excel merge dedup,
+  - cancelled axis=1 CSV merges.
+
 ---
 
 ## [3.12.0] - 2026-02-05
@@ -34,7 +83,7 @@ All notable changes to this project will be documented in this file.
   - Improve parameter naming for semantic clarity:
 
     | Function Name                  | Original Parameter Name | New Parameter Name |
-    |--------------------------------|-------------------------|--------------------|
+    |:--------------------------------:|:-----------------------:|:------------------:|
     | `get_latlon_bounds()`          | `value_roundoff`        | `decimal_places`   |
     | `get_latlon_deltas()`          | `delta_roundoff`        | `decimal_places`   |
     | `find_nearest_coordinates()`   | `roundoff`              | `decimal_places`   |
@@ -45,7 +94,7 @@ All notable changes to this project will be documented in this file.
   - Improve parameter naming for semantic clarity:
 
     | Function Name               | Original Parameter Name | New Parameter Name     |
-    |-----------------------------|-------------------------|------------------------|
+    |:---------------------------:|:-----------------------:|:----------------------:|
     | `extract_latlon_bounds()`   | `delta_roundoff`        | `delta_decimal_places` |
     | `extract_latlon_bounds()`   | `value_roundoff`        | `value_decimal_places` |
 
