@@ -53,7 +53,7 @@ packages = ["filewise"]
 filewise = ["*.yaml", "*.json"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["filewise/tests"]
 python_files = ["test_*.py"]
 addopts = "-ra -q"
 
