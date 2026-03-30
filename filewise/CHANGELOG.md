@@ -82,21 +82,21 @@ All notable changes to this project will be documented in this file.
 - Module `patterns.py`:
   - Improve parameter naming for semantic clarity:
 
-    | Function Name                  | Original Parameter Name | New Parameter Name |
-    |:--------------------------------:|:-----------------------:|:------------------:|
-    | `get_latlon_bounds()`          | `value_roundoff`        | `decimal_places`   |
-    | `get_latlon_deltas()`          | `delta_roundoff`        | `decimal_places`   |
-    | `find_nearest_coordinates()`   | `roundoff`              | `decimal_places`   |
+    | Function Name | Original Parameter Name | New Parameter Name |
+    | :--- | :---: | :---: |
+    | `get_latlon_bounds()` | `value_roundoff` | `decimal_places` |
+    | `get_latlon_deltas()` | `delta_roundoff` | `decimal_places` |
+    | `find_nearest_coordinates()` | `roundoff` | `decimal_places` |
 
     - Update all related documentation, validation logic, error messages, and internal usage
 
 - Module `data_manipulation.py`:
   - Improve parameter naming for semantic clarity:
 
-    | Function Name               | Original Parameter Name | New Parameter Name     |
-    |:---------------------------:|:-----------------------:|:----------------------:|
-    | `extract_latlon_bounds()`   | `delta_roundoff`        | `delta_decimal_places` |
-    | `extract_latlon_bounds()`   | `value_roundoff`        | `value_decimal_places` |
+    | Function Name | Original Parameter Name | New Parameter Name |
+    | :--- | :---: | :---: |
+    | `extract_latlon_bounds()` | `delta_roundoff` | `delta_decimal_places` |
+    | `extract_latlon_bounds()` | `value_roundoff` | `value_decimal_places` |
 
     - Update all related documentation, validation logic, and function calls to `get_latlon_bounds()` and `get_latlon_deltas()`
 
@@ -182,9 +182,9 @@ All notable changes to this project will be documented in this file.
     - **Reason**: standardise parameter naming consistency with `ods_handler()` function
   - **Rectified**: corrected docstring capitalisation inconsistencies to match function signatures:
 
-  | Old                     | New                     |
-  |:-----------------------:|:-----------------------:|
-  | `List[pd.DataFrame]`    | `list[pd.DataFrame]`    |
+  | Old | New |
+  | :--- | :--- |
+  | `List[pd.DataFrame]` | `list[pd.DataFrame]` |
   | `List[Tuple[str, str]]` | `list[tuple[str, str]]` |
   
   - Function affected: `standardise_time_series`
@@ -280,7 +280,7 @@ All notable changes to this project will be documented in this file.
 - These include abbreviation addressing and variable/key name standardisation.
 
 | Module | Old variable name | New variable name | Old key name | New key name |
-| :------: | :-----------------: | :-----------------: | :------------: | :------------: |
+| :--- | :---: | :---: | :---: | :---: |
 | `file_operations/bulk_rename_auto.py` | `NON_STD_TIME_FORMAT_STRS` | `NON_STANDARD_TIME_FORMAT_STRS` | `CFT_H` | `CTIME_H` |
 | `format_converters/pdf_tools.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` | `(N/A)` | `(N/A)` |
 | `xarray_utils/patterns.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` | `(N/A)` | `(N/A)` |
@@ -687,7 +687,7 @@ All notable changes to this project will be documented in this file.
 - The following method renamings have been made:
 
 | Old function name | New function name |
-| :-----------------: | :-----------------: |
+| :--- | :--- |
 | `serialise_dict_to_json` | `serialise_to_json` |
 | `serialise_json_to_dict` | `deserialise_json` |
 | `serialise_json_to_df` | `deserialise_json_to_df` |
