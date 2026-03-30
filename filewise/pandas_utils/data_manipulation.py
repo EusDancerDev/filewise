@@ -330,7 +330,13 @@ def concat_dfs_aux(input_file_list: list,
                    header: int | list[int] | str | None, 
                    parse_dates: bool | list[int] | list[str] | list[list] | dict, 
                    index_col: int | str | list | None, 
-                   decimal: str) -> pd.DataFrame:
+                   decimal: str,
+                   axis: int = 0,
+                   sort: bool = False,
+                   ignore_index_bool: bool | None = None,
+                   drop_duplicates: bool = False,
+                   dedup_subset: str | list[str] | None = None,
+                   dedup_keep: str = "first") -> pd.DataFrame:
     """
     Auxiliary function to concatenate multiple CSV files into a single DataFrame.
 
@@ -353,6 +359,22 @@ def concat_dfs_aux(input_file_list: list,
     decimal : str
         Character to recognise as decimal point.
 
+    axis : int, default 0
+        Concatenation axis. Use 0 to stack rows (default), or 1 to align by index
+        and append columns.
+    sort : bool, default False
+        Whether to sort non-concatenation axis labels.
+    ignore_index_bool : bool | None, default None
+        Whether to ignore index values on concatenation. If None, defaults to True
+        for ``axis=0`` and False for ``axis=1``.
+    drop_duplicates : bool, default False
+        If True and ``axis=0``, drop duplicate rows after concatenation.
+    dedup_subset : str | list[str] | None, default None
+        Column label or labels used for duplicate detection when
+        ``drop_duplicates=True``.
+    dedup_keep : str, default "first"
+        Which duplicates to keep. Passed to ``DataFrame.drop_duplicates``.
+
     Returns
     -------
     pd.DataFrame
@@ -369,13 +391,20 @@ def concat_dfs_aux(input_file_list: list,
 
     Notes
     -----
-    This is a helper function that reads multiple CSV files with the same structure
-    and concatenates them column-wise. All files should have compatible schemas.
+    This helper reads multiple CSV files with common parsing options and then
+    concatenates them either row-wise (``axis=0``) or column-wise (``axis=1``).
     """
     if not input_file_list:
         raise ValueError("input_file_list cannot be empty")
+    if axis not in (0, 1):
+        raise ValueError(f"axis must be either 0 or 1, got {axis}")
+    if drop_duplicates and axis != 0:
+        raise ValueError("drop_duplicates is only supported for axis=0 concatenation")
+
+    if ignore_index_bool is None:
+        ignore_index_bool = axis == 0
     
-    all_file_data_df = pd.DataFrame()
+    file_df_list = []
     for file in input_file_list:
         try:
             file_df = csv2df(file_path=file,
@@ -386,13 +415,27 @@ def concat_dfs_aux(input_file_list: list,
                              parse_dates=parse_dates,
                              index_col=index_col,
                              decimal=decimal)
-            
-            all_file_data_df = pd.concat([all_file_data_df, file_df], axis=1)
+            file_df_list.append(file_df)
         except FileNotFoundError:
             raise FileNotFoundError(f"File not found: {file}")
         except Exception as e:
             raise ValueError(f"Error processing file {file}: {e}")
-    
+
+    all_file_data_df = pd.concat(
+        file_df_list,
+        axis=axis,
+        sort=sort,
+        ignore_index=ignore_index_bool,
+    )
+
+    if drop_duplicates:
+        all_file_data_df = all_file_data_df.drop_duplicates(
+            subset=dedup_subset,
+            keep=dedup_keep,
+        )
+        if ignore_index_bool:
+            all_file_data_df = all_file_data_df.reset_index(drop=True)
+
     return all_file_data_df
 
 
