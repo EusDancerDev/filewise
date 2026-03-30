@@ -38,7 +38,7 @@ The **filewise** package follows [Semantic Versioning](https://semver.org/) (Sem
 The following table provides a summary of the version history for the **filewise** package:
 
 | Version | Date | Description |
-|---------|------|-------------|
+| --- | --- | --- |
 | v3.6.0 | 2025-04-05 | Improved variable naming conventions across multiple modules |
 | v3.5.4 | 2025-02-18 | Replaced `method` with `function` and renamed constants |
 | v3.5.0 | 2024-11-18 | Enhanced JSON serialization functions |
