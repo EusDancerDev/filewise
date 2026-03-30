@@ -5,20 +5,20 @@
 # Import modules #
 #----------------#
 
-from numpy import unique
+import os
+import tempfile
+
 import pandas as pd
+from numpy import unique
 # Modern type annotations - no longer need typing imports for basic types
 
 #------------------------#
 # Import project modules #
 #------------------------#
 
-from filewise.file_operations.ops_handler import remove_files
-from filewise.file_operations.path_utils import find_files
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 
 from pygenutils.arrays_and_lists.data_manipulation import flatten_list
-from pygenutils.arrays_and_lists.patterns import find_duplicated_elements
 from pygenutils.strings.string_handler import append_ext, find_substring_index, get_obj_specs
 from pygenutils.strings.text_formatters import format_string
 
@@ -530,6 +530,94 @@ def standardise_time_series(
 # Microsoft Excel spreadsheets #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
+def _ensure_extension(file_path: str, extension: str) -> str:
+    """Ensure file_path has the desired extension."""
+    file_ext = get_obj_specs(file_path, obj_spec_key="ext")
+    if len(file_ext) == 0:
+        return append_ext(file_path, extension)
+    return file_path
+
+
+def _request_overwrite_if_exists(file_path: str) -> bool:
+    """
+    Ask the user whether an existing path should be overwritten.
+    Returns True if writing is allowed.
+    """
+    if not os.path.exists(file_path):
+        return True
+
+    file_name = get_obj_specs(file_path, obj_spec_key="name")
+    fn_parent = get_obj_specs(file_path, obj_spec_key="parent")
+    format_args_file_exists = [file_name, fn_parent]
+    overwrite_stdin = input(
+        format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists)
+    )
+    while overwrite_stdin not in ("y", "n"):
+        overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
+
+    return overwrite_stdin == "y"
+
+
+def _build_tmp_file_path(file_path: str) -> str:
+    """Create a temp path next to final target path."""
+    parent_dir = get_obj_specs(file_path, obj_spec_key="parent")
+    file_name = get_obj_specs(file_path, obj_spec_key="name_noext")
+    file_ext = get_obj_specs(file_path, obj_spec_key="ext")
+    suffix = f".{file_ext}" if file_ext else ".tmp"
+
+    fd, tmp_path = tempfile.mkstemp(
+        prefix=f".{file_name}_tmp_",
+        suffix=suffix,
+        dir=parent_dir if parent_dir else None,
+    )
+    os.close(fd)
+    return tmp_path
+
+
+def _delete_if_exists(file_path: str) -> None:
+    """Delete file if it already exists."""
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+
+def _write_with_atomic_replace(file_path: str, write_callable) -> None:
+    """
+    Atomic-first write strategy:
+    1) write to temp file in destination directory
+    2) os.replace to destination
+    3) if replace fails, fallback to delete+recreate
+    """
+    tmp_path = _build_tmp_file_path(file_path)
+    try:
+        write_callable(tmp_path)
+        try:
+            os.replace(tmp_path, file_path)
+        except OSError:
+            _delete_if_exists(file_path)
+            write_callable(file_path)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+
+def _get_unique_sheet_key(sheet_name: str, file_name: str, existing_keys: set[str]) -> str:
+    """Create deterministic unique keys when sheet names collide across files."""
+    base_key = str(sheet_name)
+    if base_key not in existing_keys:
+        return base_key
+
+    candidate = f"{base_key}_{file_name}"
+    if candidate not in existing_keys:
+        return candidate
+
+    counter = 2
+    while True:
+        numbered_candidate = f"{candidate}_{counter}"
+        if numbered_candidate not in existing_keys:
+            return numbered_candidate
+        counter += 1
+
+
 def excel_handler(file_path, 
                   sheet_name=None,
                   header=None,
@@ -607,7 +695,6 @@ def excel_handler(file_path,
                 all_value_df = pd.concat([all_value_df, df_polished_colnames])
                 
             all_value_df.reset_index(inplace=True, drop=True)
-            all_value_df = all_value_df.drop(columns=['sheet'])
             return all_value_df
 
 def save2excel(file_path,
@@ -656,97 +743,38 @@ def save2excel(file_path,
     >>> save2excel("output.xlsx", dfs)
     """
     
-    # Get the file path's components #
-    #--------------------------------#
-    
-    # Extension #
-    """
-    There can be some times in which the file does not have any extension,
-    as a result of any other manipulation with any of the modules of this package.
-    If so, Excel file extension is automatically added.
-    """
-    file_ext = get_obj_specs(file_path, obj_spec_key="ext")
-    extension_length = len(file_ext)
-    
-    if extension_length == 0:
-        file_path = append_ext(file_path, EXTENSIONS[1])
-    
-    # Name and parent #
-    file_name = get_obj_specs(file_path, obj_spec_key="name")
-    fn_parent = get_obj_specs(file_path, obj_spec_key="parent")
-    
-    # Check if the file already exists #
-    #----------------------------------#
-    
-    file_already_exists\
-    = bool(len(find_files(file_name, fn_parent, match_type="glob", top_only=True)))
-    
-    # Save the file according to the input data type #
-    #------------------------------------------------#
-    
+    file_path = _ensure_extension(file_path, EXTENSIONS[1])
+
+    if not isinstance(frame_obj, (dict, pd.DataFrame)):
+        raise TypeError(
+            "Unsupported type of frame. It must either be of type 'dict' "
+            "or 'pandas.DataFrame'."
+        )
+
+    if not _request_overwrite_if_exists(file_path):
+        return None
+
     if isinstance(frame_obj, dict):
-        writer = pd.ExcelWriter(file_path, engine=engine)
-        
-        for sheet, frame in frame_obj.items():
-            frame.to_excel(writer,
-                           sheet_name=sheet,
-                           index=save_index,
-                           header=save_header)
-            
-        # If the file to be created already exists, prompt to overwrite it #    
-        if file_already_exists:
-            format_args_file_exists = [file_name, fn_parent]
-            overwrite_stdin\
-            = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
-            
-            while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
-            else:  
-                # In this case, save the file directly
-                if overwrite_stdin == "y":
-                    writer.close() 
-                    return 0
-                else:
-                    pass
-        
-        # Else, save it directly #
-        else:
-            writer.close()
-            return 0
-
-
-    elif isinstance(frame_obj, pd.DataFrame):
-        
-        # If the file to be created already exists, prompt to overwrite it #    
-        if file_already_exists:
-            format_args_file_exists = [file_name, fn_parent]
-            overwrite_stdin\
-            = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
-            
-            while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
-            else:
-                # If chosen to overwrite, data cannot be directly overriden.
-                # Instead, delete the original file and create a new one
-                # of the same name with the new data
-                if overwrite_stdin == "y":
-                    remove_files(file_path, fn_parent, match_type="glob")
-                    frame_obj.to_excel(file_path, 
-                                       sheet_name=indiv_sheet_name,
-                                       index=save_index,
-                                       header=save_header)
-                    return 0
-                else:
-                    pass
-          
-        # Else, save it directly #
-        else:
-            frame_obj.to_excel(file_path, save_index, save_header)
-            return 0
-        
+        def write_excel(path):
+            with pd.ExcelWriter(path, engine=engine) as writer:
+                for sheet, frame in frame_obj.items():
+                    frame.to_excel(
+                        writer,
+                        sheet_name=str(sheet),
+                        index=save_index,
+                        header=save_header,
+                    )
     else:
-        raise TypeError("Unsupported type of frame. "
-                        "It must either be of type 'dict' or 'pandas.DataFrame'.")
+        def write_excel(path):
+            frame_obj.to_excel(
+                path,
+                sheet_name=indiv_sheet_name,
+                index=save_index,
+                header=save_header,
+            )
+
+    _write_with_atomic_replace(file_path, write_excel)
+    return 0
         
 
 def merge_excel_files(input_file_list: str | list,
@@ -754,11 +782,19 @@ def merge_excel_files(input_file_list: str | list,
                       header: int | list[int] | None = None,
                       engine: str | None = None,
                       decimal: str = ".",
+                      axis: int = 0,
+                      sort: bool = False,
+                      ignore_index_bool: bool | None = None,
+                      out_single_DataFrame: bool = False,
+                      drop_duplicates: bool = False,
+                      dedup_subset: str | list[str] | None = None,
+                      dedup_keep: str = "first",
                       save_index: bool = False,
                       save_header: bool = False,
-                      save_merged_file: bool = False) -> int | dict:
+                      save_merged_file: bool = False) -> int | dict | pd.DataFrame:
     """
-    Merge data from multiple Excel files into a single Excel file or dictionary.
+    Merge data from multiple Excel files into either a dictionary of sheets
+    or one concatenated DataFrame.
 
     Parameters
     ----------
@@ -775,6 +811,22 @@ def merge_excel_files(input_file_list: str | list,
         SQLAlchemy engine or connection string for connecting to database files.
     decimal : str, default '.'
         Character recognised as decimal separator.
+    axis : int, default 0
+        Concatenation axis when ``out_single_DataFrame=True``.
+    sort : bool, default False
+        Whether to sort the non-concatenation axis labels when concatenating.
+    ignore_index_bool : bool | None, default None
+        Whether to ignore index during concatenation when building a single DataFrame.
+        If None, defaults to True for axis=0 and False for axis=1.
+    out_single_DataFrame : bool, default False
+        If True, return a single concatenated DataFrame across all sheets and files.
+        If False, return a dictionary keyed by sheet name.
+    drop_duplicates : bool, default False
+        If True and ``out_single_DataFrame=True`` with ``axis=0``, drop duplicate rows.
+    dedup_subset : str | list[str] | None, default None
+        Subset used by ``drop_duplicates``.
+    dedup_keep : str, default "first"
+        Keep strategy used by ``drop_duplicates``.
     save_index : bool, default False
         Whether to include a column in the output Excel file that identifies row numbers.
     save_header : bool, default False
@@ -784,10 +836,12 @@ def merge_excel_files(input_file_list: str | list,
 
     Returns
     -------
-    int or dict
+    int or dict or pd.DataFrame
         If 'save_merged_file' is True, returns 0 to indicate successful file saving.
-        If 'save_merged_file' is False, returns a dictionary containing DataFrames
-        with merged data, separated by file names.
+        If 'save_merged_file' is False and 'out_single_DataFrame' is False,
+        returns a dictionary containing DataFrames by unique sheet keys.
+        If 'save_merged_file' is False and 'out_single_DataFrame' is True,
+        returns one concatenated DataFrame.
 
     Raises
     ------
@@ -796,96 +850,72 @@ def merge_excel_files(input_file_list: str | list,
 
     Notes
     -----
-    If multiple files contain sheets with identical names, the function appends
-    the original file name to the sheet names to avoid key conflicts
-    in the output dictionary.
+    When several files contain the same sheet name, deterministic suffixes are
+    applied to avoid key collisions in dictionary output.
     """
-    
-    # Quality control section #
+
+    if axis not in (0, 1):
+        raise ValueError(f"axis must be either 0 or 1, got {axis}")
+    if drop_duplicates and (not out_single_DataFrame or axis != 0):
+        raise ValueError(
+            "drop_duplicates is only supported when out_single_DataFrame=True and axis=0"
+        )
+
     if isinstance(input_file_list, str):
         input_file_list = [input_file_list]
     elif isinstance(input_file_list, list):
         input_file_list = flatten_list(input_file_list)
-        
-    input_file_count = len(input_file_list)    
-    if input_file_count == 1:
+
+    if len(input_file_list) <= 1:
         raise ValueError(BELOW_MINIMUM_FILE_WARNING)
-        
-    # For simplicity and convenience, even if any file has only one sheet, 
-    # follow the natural behaviour, that is, conserving the key containing
-    # object as a list, instead of indexing to an integer
-    all_file_sheetname_list_of_lists = [list(excel_handler(file, 
-                                                           engine=engine,
-                                                           return_type='dict').keys())
-                                        for file in input_file_list]
-    
-    
-    """
-    Handle duplicated sheet names, if any, by adding the corresponding
-    file name after it. Otherwise, because in a dictionary cannot appear
-    repeated keys, the information pertaining to the second key and beyond,
-    among the duplicated ones, will be lost.
-        
-    For example, if the previous instruction gives a list of lists 
-    like the following one:
-        
-    [['sheet1', 'test_sheet'], ['sheet1', 'savings']]
-    
-    To identify the duplicated names, as well as remembering which
-    file do they correspond to:
-    
-    - Each individual list corresponds to the sheets contained in a file,
-      which will be identified as a key.
-    - A first index is necessary to idenfity which file does the potentially
-      duplicated element correspond to, i.e. the position of the individual list.
-    - Another index serves to locate the duplicated element within the
-      mentioned individual list and modify its name.
-      * The previous two indices will be contained in a tuple.
-      * Because duplicated elements appear minimum twice,
-        there will be more than one tuple, contained in a list,
-        in order to preserve performance.
-      
-    The application of the function results in a dictionary as follows:
-    res_dict = {'sheet1' : [(0,0), (1,0)]}
-    
-    In this case, the repeated key is 'sheet1', which appears in the sheets
-    of the first and second file (first indices 0 and 1, respectively),
-    and that sheet name is located in the first position for both files
-    (second index 0 in both cases).
-    """
-    duplicated_sheetname_index_dict = find_duplicated_elements(all_file_sheetname_list_of_lists)
-    duplicate_sheet_count = len(duplicated_sheetname_index_dict)
-    if duplicate_sheet_count > 0:
-        for sheet_name in list(duplicated_sheetname_index_dict.keys()):
-            index_tuple_list = duplicated_sheetname_index_dict[sheet_name]
-            for tupl in index_tuple_list:
-                new_sheet_name = f"{sheet_name}_{input_file_list[tupl[0]]}"
-                all_file_sheetname_list_of_lists[tupl[0]][tupl[1]] = new_sheet_name
-        
-    all_file_sheetname_list_of_lists = [lst[i] 
-                                        for lst in all_file_sheetname_list_of_lists
-                                        for i in range(len(lst))]
-    
 
-    # Gather data #     
-    all_file_data_dict = {file_sheetname : excel_handler(file, 
-                                                         header=header,
-                                                         engine=engine, 
-                                                         decimal=decimal,
-                                                         return_type='dict')
-                          for file_sheetname, file in zip(all_file_sheetname_list_of_lists, 
-                                                          input_file_list)}
+    if ignore_index_bool is None:
+        ignore_index_bool = axis == 0
 
-    # File saving 
-    if save_merged_file:
-        saving_result = save2excel(output_file_path,
-                                   all_file_data_dict, 
-                                   save_index=save_index, 
-                                   save_header=save_header)
-        return saving_result
-     
+    all_file_data_dict: dict[str, pd.DataFrame] = {}
+    for file in input_file_list:
+        sheet_dict = excel_handler(
+            file,
+            header=header,
+            engine=engine,
+            decimal=decimal,
+            return_type="dict",
+        )
+        source_file_name = get_obj_specs(file, "name_noext")
+        for sheet_name, sheet_df in sheet_dict.items():
+            unique_key = _get_unique_sheet_key(
+                str(sheet_name),
+                source_file_name,
+                set(all_file_data_dict.keys()),
+            )
+            all_file_data_dict[unique_key] = sheet_df
+
+    if out_single_DataFrame:
+        merged_result = pd.concat(
+            list(all_file_data_dict.values()),
+            axis=axis,
+            sort=sort,
+            ignore_index=ignore_index_bool,
+        )
+        if drop_duplicates:
+            merged_result = merged_result.drop_duplicates(
+                subset=dedup_subset,
+                keep=dedup_keep,
+            )
+            if ignore_index_bool:
+                merged_result = merged_result.reset_index(drop=True)
     else:
-        return all_file_data_dict
+        merged_result = all_file_data_dict
+
+    if save_merged_file:
+        return save2excel(
+            output_file_path,
+            merged_result,
+            save_index=save_index,
+            save_header=save_header,
+        )
+
+    return merged_result
         
 
 # CSV files #
@@ -937,108 +967,24 @@ def save2csv(file_path,
 
     
     if isinstance(data_frame, pd.DataFrame):
-        
-        # Get the file path's components #
-        #--------------------------------#
-        
-        # Extension #
-        """
-        There can be some times in which the file does not have any extension,
-        as a result of any other manipulation with any of the modules of this package.
-        If so, Excel file extension is automatically added.
-        """
-        
-        file_ext = get_obj_specs(file_path, obj_spec_key="ext")
-        extension_length = len(file_ext)
-        
-        if extension_length == 0:
-            file_path = append_ext(file_path, EXTENSIONS[0])
-        
-        
-        # Name and parent #
-        file_name = get_obj_specs(file_path, obj_spec_key="name")
-        fn_parent = get_obj_specs(file_path, obj_spec_key="parent")
-        
-        # Check if the file already exists #
-        #----------------------------------#
-        
-        file_already_exists\
-        = bool(len(find_files(file_name, fn_parent, match_type="glob", top_only=True)))
-        
-        # Save the file according to the input data type #
-        #------------------------------------------------#
-        
-        if date_format is None:
-            
-            # If the file to be created already exists, prompt to overwrite it #  
-            if file_already_exists:
-                format_args_file_exists = [file_name, fn_parent]
-                overwrite_stdin\
-                = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
-                
-                while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                    overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
-                else:
-                    # If chosen to overwrite, data cannot be directly overriden.
-                    # Instead, delete the original file and create a new one
-                    # of the same name with the new data
-                    if overwrite_stdin == "y":
-                        remove_files(file_path, fn_parent, match_type="glob")
-                        data_frame.to_csv(file_path,
-                                          sep=separator,
-                                          decimal=decimal,
-                                          index=save_index,
-                                          header=save_header)
-                        return 0
-                    else:
-                        pass
-                
-            # Else, save it directly #
-            else:
-                data_frame.to_csv(file_path,
-                                  sep=separator,
-                                  decimal=decimal,
-                                  index=save_index,
-                                  header=save_header)
-                return 0
-                
-            
-        else:
-            # If the file to be created already exists, prompt to overwrite it #  
-            if file_already_exists:
-                format_args_file_exists = [file_name, fn_parent]
-                overwrite_stdin\
-                = input(format_string(ALREADY_EXISTING_FILE_WARNING_TEMPLATE, format_args_file_exists))
-                
-                while (overwrite_stdin != "y" and overwrite_stdin != "n"):
-                    overwrite_stdin = input(OVERWRITE_PROMPT_WARNING)
-                else:
-                    # If chosen to overwrite, data cannot be directly overriden.
-                    # Instead, delete the original file and create a new one
-                    # of the same name with the new data
-                    if overwrite_stdin == "y":
-                        remove_files(file_path, fn_parent, match_type="glob")
-                        data_frame.to_csv(file_path,
-                                          sep=separator,
-                                          decimal=decimal,
-                                          date_format=date_format,
-                                          index=save_index,
-                                          header=save_header)
-                        return 0                        
-                    else:
-                        pass
-                
-            # Else, save it directly #
-            else:
-                data_frame.to_csv(file_path,
-                                  sep=separator,
-                                  decimal=decimal,
-                                  date_format=date_format,
-                                  index=save_index,
-                                  header=save_header)
-                return 0
-            
-    else:        
+        file_path = _ensure_extension(file_path, EXTENSIONS[0])
+
+        if not _request_overwrite_if_exists(file_path):
+            return None
+
+        def write_csv(path):
+            data_frame.to_csv(
+                path,
+                sep=separator,
+                decimal=decimal,
+                date_format=date_format,
+                index=save_index,
+                header=save_header,
+            )
+
+        _write_with_atomic_replace(file_path, write_csv)
+        return 0
+    else:
         input_obj_type = get_type_str(data_frame)
         raise TypeError(format_string(UNSUPPORTED_OBJ_TYPE_ERR_TEMPLATE, input_obj_type))
         
@@ -1137,7 +1083,13 @@ def merge_csv_files(input_file_list: str | list,
                     header: int | list[int] | str | None = 'infer',
                     parse_dates: bool | list[int] | list[str] | list[list] | dict = False,
                     index_col: int | str | list | None = None,
-                    decimal: str = ",",                                 
+                    decimal: str = ",",
+                    axis: int = 0,
+                    sort: bool = False,
+                    ignore_index_bool: bool | None = None,
+                    drop_duplicates: bool = False,
+                    dedup_subset: str | list[str] | None = None,
+                    dedup_keep: str = "first",
                     save_index: bool = False,
                     save_header: bool = False,
                     out_single_DataFrame: bool = True,
@@ -1145,7 +1097,7 @@ def merge_csv_files(input_file_list: str | list,
                     save_merged_file: bool = False) -> int | pd.DataFrame | dict:
 
     """
-    Merges several CSV files' data into a single one.
+    Merge several CSV files into one DataFrame or a dictionary of DataFrames.
 
     Two options are given:
         1. Merge data of each file into a single DataFrame.
@@ -1220,6 +1172,20 @@ def merge_csv_files(input_file_list: str | list,
     decimal : str
         Character to recognise as decimal point (e.g. use ',' 
         for European data). Default value is ',' (comma).    
+    axis : int, default 0
+        Concatenation axis for single-DataFrame output.
+        Use 0 to stack rows or 1 to align by index and append columns.
+    sort : bool, default False
+        Whether to sort the non-concatenation axis labels.
+    ignore_index_bool : bool | None, default None
+        Whether to ignore index values while concatenating. If None, defaults
+        to True for axis=0 and False for axis=1.
+    drop_duplicates : bool, default False
+        If True and ``axis=0``, duplicate rows are removed after concatenation.
+    dedup_subset : str | list[str] | None, default None
+        Column subset to use with duplicate removal.
+    dedup_keep : str, default "first"
+        Keep strategy used with duplicate removal.
     save_index : bool, optional
         Whether to include the DataFrame index as a column in the Excel sheet. Default is False.
     save_header : bool, optional
@@ -1261,10 +1227,10 @@ def merge_csv_files(input_file_list: str | list,
     and 'keep_data_in_sections' cannot be True at the same time.
     """
         
-    # Proper argument selection control # 
-    #-----------------------------------#
-    
-    # Data merging #
+    if axis not in (0, 1):
+        raise ValueError(f"axis must be either 0 or 1, got {axis}")
+
+    # Proper argument selection control #
     param_keys = get_caller_args()
     kdis_arg_pos = find_substring_index(param_keys, "keep_data_in_sections")
     osd_arg_pos = find_substring_index(param_keys, "out_single_DataFrame")
@@ -1285,118 +1251,89 @@ def merge_csv_files(input_file_list: str | list,
     if input_file_count == 1:
         raise ValueError(BELOW_MINIMUM_FILE_WARNING)
         
-    # Option 1: merge data of all files into a single DataFrame #
-    #-----------------------------------------------------------#
-    
     if out_single_DataFrame and not keep_data_in_sections:
-        
-        # Check firstly if all data frames have the same number of columns 
-        #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-        
-        ind_file_df_nrow_list = []    
-        for file in input_file_list:
-            file_df = csv2df(file,
-                             separator=separator_in,
-                             engine=engine,
-                             encoding=encoding,
-                             header=header,
-                             parse_dates=parse_dates,
-                             index_col=index_col,
-                             decimal=decimal)
-            
-            ind_file_df_nrow_list.append(file_df.shape[0])
-            
-        ind_file_df_nrow_unique = unique(ind_file_df_nrow_list)
-        unique_row_count = len(ind_file_df_nrow_unique)
-        
-        # If not the case, warn respectively and prompt to merge anyway #
-        if unique_row_count > 1:
-            merge_anyway_stdin = input("Warning: number of rows of data in some files "
-                                       "is not common to all data. "
-                                       "Mergeing resulted in concatenation by "
-                                       "filling the missing values with NaNs. "
-                                       "Proceed anyway? (y/n) ")
-            
-            
-            while (merge_anyway_stdin != "y" and merge_anyway_stdin != "n"):
-                merge_anyway_stdin = input("\nPlease select 'y' for 'yes' "
-                                           "or 'n' for 'no': ")
-                
-            else:  
-                # Merge now all DataFrames into a single one #
-                if merge_anyway_stdin == "y":
-                    all_file_data_df = _concat_dfs_aux(input_file_list,
-                                                       separator_in,
-                                                       engine,
-                                                       encoding,
-                                                       header,
-                                                       parse_dates,
-                                                       index_col,
-                                                       decimal)
-                else:
-                    pass
-                
-                
-             
-        # Otherwise merge all DataFrames into a single one directly #
-        #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-        
-        else:
-            all_file_data_df = _concat_dfs_aux(input_file_list,
-                                               separator_in,
-                                               engine,
-                                               encoding,
-                                               header,
-                                               parse_dates,
-                                               index_col,
-                                               decimal)
-            
-        # Prompt to save the merged object #
-        #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-        
+        if axis == 1:
+            ind_file_df_nrow_list = []
+            for file in input_file_list:
+                file_df = csv2df(
+                    file,
+                    separator=separator_in,
+                    engine=engine,
+                    encoding=encoding,
+                    header=header,
+                    parse_dates=parse_dates,
+                    index_col=index_col,
+                    decimal=decimal,
+                )
+                ind_file_df_nrow_list.append(file_df.shape[0])
+
+            unique_row_count = len(unique(ind_file_df_nrow_list))
+            if unique_row_count > 1:
+                merge_anyway_stdin = input(
+                    "Warning: number of rows of data in some files is not common to all data. "
+                    "Merging with axis=1 may fill missing values with NaNs. Proceed anyway? (y/n) "
+                )
+                while merge_anyway_stdin not in ("y", "n"):
+                    merge_anyway_stdin = input("\nPlease select 'y' for 'yes' or 'n' for 'no': ")
+                if merge_anyway_stdin == "n":
+                    raise ValueError("Merge cancelled by user due to row-count mismatch.")
+
+        all_file_data_df = _concat_dfs_aux(
+            input_file_list=input_file_list,
+            separator_in=separator_in,
+            engine=engine,
+            encoding=encoding,
+            header=header,
+            parse_dates=parse_dates,
+            index_col=index_col,
+            decimal=decimal,
+            axis=axis,
+            sort=sort,
+            ignore_index_bool=ignore_index_bool,
+            drop_duplicates=drop_duplicates,
+            dedup_subset=dedup_subset,
+            dedup_keep=dedup_keep,
+        )
+
         if save_merged_file:
-           saving_result = save2csv(output_file_path, 
-                                    all_file_data_df, 
-                                    separator=separator_out,
-                                    decimal=decimal,
-                                    save_index=save_index, 
-                                    save_header=save_header)
-           return saving_result
-            
-        else:
-            return all_file_data_df
-        
-        
-    # Option 2: save each DataFrame with the corresponding file into a dictionary #
-    #-----------------------------------------------------------------------------#
-        
+            return save2csv(
+                output_file_path,
+                all_file_data_df,
+                separator=separator_out,
+                decimal=decimal,
+                save_index=save_index,
+                save_header=save_header,
+            )
+        return all_file_data_df
+
     elif not out_single_DataFrame and keep_data_in_sections:
-        all_file_data_dict = \
-            {get_obj_specs(file,"name_noext") : csv2df(file,
-                                                       separator=separator_in,
-                                                       engine=engine,
-                                                       encoding=encoding,
-                                                       header=header,
-                                                       parse_dates=parse_dates,
-                                                       index_col=index_col,
-                                                       decimal=decimal)
-             for file in input_file_list}
-        
-        # Prompt to save the merged object #
-        #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-        
-        # Because there is no 'sheet' concept, in case of saving the dictionary
-        # it must be done so in an Excel file, not a CSV file
-        
+        all_file_data_dict = {
+            get_obj_specs(file, "name_noext"): csv2df(
+                file,
+                separator=separator_in,
+                engine=engine,
+                encoding=encoding,
+                header=header,
+                parse_dates=parse_dates,
+                index_col=index_col,
+                decimal=decimal,
+            )
+            for file in input_file_list
+        }
+
         if save_merged_file:
-            saving_result = save2excel(output_file_path,
-                                       all_file_data_dict, 
-                                       save_index=save_index, 
-                                       save_header=save_header)
-            return saving_result
-         
-        else:
-            return all_file_data_dict
+            return save2excel(
+                output_file_path,
+                all_file_data_dict,
+                save_index=save_index,
+                save_header=save_header,
+            )
+        return all_file_data_dict
+
+    raise ValueError(
+        "Invalid merge mode: set either out_single_DataFrame=True "
+        "or keep_data_in_sections=True."
+    )
         
         
     
@@ -1407,21 +1344,33 @@ def _concat_dfs_aux(input_file_list,
                     header, 
                     parse_dates, 
                     index_col, 
-                    decimal):
-    
-    all_file_data_df = pd.DataFrame()
-    for file in input_file_list:
-        file_df = csv2df(file,
-                         separator=separator_in,
-                         engine=engine,
-                         encoding=encoding,
-                         header=header,
-                         parse_dates=parse_dates,
-                         index_col=index_col,
-                         decimal=decimal)
-        
-        all_file_data_df = pd.concat([all_file_data_df, file_df], axis=1)
-    return all_file_data_df
+                    decimal,
+                    axis=0,
+                    sort=False,
+                    ignore_index_bool=None,
+                    drop_duplicates=False,
+                    dedup_subset=None,
+                    dedup_keep="first"):
+
+    # Lazy import avoids module import cycles with data_manipulation -> pandas_obj_handler.
+    from filewise.pandas_utils.data_manipulation import concat_dfs_aux
+
+    return concat_dfs_aux(
+        input_file_list=input_file_list,
+        separator_in=separator_in,
+        engine=engine,
+        encoding=encoding,
+        header=header,
+        parse_dates=parse_dates,
+        index_col=index_col,
+        decimal=decimal,
+        axis=axis,
+        sort=sort,
+        ignore_index_bool=ignore_index_bool,
+        drop_duplicates=drop_duplicates,
+        dedup_subset=dedup_subset,
+        dedup_keep=dedup_keep,
+    )
     
 
 # ODS files #
@@ -1501,7 +1450,7 @@ def save2ods(file_path,
              save_index=False,
              save_header=False,
              engine="odf"):
-    
+    file_path = _ensure_extension(file_path, EXTENSIONS[2])
     saving_result = save2excel(file_path,
                                frame_obj,
                                indiv_sheet_name=indiv_sheet_name,
@@ -1513,12 +1462,31 @@ def save2ods(file_path,
 
 def merge_ods_files(input_file_list,
                     output_file_path,
+                    header=None,
+                    decimal='.',
+                    axis=0,
+                    sort=False,
+                    ignore_index_bool=None,
+                    out_single_DataFrame=False,
+                    drop_duplicates=False,
+                    dedup_subset=None,
+                    dedup_keep="first",
                     save_index=False,
                     save_header=False,
                     save_merged_file=False):
     
     saving_result = merge_excel_files(input_file_list,
                                       output_file_path,
+                                      header=header,
+                                      engine="odf",
+                                      decimal=decimal,
+                                      axis=axis,
+                                      sort=sort,
+                                      ignore_index_bool=ignore_index_bool,
+                                      out_single_DataFrame=out_single_DataFrame,
+                                      drop_duplicates=drop_duplicates,
+                                      dedup_subset=dedup_subset,
+                                      dedup_keep=dedup_keep,
                                       save_index=save_index,
                                       save_header=save_header,
                                       save_merged_file=save_merged_file)
@@ -1530,7 +1498,7 @@ def merge_ods_files(input_file_list,
 #--------------------------#
 
 # File extension list #
-EXTENSIONS = ["csv", "xlsx"]
+EXTENSIONS = ["csv", "xlsx", "ods"]
 
 # Template strings #
 #----------------------#
