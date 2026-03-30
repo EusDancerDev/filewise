@@ -23,9 +23,8 @@
 
 - **Data Processing**:
   - **Pandas utilities**: DataFrame manipulation, merging, time series standardisation
-  - **Xarray utilities**: NetCDF file handling, climate data processing, coordinate operations
   - **JSON utilities**: Advanced JSON serialisation, encoding operations, DataFrame integration
-  - Scientific data format conversion and analysis
+  - For **NetCDF / xarray** workflows previously covered by `filewise.xarray_utils`, see the companion package [**climarraykit**](https://pypi.org/project/climarraykit/) (equivalent APIs under `climarraykit.*`)
 
 - **Automation Scripts**:
   - Copy and compress workflows for file management
@@ -47,13 +46,20 @@ Before installing, please ensure the following dependencies are available on you
 - **Required Third-Party Libraries**:
 
   ```bash
-  pip install pandas numpy xarray netcdf4 openpyxl xlsxwriter odfpy
+  pip install pandas numpy openpyxl
+  ```
+
+  Optional extras for some spreadsheet engines (used by pandas when you select them):
+
+  ```bash
+  pip install xlsxwriter odfpy
   ```
 
   Or via Anaconda (recommended channel: `conda-forge`):
 
   ```bash
-  conda install -c conda-forge pandas numpy xarray netcdf4 openpyxl xlsxwriter odfpy
+  conda install -c conda-forge pandas numpy openpyxl
+  conda install -c conda-forge xlsxwriter odfpy  # optional
   ```
 
 - **External Tools** (for PDF and email conversion):
@@ -150,6 +156,16 @@ pip install -e .
 ```
 
 This approach gives you the latest development versions of all interdependent packages for testing and development.
+
+### Running tests
+
+With development dependencies installed (`pip install -e .[dev]` or `pip install -r requirements-dev.txt` plus `pip install -e .`), run the suite from the repository root:
+
+```bash
+pytest
+```
+
+Tests are under `filewise/tests/` (for example `test_pandas_utils_merge_save.py` for merge/save helpers in `pandas_utils`).
 
 ### Troubleshooting
 
@@ -258,12 +274,18 @@ standardised_df = standardise_time_series(
 )
 ```
 
-### Scientific Data Example - Xarray
+### Scientific data example — NetCDF / xarray (climarraykit)
+
+NetCDF and xarray helpers now live in **climarraykit**, not in `filewise`:
+
+```bash
+pip install climarraykit
+```
 
 ```python
-from filewise.xarray_utils.file_utils import scan_ncfiles, ncfile_integrity_status
-from filewise.xarray_utils.patterns import get_latlon_bounds
-from filewise.xarray_utils.xarray_obj_handler import save2nc
+from climarraykit.file_utils import scan_ncfiles, ncfile_integrity_status
+from climarraykit.patterns import get_latlon_bounds
+from climarraykit.xarray_obj_handler import save2nc
 
 # Scan NetCDF files in directory
 file_info = scan_ncfiles("/path/to/netcdf/files")
@@ -328,25 +350,21 @@ filewise/
 │   ├── conversions.py               # DataFrame format conversions
 │   ├── data_manipulation.py         # DataFrame operations and analysis
 │   └── pandas_obj_handler.py        # Excel, CSV, ODS file handling
-├── xarray_utils/
-│   ├── conversions.py               # Climate data format conversion
-│   ├── data_manipulation.py         # NetCDF data processing
-│   ├── file_utils.py                # NetCDF file utilities and integrity checks
-│   ├── patterns.py                  # Coordinate and dimension pattern analysis
-│   └── xarray_obj_handler.py        # NetCDF file creation and manipulation
 ├── json_utils/
 │   ├── json_encoding_operations.py  # Custom JSON encoding/decoding
 │   └── json_obj_handler.py          # JSON file operations and DataFrame integration
 ├── general/
 │   └── introspection_utils.py       # Function introspection and debugging
-└── scripts/
-    ├── bulk_rename.py               # Bulk renaming automation
-    ├── compress_pdf.py              # PDF compression automation
-    ├── copy_compress.py             # File copy and compression workflow
-    ├── eml2pdf_exec.py             # Email to PDF conversion
-    ├── modify_properties.py         # File property modification
-    ├── msg2pdf_exec.py             # MSG to PDF conversion
-    └── tweak_pdf.py                # PDF page manipulation
+├── scripts/
+│   ├── bulk_rename.py               # Bulk renaming automation
+│   ├── compress_pdf.py              # PDF compression automation
+│   ├── copy_compress.py             # File copy and compression workflow
+│   ├── eml2pdf_exec.py             # Email to PDF conversion
+│   ├── modify_properties.py         # File property modification
+│   ├── msg2pdf_exec.py             # MSG to PDF conversion
+│   └── tweak_pdf.py                # PDF page manipulation
+└── tests/
+    └── test_pandas_utils_merge_save.py  # Pytest coverage for pandas save/merge helpers
 ```
 
 ## Key Functions
@@ -368,8 +386,8 @@ filewise/
 
 - `merge_excel_files()` - Multi-file Excel processing
 - `standardise_time_series()` - Time series data normalisation
-- `scan_ncfiles()` - NetCDF file analysis and cataloguing
-- `get_latlon_bounds()` - Climate data coordinate extraction
+
+NetCDF / xarray helpers (`scan_ncfiles`, `get_latlon_bounds`, etc.) are provided by **climarraykit**, not `filewise`.
 
 ### JSON Operations
 
@@ -397,15 +415,14 @@ filewise/
 - Efficient file searching algorithms
 - Memory-conscious data processing
 
-### Scientific Data Support
+### Scientific and tabular data
 
-- Climate data processing with coordinate system handling
-- NetCDF file integrity checking and validation
-- Advanced time series manipulation and standardisation
+- Advanced time series manipulation and standardisation in **pandas_utils**
+- Climate / NetCDF / xarray tooling: use **climarraykit**
 
 ## Version Information
 
-Current version: **3.10.0**
+Current version: **3.13.0**
 
 For detailed version history and changelog, see [CHANGELOG.md](CHANGELOG.md) and [VERSIONING.md](VERSIONING.md).
 
@@ -442,11 +459,11 @@ This package relies on several high-quality external packages:
 
 - `pygenutils` - General utility functions and data manipulation
 - `paramlib` - Parameter and configuration management
-- Standard scientific Python stack (NumPy, Pandas, Xarray)
-- External system tools for advanced file operations
+- Core stack: NumPy, Pandas, OpenPyXL (for Excel workflows)
+- External system tools for advanced file operations (PDF scripts)
 
 ## System Requirements
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - Unix-like operating system (Linux, macOS) for full functionality
 - Optional: External tools for PDF and email processing (ghostscript, pdftk, etc.)
