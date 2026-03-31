@@ -1,6 +1,6 @@
 # Core dependencies
-pandas>=1.3.0
-numpy>=1.21.0
+pandas>=2.2.3
+numpy>=2.2.3
 openpyxl>=3.0.0
 
 # Interdependent packages (aligned with pyproject.toml)
