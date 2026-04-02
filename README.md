@@ -1,7 +1,7 @@
 # filewise
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EusDancerDev/filewise/blob/main/LICENSE)
 [![PyPI Version](https://img.shields.io/pypi/v/filewise.svg)](https://pypi.org/project/filewise/)
 
 **filewise** is a comprehensive Python toolkit designed to simplify file operations, data manipulation, and scientific data processing. It provides a robust set of tools for file handling, directory management, format conversion, and data analysis, making it an essential utility package for Python developers working with diverse file types and data formats.
@@ -422,9 +422,9 @@ NetCDF / xarray helpers (`scan_ncfiles`, `get_latlon_bounds`, etc.) are provided
 
 ## Version Information
 
-Current version: **3.13.0**
+Current version: **3.14.1**
 
-For detailed version history and changelog, see [CHANGELOG.md](CHANGELOG.md) and [VERSIONING.md](VERSIONING.md).
+For detailed version history and changelog, see the [changelog](https://github.com/EusDancerDev/filewise/blob/main/filewise/CHANGELOG.md) and [versioning notes](https://github.com/EusDancerDev/filewise/blob/main/filewise/VERSIONING.md) in the repository.
 
 ## Contributing
 
@@ -440,7 +440,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](https://github.com/EusDancerDev/filewise/blob/main/LICENSE) file in the repository for details.
 
 ## Acknowledgments
 
