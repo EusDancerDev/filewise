@@ -1,5 +1,5 @@
 {% set name = "filewise" %}
-{% set version = "3.13.0" %}
+{% set version = "3.14.1" %}
 
 package:
   name: {{ name|lower }}
@@ -23,7 +23,8 @@ requirements:
     - pip
     - numpy >=2.2.3
     - pandas >=2.2.3
-    # Add other dependencies as needed
+    - openpyxl >=3.0.0
+    # pygenutils, paramlib: PyPI pins via post-link.sh
 
 test:
   imports:
