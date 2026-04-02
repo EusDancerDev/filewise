@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "filewise"
-version = "3.13.0"
+version = "3.14.1"
 license = {file = "LICENSE"}
 description = "A Python package for efficient file and directory management, featuring tools for bulk renaming, data handling, and format conversion"
 keywords = ["file management", "directory operations", "bulk renaming", "data handling", "format conversion"]
@@ -28,8 +28,8 @@ dependencies = [
     "pandas>=2.2.3",
     "numpy>=2.2.3",
     "openpyxl>=3.0.0",
-    "pygenutils>=16.4.0",
-    "paramlib>=3.4.10",
+    "pygenutils>=17.1.0",
+    "paramlib>=3.5.0",
 ]
 
 [project.optional-dependencies]
