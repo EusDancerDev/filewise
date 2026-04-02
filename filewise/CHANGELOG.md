@@ -2,8 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-<!-- TODO: check that the table formatting is correct,  in terms of the usage of the centering colon symbols and the amount of hyphens used as the horizontal borders of the tables -->
-
 ---
 
 ## [3.14.0] - 2026-03-31
