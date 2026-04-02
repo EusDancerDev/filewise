@@ -3,6 +3,6 @@ pandas>=2.2.3
 numpy>=2.2.3
 openpyxl>=3.0.0
 
-# Interdependent packages (aligned with pyproject.toml)
-pygenutils>=16.4.0
-paramlib>=3.4.10 
+# Interdependent packages (aligned with pyproject.toml; NumPy/Pandas 2.2.3+ stack)
+pygenutils>=17.1.0
+paramlib>=3.5.0
