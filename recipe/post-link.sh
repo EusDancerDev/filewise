@@ -1,4 +1,5 @@
 #!/bin/bash
-
-# Install pip dependencies that might not be available in conda
-"${PREFIX}/bin/pip" install -v more_itertools>=10.0.0
+# Interdependent PyPI packages (aligned with pyproject.toml)
+"${PREFIX}/bin/pip" install -v \
+  "pygenutils>=17.1.0" \
+  "paramlib>=3.5.0"
