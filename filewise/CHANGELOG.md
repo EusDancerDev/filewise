@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.14.1] - 2026-04-02
+
+### Fixed (3.14.1)
+
+#### **Package Dependencies** (fixing; 3.14.1)
+
+- **`pygenutils`:** raise the minimum to **`>=17.1.0`** in **`pyproject.toml`** and **`requirements.txt`**, matching the **NumPy** / **Pandas** **≥2.2.3** stack and **pygenutils** metadata alignment (**≥17.1.0**).
+- **`paramlib`:** raise the minimum to **`>=3.5.0`** in the same files (**paramlib** **3.5.0** declares the same scientific stack).
+
+#### **Conda recipe** (fixing; 3.14.1)
+
+- **`recipe/meta.yaml`:** set version to **3.14.1**; add **`openpyxl`** to **`run`** (aligned with **`pyproject.toml`**).
+- **`recipe/post-link.sh`:** install **`pygenutils`** and **`paramlib`** at the PyPI floors above (replacing **`more_itertools`** only).
+
+### Changed (3.14.1)
+
+#### **Packaging** (changing; 3.14.1)
+
+- **`pyproject.toml`**, **`filewise.__init__.__version__`**, **`recipe/meta.yaml`**, and **`README.md`:** set release version to **3.14.1** so published artefacts match the **3.14.x** changelog line after **[3.14.0]**.
+
+---
+
 ## [3.14.0] - 2026-03-31
 
 ### Changed (3.14.0)
@@ -11,6 +33,8 @@ All notable changes to this project will be documented in this file.
 #### **Package Dependencies** (changing; 3.14.0)
 
 - **NumPy / Pandas:** require **`numpy>=2.2.3`** and **`pandas>=2.2.3`** in **`pyproject.toml`**, **`requirements.txt`**, **`requirements-dev.txt`**, and **`recipe/meta.yaml`**.
+
+  Interdependent floors (**`pygenutils`**, **`paramlib`**) for that stack are set in **[3.14.1]**; published version metadata through **3.13.0** lagged this section until **3.14.1**.
 
 ---
 
