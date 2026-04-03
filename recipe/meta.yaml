@@ -36,7 +36,11 @@ about:
   home: https://github.com/EusDancerDev/filewise
   license: MIT
   license_file: LICENSE
-  summary: Python package filewise
+  summary: File and directory utilities—bulk rename, tabular I/O, and format conversion
+  description: |
+    filewise streamlines filesystem operations: patterned renames, directory hygiene, and structured
+    data handling including Excel-oriented workflows via openpyxl. Shared introspection helpers make
+    it a dependable layer for larger EusDancerDev packages.
   doc_url: https://github.com/EusDancerDev/filewise#readme
   dev_url: https://github.com/EusDancerDev/filewise.git
 
